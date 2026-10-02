@@ -332,3 +332,14 @@ Nouveautés côté maître :
 - réponses rapides pré-enregistrées.
 
 Important : dans cette V7, le classement/favori/archivage des groupes est mémorisé dans le navigateur du maître. La prochaine refonte des profils permanents pourra enregistrer ces métadonnées directement dans Firestore pour les retrouver sur n'importe quel appareil.
+
+
+## V7.1 — corrections maître
+
+- Barre supérieure convertie au thème graphite/cyan, sans violet.
+- Bouton Accueil fiabilisé.
+- Statistiques affichées en pourcentage.
+- Progression calculée à partir des missions attribuées / terminées.
+- Boutons participant : Déconnecter, Réinitialiser, Supprimer.
+- La suppression libère la place et génère un nouveau code participant.
+- Une déconnexion demandée par le maître est détectée côté participant et ferme sa session.

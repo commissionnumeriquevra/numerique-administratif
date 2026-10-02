@@ -14,7 +14,8 @@ let state = {
   seat: null,
   student: null,
   currentMission: null,
-  selectedConversation: null
+  selectedConversation: null,
+  teacherAnalytics: null
 };
 
 const demo = loadDemo();
@@ -75,7 +76,12 @@ function missionName(t){return ({
 })[t]||t;}
 
 $$("[data-open]").forEach(b=>b.addEventListener("click",()=>show(b.dataset.open)));
-$("#homeBtn").addEventListener("click",()=>show("landing"));
+$("#homeBtn")?.addEventListener("click",async()=>{
+  // Retour réel à l'accueil, quel que soit l'écran courant.
+  state.currentMission=null;
+  state.selectedConversation=null;
+  show("landing");
+});
 
 /* -------------------- TEACHER -------------------- */
 $("#demoTeacherBtn").addEventListener("click",()=>{
@@ -149,6 +155,7 @@ async function renderTeacher(){
     : Object.values(demo.workshops).filter(w=>w.teacherUid===(state.teacher?.uid||"demo-teacher"));
 
   state.teacherGroups=sortedTeacherGroups(workshops);
+  state.teacherAnalytics=await loadTeacherAnalytics(state.teacherGroups);
 
   if(!state.workshop && state.teacherGroups.length){
     state.workshop=state.teacherGroups.find(g=>!groupMeta(g.id).archived)||state.teacherGroups[0];
@@ -162,6 +169,7 @@ async function renderTeacher(){
   renderGroupsManager();
   renderParticipantsDirectory();
   renderActivityFeed();
+  renderStatsParticipants();
 
   const info=$("#workshopInfo");
   if(!state.workshop){
@@ -184,26 +192,71 @@ async function renderTeacher(){
         <div class="name">${s.claimed?esc(s.displayName):"Participant "+(i+1)}</div>
         <div class="status">${s.claimed?"Connecté":"Place disponible"} · code <span class="seat-code">${esc(s.seatCode)}</span></div>
         <div class="status">${s.level?levelName(s.level):""}</div>
+        ${s.claimed||s.displayName?`<div class="participant-progress-line"><span>Progression</span><strong>${participantProgress(s.id)}%</strong></div>${participantActionsHTML(state.workshop.id,s.id)}`:""}
       </div>`).join("");
   }
   if($("#missionSeat"))$("#missionSeat").innerHTML=seats.map((s,i)=>`<option value="${s.id}">${s.claimed?esc(s.displayName):"Participant "+(i+1)} — ${s.seatCode}</option>`).join("");
   renderTeacherConversations();
 }
 
+function pct(n,d){return d>0?Math.round((n/d)*100):0;}
+
+async function loadTeacherAnalytics(groups){
+  const allSeats=[];
+  groups.forEach(g=>(g.seats||[]).forEach(s=>allSeats.push({...s,workshopId:g.id,workshopName:g.name})));
+  const claimed=allSeats.filter(s=>s.claimed);
+  let missions=[],messages=[];
+  if(configured){
+    for(const g of groups){
+      const mq=firebase.query(firebase.collection(firebase.db,"missions"),firebase.where("workshopId","==",g.id));
+      const ms=await firebase.getDocs(mq);
+      missions.push(...ms.docs.map(d=>({id:d.id,...d.data()})));
+      const qmsg=firebase.query(firebase.collection(firebase.db,"messages"),firebase.where("workshopId","==",g.id));
+      const msgSnap=await firebase.getDocs(qmsg);
+      messages.push(...msgSnap.docs.map(d=>({id:d.id,...d.data()})));
+    }
+  }else{
+    const ids=new Set(groups.map(g=>g.id));
+    missions=Object.values(demo.missions||{}).filter(m=>ids.has(m.workshopId));
+    messages=Object.values(demo.messages||{}).filter(m=>ids.has(m.workshopId));
+  }
+  const perSeat={};
+  for(const s of claimed){perSeat[s.id]={seat:s,total:0,done:0,progress:0};}
+  for(const m of missions){
+    if(!perSeat[m.seatId])continue;
+    perSeat[m.seatId].total++;
+    if(m.status==="done")perSeat[m.seatId].done++;
+  }
+  Object.values(perSeat).forEach(x=>x.progress=pct(x.done,x.total));
+  const completed=missions.filter(m=>m.status==="done").length;
+  const progressValues=Object.values(perSeat).map(x=>x.progress);
+  const averageProgress=progressValues.length?Math.round(progressValues.reduce((a,b)=>a+b,0)/progressValues.length):0;
+  const attention=Object.values(perSeat).filter(x=>x.total>0&&x.progress<50).length;
+  return {
+    missions,messages,perSeat,
+    averageProgress,
+    completedPct:pct(completed,missions.length),
+    activePct:pct(claimed.length,allSeats.length),
+    attentionPct:pct(attention,claimed.length),
+    unread:messages.filter(m=>m.to==="teacher"&&!m.read).length,
+    inProgress:missions.filter(m=>m.status!=="done").length
+  };
+}
+
 function renderTeacherMetrics(){
   const groups=state.teacherGroups||[];
   const activeGroups=groups.filter(g=>!groupMeta(g.id).archived);
   const participants=groups.reduce((n,g)=>n+(g.seats||[]).filter(s=>s.claimed).length,0);
+  const an=state.teacherAnalytics||{averageProgress:0,completedPct:0,activePct:0,attentionPct:0,unread:0,inProgress:0};
   const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value);};
   set("metricGroups",activeGroups.length);
   set("metricParticipants",participants);
-  if(configured){set("metricMissions","—");set("metricMessages","—");}
-  else{
-    set("metricMissions",Object.values(demo.missions||{}).filter(m=>m.status!=="done").length);
-    set("metricMessages",Object.values(demo.messages||{}).filter(m=>m.to==="teacher"&&!m.read).length);
-  }
-  set("statActiveUsers",participants);
-  set("statAttention",0);
+  set("metricMissions",an.inProgress);
+  set("metricMessages",an.unread);
+  set("statProgress",an.averageProgress+"%");
+  set("statCompleted",an.completedPct+"%");
+  set("statActiveUsers",an.activePct+"%");
+  set("statAttention",an.attentionPct+"%");
 }
 
 function groupCardHTML(g){
@@ -241,12 +294,108 @@ function renderGroupsManager(){
   c.innerHTML=groups.length?groups.map(g=>{const meta=groupMeta(g.id);return `<div class="group-manager-row"><div><div class="group-manager-name">${esc(g.name)}</div><div class="group-manager-meta">Code ${esc(g.code)} · ${(g.seats||[]).length} place(s)</div></div><div>${meta.favorite?"★ Favori":"Standard"}</div><div>${meta.archived?"Archivé":"Actif"}</div><div class="group-card-actions"><button class="icon-btn" onclick="window.moveTeacherGroup('${g.id}',-1)">↑</button><button class="icon-btn" onclick="window.moveTeacherGroup('${g.id}',1)">↓</button><button class="icon-btn" onclick="window.renameTeacherGroup('${g.id}')">✎</button></div></div>`;}).join(""):'<div class="empty-state">Aucun groupe.</div>';
 }
 
+function participantProgress(seatId){
+  return state.teacherAnalytics?.perSeat?.[seatId]?.progress||0;
+}
+function participantActionsHTML(workshopId,seatId){
+  return `<div class="participant-actions">
+    <button class="icon-btn warning-action" onclick="window.disconnectTeacherParticipant('${workshopId}','${seatId}')">Déconnecter</button>
+    <button class="icon-btn" onclick="window.resetTeacherParticipant('${workshopId}','${seatId}')">Réinitialiser</button>
+    <button class="icon-btn danger-action" onclick="window.deleteTeacherParticipant('${workshopId}','${seatId}')">Supprimer</button>
+  </div>`;
+}
 function renderParticipantsDirectory(){
   const c=document.getElementById("participantsDirectory");if(!c)return;
   const cards=[];
-  (state.teacherGroups||[]).forEach(g=>(g.seats||[]).filter(s=>s.claimed).forEach(s=>cards.push(`<article class="participant-profile-card"><h3>${esc(s.displayName||"Participant")}</h3><div class="meta">${esc(g.name)} · ${levelName(s.level||"beginner")}</div><div class="progress-track"><span style="width:35%"></span></div><div class="meta">Progression détaillée à venir avec les profils permanents.</div><button class="icon-btn" onclick="window.selectTeacherGroup('${g.id}')">Ouvrir le groupe</button></article>`)));
-  c.innerHTML=cards.length?cards.join(""):'<div class="empty-state">Aucun participant connecté.</div>';
+  (state.teacherGroups||[]).forEach(g=>(g.seats||[]).filter(s=>s.claimed||s.displayName).forEach(s=>{
+    const progress=participantProgress(s.id);
+    cards.push(`<article class="participant-profile-card">
+      <h3>${esc(s.displayName||"Participant")}</h3>
+      <div class="meta">${esc(g.name)} · ${levelName(s.level||"beginner")} · code ${esc(s.seatCode)}</div>
+      <div class="participant-progress-line"><span>Progression</span><strong>${progress}%</strong></div>
+      <div class="progress-track"><span style="width:${progress}%"></span></div>
+      ${participantActionsHTML(g.id,s.id)}
+    </article>`);
+  }));
+  c.innerHTML=cards.length?cards.join(""):'<div class="empty-state">Aucun participant enregistré.</div>';
 }
+
+function renderStatsParticipants(){
+  const c=document.getElementById("statsParticipants");if(!c)return;
+  const rows=[];
+  (state.teacherGroups||[]).forEach(g=>(g.seats||[]).filter(s=>s.claimed||s.displayName).forEach(s=>{
+    const x=state.teacherAnalytics?.perSeat?.[s.id];
+    const progress=x?.progress||0;
+    rows.push(`<div class="stats-participant-row">
+      <div class="who"><strong>${esc(s.displayName||"Participant")}</strong><small>${esc(g.name)}</small></div>
+      <div class="progress-track"><span style="width:${progress}%"></span></div>
+      <div class="stats-percent">${progress}%</div>
+    </div>`);
+  }));
+  c.innerHTML=rows.length?rows.join(""):'<div class="stats-empty">Aucune statistique disponible pour le moment.</div>';
+}
+
+function teacherGroupAndSeat(workshopId,seatId){
+  const group=(state.teacherGroups||[]).find(g=>g.id===workshopId);
+  const seat=group?.seats?.find(s=>s.id===seatId);
+  return {group,seat};
+}
+
+async function deleteParticipantLearningData(workshopId,seatId,{deleteMessages=false}={}){
+  if(configured){
+    const mq=firebase.query(firebase.collection(firebase.db,"missions"),firebase.where("workshopId","==",workshopId),firebase.where("seatId","==",seatId));
+    const ms=await firebase.getDocs(mq);
+    for(const d of ms.docs)await firebase.deleteDoc(firebase.doc(firebase.db,"missions",d.id));
+
+    const ach=await firebase.getDocs(firebase.collection(firebase.db,"workshops",workshopId,"seats",seatId,"achievements"));
+    for(const d of ach.docs)await firebase.deleteDoc(firebase.doc(firebase.db,"workshops",workshopId,"seats",seatId,"achievements",d.id));
+
+    if(deleteMessages){
+      const q=firebase.query(firebase.collection(firebase.db,"messages"),firebase.where("workshopId","==",workshopId),firebase.where("seatId","==",seatId));
+      const snap=await firebase.getDocs(q);
+      for(const d of snap.docs)await firebase.deleteDoc(firebase.doc(firebase.db,"messages",d.id));
+    }
+  }else{
+    Object.keys(demo.missions||{}).forEach(id=>{const m=demo.missions[id];if(m.workshopId===workshopId&&m.seatId===seatId)delete demo.missions[id];});
+    delete demo.achievements[workshopId+"_"+seatId];
+    if(deleteMessages)Object.keys(demo.messages||{}).forEach(id=>{const m=demo.messages[id];if(m.workshopId===workshopId&&m.seatId===seatId)delete demo.messages[id];});
+    saveDemo();
+  }
+}
+
+window.disconnectTeacherParticipant=async(workshopId,seatId)=>{
+  const {seat}=teacherGroupAndSeat(workshopId,seatId);if(!seat)return;
+  if(!confirm(`Déconnecter ${seat.displayName||"ce participant"} ?\n\nSon travail reste enregistré. Il pourra se reconnecter avec son code.`))return;
+  if(configured){
+    await firebase.updateDoc(firebase.doc(firebase.db,"workshops",workshopId,"seats",seatId),{claimed:false,studentUid:"",forcedLogoutAt:firebase.serverTimestamp()});
+  }else{
+    const s=demo.workshops[workshopId]?.seats?.find(x=>x.id===seatId);if(s){s.claimed=false;s.studentUid="";s.forcedLogoutAt=Date.now();saveDemo();}
+  }
+  await renderTeacher();
+};
+
+window.resetTeacherParticipant=async(workshopId,seatId)=>{
+  const {seat}=teacherGroupAndSeat(workshopId,seatId);if(!seat)return;
+  if(!confirm(`Réinitialiser la progression de ${seat.displayName||"ce participant"} ?\n\nSes missions et réussites seront effacées. Son code participant et son nom seront conservés.`))return;
+  await deleteParticipantLearningData(workshopId,seatId,{deleteMessages:false});
+  await renderTeacher();
+};
+
+window.deleteTeacherParticipant=async(workshopId,seatId)=>{
+  const {group,seat}=teacherGroupAndSeat(workshopId,seatId);if(!group||!seat)return;
+  if(!confirm(`SUPPRIMER ${seat.displayName||"ce participant"} ?\n\nSa progression, ses messages et son ancien code participant seront supprimés. La place redeviendra libre avec un nouveau code.`))return;
+  await deleteParticipantLearningData(workshopId,seatId,{deleteMessages:true});
+  const used=new Set((group.seats||[]).filter(s=>s.id!==seatId).map(s=>s.seatCode));
+  let newCode=randomDigits(4);while(used.has(newCode))newCode=randomDigits(4);
+  const replacement={seatCode:newCode,displayName:"",claimed:false,studentUid:"",level:"beginner",deletedAt:configured?firebase.serverTimestamp():Date.now()};
+  if(configured){
+    await firebase.updateDoc(firebase.doc(firebase.db,"workshops",workshopId,"seats",seatId),replacement);
+  }else{
+    const s=demo.workshops[workshopId]?.seats?.find(x=>x.id===seatId);if(s)Object.assign(s,replacement);saveDemo();
+  }
+  if(state.selectedConversation===seatId)state.selectedConversation=null;
+  await renderTeacher();
+};
 
 function renderActivityFeed(){
   const c=document.getElementById("activityFeed");if(!c)return;
@@ -336,8 +485,24 @@ async function findSeat(workshopCode,seatCode){
 
 /* -------------------- STUDENT DASHBOARD -------------------- */
 $("#studentLogoutBtn").addEventListener("click",async()=>{
+  if(configured&&firebase?.auth?.currentUser?.isAnonymous)await firebase.signOut(firebase.auth);
   state.student=null;state.seat=null;state.workshop=null;show("landing");
 });
+
+// Permet au maître de fermer réellement une session participant à distance.
+setInterval(async()=>{
+  if(!configured||!firebase||!state.student||!state.seat||!state.workshop)return;
+  try{
+    const snap=await firebase.getDoc(firebase.doc(firebase.db,"workshops",state.workshop.id,"seats",state.seat.id));
+    const current=snap.exists()?snap.data():null;
+    if(!current||!current.claimed||!current.studentUid||current.studentUid!==state.student.uid){
+      if(firebase.auth.currentUser?.isAnonymous)await firebase.signOut(firebase.auth);
+      state.student=null;state.seat=null;state.workshop=null;state.currentMission=null;
+      show("studentJoin");
+      const m=document.getElementById("studentJoinMsg");if(m){m.className="msg bad";m.textContent="Votre session a été fermée par le maître. Vous pouvez vous reconnecter avec votre code participant.";}
+    }
+  }catch(e){}
+},4000);
 $("#backStudentDash").addEventListener("click",()=>{show("studentDashboard");renderStudent();});
 $("#openMessagesBtn").addEventListener("click",()=>{show("studentMessages");renderStudentMessages();});
 

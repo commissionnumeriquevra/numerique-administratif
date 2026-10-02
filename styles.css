@@ -7,8 +7,8 @@
 radial-gradient(circle at 10% 5%,rgba(255,215,106,.22),transparent 24%),
 radial-gradient(circle at 90% 8%,rgba(112,80,191,.12),transparent 22%),var(--bg);color:var(--ink)}
 button,input,select,textarea{font:inherit} button{cursor:pointer}
-.topbar{min-height:64px;padding:12px 24px;background:#6848ae;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.topbar strong{font-size:1.06rem}.subtitle{opacity:.82;margin-left:10px;font-size:.9rem}
+.topbar{min-height:64px;padding:12px 24px;background:#0b0f13;color:#eafcff;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #1f3940;box-shadow:0 8px 24px rgba(0,0,0,.22);position:relative;z-index:20}
+.topbar strong{font-size:1.06rem;color:#eafcff;letter-spacing:.01em}.topbar strong::before{content:">_ ";font-family:Consolas,ui-monospace,monospace;color:#29eaff}.subtitle{color:#78969b;margin-left:10px;font-size:.9rem}.topbar .ghost{border:1px solid #27636c;background:#0d1b20;color:#63f1fb;box-shadow:0 0 18px rgba(41,234,255,.08)}.topbar .ghost:hover{background:#102930;border-color:#29eaff;color:#dffcff}
 .screen{display:none;max-width:1240px;margin:auto;padding:38px 22px 70px}.screen.active{display:block}
 .hero-card,.panel,.content-card,.sidebar-card,.mission-shell{background:#fff;border:1px solid var(--line);border-radius:22px;box-shadow:0 14px 34px rgba(55,40,70,.08)}
 .hero-card{max-width:930px;margin:24px auto;padding:42px;text-align:center}
@@ -523,3 +523,20 @@ label{font-weight:850;display:block;margin:16px 0 7px}input,select,textarea{widt
 .teacher-screen .workshop-code-box{background:#0d252a!important;color:#bdf9ff!important;border-color:#2e6d76!important}
 @media(max-width:1100px){.teacher-shell{grid-template-columns:210px 1fr}.metric-grid{grid-template-columns:repeat(2,1fr)}.teacher-two-cols{grid-template-columns:1fr}.participants-directory{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){.teacher-shell{grid-template-columns:1fr}.teacher-sidebar{position:relative;height:auto}.sidebar-footer{display:none}.teacher-nav{grid-template-columns:repeat(2,1fr)}.teacher-main{padding:20px 14px 50px}.teacher-topbar{flex-direction:column}.teacher-search-row{grid-template-columns:1fr}.metric-grid{grid-template-columns:1fr}.group-card-grid,.participants-directory,.quick-reply-manager{grid-template-columns:1fr}.group-manager-row,.group-create-grid,.mission-control-grid{grid-template-columns:1fr}}
+
+
+/* V7.1 — actions participants + statistiques en pourcentage */
+.participant-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.participant-actions .icon-btn{font-weight:850}
+.icon-btn.warning-action{color:#ffd17a;border-color:#6f5526;background:#1b1710}
+.icon-btn.danger-action{color:#ff9a9f;border-color:#6b3238;background:#211316}
+.icon-btn.danger-action:hover{border-color:#ff6d75;color:#ffd7d9}
+.icon-btn.warning-action:hover{border-color:#ffbd52;color:#ffe8b9}
+.participant-progress-line{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:10px;color:#8ea9ae;font-size:.82rem}
+.participant-progress-line strong{color:#32ecf8;font-family:Consolas,ui-monospace,monospace;font-size:1rem}
+.stats-participant-list{display:grid;gap:10px;margin-top:18px}
+.stats-participant-row{display:grid;grid-template-columns:minmax(170px,1.2fr) minmax(160px,2fr) 76px;gap:14px;align-items:center;background:#0f181c;border:1px solid #223b42;border-radius:11px;padding:12px}
+.stats-participant-row .who strong{display:block;color:#e8fdff}.stats-participant-row .who small{color:#718f95}
+.stats-percent{font-family:Consolas,ui-monospace,monospace;font-weight:900;color:#42ff9d;text-align:right;font-size:1.05rem}
+.stats-empty{padding:18px;color:#78969b;text-align:center;border:1px dashed #29464c;border-radius:12px}
+@media(max-width:760px){.stats-participant-row{grid-template-columns:1fr}.stats-percent{text-align:left}.participant-actions{display:grid;grid-template-columns:1fr 1fr}.participant-actions .danger-action{grid-column:1/-1}}
