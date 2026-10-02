@@ -8,6 +8,7 @@ const configured = !firebaseConfig.apiKey.startsWith("VOTRE_");
 let firebase = null;
 let state = {
   mode: configured ? "firebase" : "demo",
+  teacherGroups: [],
   teacher: null,
   workshop: null,
   seat: null,
@@ -17,6 +18,14 @@ let state = {
 };
 
 const demo = loadDemo();
+
+const GROUP_META_KEY="teacherGroupMetaV1";
+function loadGroupMeta(){try{return JSON.parse(localStorage.getItem(GROUP_META_KEY)||"{}");}catch(e){return {};}}
+function saveGroupMeta(meta){localStorage.setItem(GROUP_META_KEY,JSON.stringify(meta));}
+function groupMeta(id){const all=loadGroupMeta();return all[id]||{favorite:false,archived:false,order:999};}
+function patchGroupMeta(id,patch){const all=loadGroupMeta();all[id]={...(all[id]||{favorite:false,archived:false,order:999}),...patch};saveGroupMeta(all);}
+function sortedTeacherGroups(groups){return [...groups].sort((a,b)=>{const ma=groupMeta(a.id),mb=groupMeta(b.id);if(ma.favorite!==mb.favorite)return ma.favorite?-1:1;if(ma.archived!==mb.archived)return ma.archived?1:-1;if((ma.order??999)!==(mb.order??999))return (ma.order??999)-(mb.order??999);return (b.createdAt||0)-(a.createdAt||0);});}
+
 
 function loadDemo(){
   const saved = localStorage.getItem("atelierNumeriqueDemo");
@@ -113,7 +122,7 @@ $("#createWorkshopBtn").addEventListener("click",async()=>{
   }else{
     demo.workshops[w.id]=w;saveDemo();
   }
-  state.workshop=w; renderTeacher();
+  state.workshop=w; patchGroupMeta(w.id,{order:(state.teacherGroups||[]).length,favorite:false,archived:false}); renderTeacher();
 });
 
 $("#assignMissionBtn").addEventListener("click",async()=>{
@@ -135,29 +144,127 @@ $("#assignMissionBtn").addEventListener("click",async()=>{
 });
 
 async function renderTeacher(){
-  if(!state.workshop){
-    const workshops = configured ? await teacherWorkshopsFirebase() : Object.values(demo.workshops).filter(w=>w.teacherUid===(state.teacher?.uid||"demo-teacher"));
-    state.workshop=workshops.sort((a,b)=>b.createdAt-a.createdAt)[0]||null;
-  }else if(configured){
-    await refreshWorkshopSeats();
+  const workshops = configured
+    ? await teacherWorkshopsFirebase()
+    : Object.values(demo.workshops).filter(w=>w.teacherUid===(state.teacher?.uid||"demo-teacher"));
+
+  state.teacherGroups=sortedTeacherGroups(workshops);
+
+  if(!state.workshop && state.teacherGroups.length){
+    state.workshop=state.teacherGroups.find(g=>!groupMeta(g.id).archived)||state.teacherGroups[0];
+  }else if(state.workshop){
+    const refreshed=state.teacherGroups.find(g=>g.id===state.workshop.id);
+    if(refreshed)state.workshop=refreshed;
   }
+
+  renderTeacherMetrics();
+  renderGroupCards();
+  renderGroupsManager();
+  renderParticipantsDirectory();
+  renderActivityFeed();
+
   const info=$("#workshopInfo");
   if(!state.workshop){
-    info.classList.add("hidden");$("#participantsGrid").innerHTML='<div class="empty-state">Créez un atelier pour commencer.</div>';
-    $("#missionSeat").innerHTML="";return;
+    if(info)info.classList.add("hidden");
+    if($("#participantsGrid"))$("#participantsGrid").innerHTML='<div class="empty-state">Créez un groupe pour commencer.</div>';
+    if($("#missionSeat"))$("#missionSeat").innerHTML="";
+    renderTeacherConversations();
+    return;
   }
-  info.classList.remove("hidden");
-  info.innerHTML=`<strong>Code atelier : ${esc(state.workshop.code)}</strong><br><small>Donnez ce code aux participants.</small>`;
+
+  if(info){
+    info.classList.remove("hidden");
+    info.innerHTML=`<strong>Groupe actif : ${esc(state.workshop.name)}</strong><br><small>Code atelier : ${esc(state.workshop.code)}</small>`;
+  }
+
   const seats=state.workshop.seats||[];
-  $("#participantCount").textContent=seats.filter(s=>s.claimed).length+" connecté(s)";
-  $("#participantsGrid").innerHTML=seats.map((s,i)=>`
-    <div class="participant">
-      <div class="name">${s.claimed?esc(s.displayName):"Participant "+(i+1)}</div>
-      <div class="status">${s.claimed?"Connecté":"Place disponible"} · code <span class="seat-code">${esc(s.seatCode)}</span></div>
-      <div class="status">${s.level?levelName(s.level):""}</div>
-    </div>`).join("");
-  $("#missionSeat").innerHTML=seats.map((s,i)=>`<option value="${s.id}">${s.claimed?esc(s.displayName):"Participant "+(i+1)} — ${s.seatCode}</option>`).join("");
+  if($("#participantsGrid")){
+    $("#participantsGrid").innerHTML=seats.map((s,i)=>`
+      <div class="participant">
+        <div class="name">${s.claimed?esc(s.displayName):"Participant "+(i+1)}</div>
+        <div class="status">${s.claimed?"Connecté":"Place disponible"} · code <span class="seat-code">${esc(s.seatCode)}</span></div>
+        <div class="status">${s.level?levelName(s.level):""}</div>
+      </div>`).join("");
+  }
+  if($("#missionSeat"))$("#missionSeat").innerHTML=seats.map((s,i)=>`<option value="${s.id}">${s.claimed?esc(s.displayName):"Participant "+(i+1)} — ${s.seatCode}</option>`).join("");
   renderTeacherConversations();
+}
+
+function renderTeacherMetrics(){
+  const groups=state.teacherGroups||[];
+  const activeGroups=groups.filter(g=>!groupMeta(g.id).archived);
+  const participants=groups.reduce((n,g)=>n+(g.seats||[]).filter(s=>s.claimed).length,0);
+  const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value);};
+  set("metricGroups",activeGroups.length);
+  set("metricParticipants",participants);
+  if(configured){set("metricMissions","—");set("metricMessages","—");}
+  else{
+    set("metricMissions",Object.values(demo.missions||{}).filter(m=>m.status!=="done").length);
+    set("metricMessages",Object.values(demo.messages||{}).filter(m=>m.to==="teacher"&&!m.read).length);
+  }
+  set("statActiveUsers",participants);
+  set("statAttention",0);
+}
+
+function groupCardHTML(g){
+  const meta=groupMeta(g.id);
+  const claimed=(g.seats||[]).filter(s=>s.claimed).length;
+  return `<article class="geek-group-card ${meta.favorite?"favorite":""} ${meta.archived?"archived":""}">
+    <div class="group-card-top"><div><div class="group-card-title">${esc(g.name)}</div><div class="group-card-meta">${claimed}/${(g.seats||[]).length} participant(s) · code ${esc(g.code)}</div></div><span>${meta.favorite?"★":meta.archived?"ARCH":"●"}</span></div>
+    <div class="group-card-actions"><button class="icon-btn" onclick="window.selectTeacherGroup('${g.id}')">Ouvrir</button><button class="icon-btn" onclick="window.renameTeacherGroup('${g.id}')">Renommer</button><button class="icon-btn" onclick="window.toggleFavoriteGroup('${g.id}')">${meta.favorite?"Retirer ★":"Favori ★"}</button><button class="icon-btn" onclick="window.toggleArchiveGroup('${g.id}')">${meta.archived?"Réactiver":"Archiver"}</button></div>
+  </article>`;
+}
+
+function filteredTeacherGroups(){
+  let groups=state.teacherGroups||[];
+  const q=(document.getElementById("teacherGlobalSearch")?.value||"").toLowerCase().trim();
+  const filter=document.getElementById("groupFilterStatus")?.value||"all";
+  return groups.filter(g=>{
+    const meta=groupMeta(g.id);
+    if(q&&!String(g.name).toLowerCase().includes(q)&&!(g.seats||[]).some(s=>String(s.displayName||"").toLowerCase().includes(q)))return false;
+    if(filter==="active"&&meta.archived)return false;
+    if(filter==="favorite"&&!meta.favorite)return false;
+    if(filter==="archived"&&!meta.archived)return false;
+    return true;
+  });
+}
+
+function renderGroupCards(){
+  const c=document.getElementById("groupCards");if(!c)return;
+  const groups=filteredTeacherGroups();
+  c.innerHTML=groups.length?groups.slice(0,6).map(groupCardHTML).join(""):'<div class="empty-state">Aucun groupe trouvé.</div>';
+}
+
+function renderGroupsManager(){
+  const c=document.getElementById("groupsManager");if(!c)return;
+  const groups=filteredTeacherGroups();
+  c.innerHTML=groups.length?groups.map(g=>{const meta=groupMeta(g.id);return `<div class="group-manager-row"><div><div class="group-manager-name">${esc(g.name)}</div><div class="group-manager-meta">Code ${esc(g.code)} · ${(g.seats||[]).length} place(s)</div></div><div>${meta.favorite?"★ Favori":"Standard"}</div><div>${meta.archived?"Archivé":"Actif"}</div><div class="group-card-actions"><button class="icon-btn" onclick="window.moveTeacherGroup('${g.id}',-1)">↑</button><button class="icon-btn" onclick="window.moveTeacherGroup('${g.id}',1)">↓</button><button class="icon-btn" onclick="window.renameTeacherGroup('${g.id}')">✎</button></div></div>`;}).join(""):'<div class="empty-state">Aucun groupe.</div>';
+}
+
+function renderParticipantsDirectory(){
+  const c=document.getElementById("participantsDirectory");if(!c)return;
+  const cards=[];
+  (state.teacherGroups||[]).forEach(g=>(g.seats||[]).filter(s=>s.claimed).forEach(s=>cards.push(`<article class="participant-profile-card"><h3>${esc(s.displayName||"Participant")}</h3><div class="meta">${esc(g.name)} · ${levelName(s.level||"beginner")}</div><div class="progress-track"><span style="width:35%"></span></div><div class="meta">Progression détaillée à venir avec les profils permanents.</div><button class="icon-btn" onclick="window.selectTeacherGroup('${g.id}')">Ouvrir le groupe</button></article>`)));
+  c.innerHTML=cards.length?cards.join(""):'<div class="empty-state">Aucun participant connecté.</div>';
+}
+
+function renderActivityFeed(){
+  const c=document.getElementById("activityFeed");if(!c)return;
+  const items=(state.teacherGroups||[]).slice(0,4).map(g=>`<div class="activity-item"><strong>${esc(g.name)}</strong><br>${(g.seats||[]).filter(s=>s.claimed).length} participant(s) connecté(s)</div>`);
+  c.innerHTML=items.length?items.join(""):'<div class="empty-state">Aucune activité récente.</div>';
+}
+
+window.selectTeacherGroup=async id=>{const g=(state.teacherGroups||[]).find(x=>x.id===id);if(!g)return;state.workshop=g;await renderTeacher();switchTeacherView("dashboard");};
+window.renameTeacherGroup=async id=>{const g=(state.teacherGroups||[]).find(x=>x.id===id);if(!g)return;const next=prompt("Nouveau nom du groupe :",g.name);if(!next||!next.trim())return;g.name=next.trim();if(configured)await firebase.updateDoc(firebase.doc(firebase.db,"workshops",id),{name:g.name});else{demo.workshops[id].name=g.name;saveDemo();}await renderTeacher();};
+window.toggleFavoriteGroup=id=>{const m=groupMeta(id);patchGroupMeta(id,{favorite:!m.favorite});state.teacherGroups=sortedTeacherGroups(state.teacherGroups||[]);renderTeacher();};
+window.toggleArchiveGroup=id=>{const m=groupMeta(id);patchGroupMeta(id,{archived:!m.archived});state.teacherGroups=sortedTeacherGroups(state.teacherGroups||[]);renderTeacher();};
+window.moveTeacherGroup=(id,delta)=>{const groups=state.teacherGroups||[];const idx=groups.findIndex(g=>g.id===id),next=idx+delta;if(idx<0||next<0||next>=groups.length)return;const a=groups[idx],b=groups[next],ma=groupMeta(a.id),mb=groupMeta(b.id);patchGroupMeta(a.id,{order:mb.order===999?next:mb.order});patchGroupMeta(b.id,{order:ma.order===999?idx:ma.order});state.teacherGroups=sortedTeacherGroups(groups);renderTeacher();};
+
+function switchTeacherView(name){
+  document.querySelectorAll(".teacher-view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".teacher-nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.teacherView===name));
+  const id="teacherView"+name.charAt(0).toUpperCase()+name.slice(1);
+  document.getElementById(id)?.classList.add("active");
 }
 
 async function teacherWorkshopsFirebase(){
@@ -1549,6 +1656,16 @@ function threadHTML(messages,viewer){
   if(!messages.length)return '<div class="empty-state">Aucun message.</div>';
   return messages.map(m=>`<div class="bubble ${m.from===viewer?"me":"them"} ${m.auto?"auto":""}"><strong>${esc(m.subject||"Message")}</strong><br>${esc(m.text)}</div>`).join("");
 }
+
+
+function setupTeacherGeekUI(){
+  document.querySelectorAll(".teacher-nav-btn").forEach(btn=>btn.addEventListener("click",()=>switchTeacherView(btn.dataset.teacherView)));
+  document.querySelectorAll("[data-teacher-view-jump]").forEach(btn=>btn.addEventListener("click",()=>switchTeacherView(btn.dataset.teacherViewJump)));
+  document.getElementById("teacherGlobalSearch")?.addEventListener("input",()=>{renderGroupCards();renderGroupsManager();});
+  document.getElementById("groupFilterStatus")?.addEventListener("change",()=>{renderGroupCards();renderGroupsManager();});
+  document.getElementById("newGroupBtn")?.addEventListener("click",()=>switchTeacherView("groups"));
+}
+setupTeacherGeekUI();
 
 /* -------------------- BOOT -------------------- */
 (async function boot(){

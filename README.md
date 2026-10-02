@@ -306,3 +306,29 @@ Les aides varient selon le niveau :
 - Expert : l'apprenant doit explorer toutes les grandes rubriques.
 
 Une bannière permanente indique clairement **SIMULATION PÉDAGOGIQUE** afin d'éviter toute confusion avec les vrais services administratifs.
+
+
+## V7 — Dashboard maître geek
+
+La page maître a été entièrement redessinée dans un style cyber-tech :
+- fond graphite/noir ;
+- cyan électrique ;
+- vert terminal ;
+- ambre pour les alertes ;
+- aucun violet.
+
+Nouveautés côté maître :
+- menu latéral ;
+- tableau de bord avec métriques ;
+- groupes renommables ;
+- favoris ;
+- archivage ;
+- ordre haut/bas ;
+- recherche et filtres ;
+- vue participants ;
+- centre de missions ;
+- messagerie ;
+- espace statistiques ;
+- réponses rapides pré-enregistrées.
+
+Important : dans cette V7, le classement/favori/archivage des groupes est mémorisé dans le navigateur du maître. La prochaine refonte des profils permanents pourra enregistrer ces métadonnées directement dans Firestore pour les retrouver sur n'importe quel appareil.

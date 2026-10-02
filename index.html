@@ -54,68 +54,69 @@
       </div>
     </section>
 
-    <section id="teacherDashboard" class="screen">
-      <div class="dash-head">
-        <div>
-          <p class="eyebrow">Espace maître</p>
-          <h1>Mon atelier</h1>
-        </div>
-        <button id="teacherLogoutBtn" class="secondary">Déconnexion</button>
-      </div>
-
-      <div class="teacher-layout">
-        <aside class="sidebar-card">
-          <h2>Atelier</h2>
-          <label>Nom de l’atelier</label>
-          <input id="workshopName" value="Atelier du jour">
-          <label>Nombre de places</label>
-          <select id="seatCount">
-            <option>4</option><option>6</option><option>8</option><option selected>10</option>
-          </select>
-          <button id="createWorkshopBtn" class="primary">Créer / réinitialiser l’atelier</button>
-          <div id="workshopInfo" class="workshop-code-box hidden"></div>
-
-          <hr>
-          <h3>Attribuer une mission</h3>
-          <label>Participant</label>
-          <select id="missionSeat"></select>
-          <label>Mission</label>
-          <select id="missionTemplate">
-            <option value="download_doc">Télécharger un document</option>
-            <option value="fill_form">Remplir un formulaire avec la touche Tab</option>
-            <option value="keyboard_skills">Maîtriser les touches essentielles du clavier</option>
-            <option value="mouse_nav">Explorer des sites administratifs à la souris</option>
-            <option value="missing_piece">Pièce manquante au dossier</option>
-            <option value="suspicious_mail">Reconnaître un e-mail suspect</option>
-            <option value="full_admin">Parcours administratif complet</option>
-          </select>
-          <label>Niveau</label>
-          <select id="missionLevel">
-            <option value="beginner">Débutant</option>
-            <option value="intermediate">Intermédiaire</option>
-            <option value="expert">Expert</option>
-          </select>
-          <button id="assignMissionBtn" class="primary">Attribuer</button>
+    <section id="teacherDashboard" class="screen teacher-screen">
+      <div class="teacher-shell">
+        <aside class="teacher-sidebar">
+          <div class="brand-chip">
+            <div class="brand-mark">&gt;_</div>
+            <div><strong>MASTER HUB</strong><small>Atelier numérique</small></div>
+          </div>
+          <nav class="teacher-nav">
+            <button class="teacher-nav-btn active" data-teacher-view="dashboard">⌁ Tableau de bord</button>
+            <button class="teacher-nav-btn" data-teacher-view="groups">▦ Groupes</button>
+            <button class="teacher-nav-btn" data-teacher-view="participants">◉ Participants</button>
+            <button class="teacher-nav-btn" data-teacher-view="missions">✦ Missions</button>
+            <button class="teacher-nav-btn" data-teacher-view="messages">✉ Messagerie</button>
+            <button class="teacher-nav-btn" data-teacher-view="stats">⌁ Statistiques</button>
+            <button class="teacher-nav-btn" data-teacher-view="quick">⚡ Réponses rapides</button>
+          </nav>
+          <div class="sidebar-footer"><span class="status-dot"></span><span>Firebase connecté</span></div>
         </aside>
 
-        <section class="content-card">
-          <div class="section-title">
-            <div><p class="eyebrow">Participants</p><h2>Suivi de l’atelier</h2></div>
-            <span id="participantCount" class="pill">0 connecté</span>
+        <section class="teacher-main">
+          <header class="teacher-topbar">
+            <div><p class="terminal-kicker">// MASTER_CONSOLE</p><h1>Bonjour, Maître</h1><p class="teacher-sub">Pilotez vos groupes, missions et messages depuis un seul endroit.</p></div>
+            <div class="teacher-top-actions"><button id="newGroupBtn" class="cyber-btn secondary">+ Nouveau groupe</button><button id="teacherLogoutBtn" class="cyber-btn danger">Déconnexion</button></div>
+          </header>
+
+          <div class="teacher-search-row">
+            <div class="cyber-search"><span>⌕</span><input id="teacherGlobalSearch" type="search" placeholder="Rechercher un groupe ou un participant..."></div>
+            <select id="groupFilterStatus" class="cyber-select"><option value="all">Tous les groupes</option><option value="active">Actifs</option><option value="favorite">Favoris</option><option value="archived">Archivés</option></select>
           </div>
-          <div id="participantsGrid" class="participants-grid"></div>
+
+          <section id="teacherViewDashboard" class="teacher-view active">
+            <div class="metric-grid">
+              <article class="metric-card cyan"><span class="metric-icon">▦</span><div><small>Groupes actifs</small><strong id="metricGroups">0</strong></div></article>
+              <article class="metric-card green"><span class="metric-icon">◉</span><div><small>Participants</small><strong id="metricParticipants">0</strong></div></article>
+              <article class="metric-card amber"><span class="metric-icon">✦</span><div><small>Missions en cours</small><strong id="metricMissions">0</strong></div></article>
+              <article class="metric-card red"><span class="metric-icon">✉</span><div><small>Messages non lus</small><strong id="metricMessages">0</strong></div></article>
+            </div>
+            <div class="teacher-two-cols">
+              <section class="cyber-panel"><div class="panel-head"><div><p class="terminal-kicker">// GROUPS</p><h2>Mes groupes</h2></div><button class="mini-cyber-btn" data-teacher-view-jump="groups">Tout voir →</button></div><div id="groupCards" class="group-card-grid"></div></section>
+              <section class="cyber-panel"><div class="panel-head"><div><p class="terminal-kicker">// ACTIVITY</p><h2>Activité récente</h2></div></div><div id="activityFeed" class="activity-feed"></div></section>
+            </div>
+            <section class="cyber-panel"><div class="panel-head"><div><p class="terminal-kicker">// PARTICIPANTS</p><h2>Vue rapide</h2></div><button class="mini-cyber-btn" data-teacher-view-jump="participants">Voir les profils →</button></div><div id="participantsGrid" class="participants-grid cyber-participants"></div></section>
+          </section>
+
+          <section id="teacherViewGroups" class="teacher-view">
+            <section class="cyber-panel"><div class="panel-head"><div><p class="terminal-kicker">// GROUP_MANAGER</p><h2>Classer mes groupes</h2><p>Renommez, mettez en favori, archivez et réordonnez vos groupes.</p></div><button id="createWorkshopBtn" class="cyber-btn primary">+ Créer un groupe</button></div>
+              <div class="group-create-grid"><div><label>Nom du groupe</label><input id="workshopName" value="Groupe du jour"></div><div><label>Nombre de places</label><select id="seatCount"><option>4</option><option>6</option><option>8</option><option selected>10</option></select></div></div>
+              <div id="workshopInfo" class="workshop-code-box hidden"></div><div id="groupsManager" class="groups-manager"></div></section>
+          </section>
+
+          <section id="teacherViewParticipants" class="teacher-view"><section class="cyber-panel"><div class="panel-head"><div><p class="terminal-kicker">// USER_DIRECTORY</p><h2>Participants</h2></div></div><div id="participantsDirectory" class="participants-directory"></div></section></section>
+
+          <section id="teacherViewMissions" class="teacher-view"><section class="cyber-panel"><div class="panel-head"><div><p class="terminal-kicker">// MISSION_CONTROL</p><h2>Attribuer une mission</h2></div></div>
+            <div class="mission-control-grid"><div><label>Participant</label><select id="missionSeat"></select></div><div><label>Mission</label><select id="missionTemplate"><option value="download_doc">Télécharger un document</option><option value="fill_form">Remplir un formulaire avec la touche Tab</option><option value="keyboard_skills">Maîtriser les touches essentielles du clavier</option><option value="mouse_nav">Explorer des sites administratifs à la souris</option><option value="missing_piece">Pièce manquante au dossier</option><option value="suspicious_mail">Reconnaître un e-mail suspect</option><option value="full_admin">Parcours administratif complet</option></select></div><div><label>Niveau</label><select id="missionLevel"><option value="beginner">Débutant</option><option value="intermediate">Intermédiaire</option><option value="expert">Expert</option></select></div></div>
+            <button id="assignMissionBtn" class="cyber-btn primary">Attribuer la mission</button></section></section>
+
+          <section id="teacherViewMessages" class="teacher-view"><section class="cyber-panel"><div class="panel-head"><div><p class="terminal-kicker">// MESSAGE_CENTER</p><h2>Messagerie</h2></div></div><div class="message-layout cyber-message-layout"><div id="teacherConversations" class="conversation-list"></div><div id="teacherThread" class="thread empty-state">Choisissez un participant.</div></div></section></section>
+
+          <section id="teacherViewStats" class="teacher-view"><div class="metric-grid"><article class="metric-card cyan"><span class="metric-icon">%</span><div><small>Progression moyenne</small><strong id="statProgress">—</strong></div></article><article class="metric-card green"><span class="metric-icon">✓</span><div><small>Missions terminées</small><strong id="statCompleted">0</strong></div></article><article class="metric-card amber"><span class="metric-icon">◎</span><div><small>Profils actifs</small><strong id="statActiveUsers">0</strong></div></article><article class="metric-card red"><span class="metric-icon">!</span><div><small>À surveiller</small><strong id="statAttention">0</strong></div></article></div><section class="cyber-panel"><p class="terminal-kicker">// ANALYTICS</p><h2>Statistiques détaillées</h2><p class="teacher-sub">Cette zone accueillera les statistiques fiables par profil lors de la refonte des profils permanents.</p><div class="stats-placeholder"><div class="fake-chart"></div><div class="fake-chart short"></div><div class="fake-chart shorter"></div></div></section></section>
+
+          <section id="teacherViewQuick" class="teacher-view"><section class="cyber-panel"><p class="terminal-kicker">// QUICK_REPLIES</p><h2>Réponses pré-enregistrées</h2><div class="quick-reply-manager"><article><strong>Pièce manquante</strong><p>Il manque un ou plusieurs documents à votre demande. Merci de consulter la liste des pièces demandées et de transmettre les bons documents.</p></article><article><strong>Mauvais document</strong><p>Le document transmis ne correspond pas à la pièce demandée. Merci de vérifier le nom du document et de renvoyer le bon fichier.</p></article><article><strong>Document illisible</strong><p>Le document reçu n’est pas suffisamment lisible. Merci de transmettre une nouvelle copie plus nette.</p></article><article><strong>Dossier complet</strong><p>Merci. Votre dossier est maintenant complet.</p></article></div></section></section>
         </section>
       </div>
-
-      <section class="content-card">
-        <div class="section-title">
-          <div><p class="eyebrow">Messagerie</p><h2>Messages des participants</h2></div>
-        </div>
-        <div class="message-layout">
-          <div id="teacherConversations" class="conversation-list"></div>
-          <div id="teacherThread" class="thread empty-state">Choisissez un participant.</div>
-        </div>
-      </section>
     </section>
 
     <section id="studentJoin" class="screen">
