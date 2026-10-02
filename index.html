@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Atelier numérique — Démarches administratives</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <strong>Atelier numérique</strong>
+      <span class="subtitle">Simulations administratives</span>
+    </div>
+    <button id="homeBtn" class="ghost hidden" type="button">Accueil</button>
+  </header>
+
+  <main id="app">
+    <section id="landing" class="screen active">
+      <div class="hero-card">
+        <div class="hero-icon">🧭</div>
+        <p class="eyebrow">Plateforme de formation</p>
+        <h1>Bienvenue dans l’atelier</h1>
+        <p class="lead">Choisissez votre espace. Vous pouvez vous tromper : ici, tout est fait pour apprendre.</p>
+        <div class="role-grid">
+          <button class="role-card" data-open="teacherLogin">
+            <span class="big">🧑‍🏫</span>
+            <strong>Je suis le maître</strong>
+            <span>Créer l’atelier, attribuer des missions et répondre aux messages.</span>
+          </button>
+          <button class="role-card" data-open="studentJoin">
+            <span class="big">👤</span>
+            <strong>Je participe à l’atelier</strong>
+            <span>Entrer avec mon code, choisir mon prénom ou pseudo, puis faire mes missions.</span>
+          </button>
+        </div>
+        <div id="modeBanner" class="demo-banner"></div>
+      </div>
+    </section>
+
+    <section id="teacherLogin" class="screen">
+      <div class="panel narrow">
+        <button class="back" data-open="landing">← Retour</button>
+        <p class="eyebrow">Espace maître</p>
+        <h1>Connexion du maître</h1>
+        <label>E-mail</label>
+        <input id="teacherEmail" type="email" placeholder="formateur@exemple.fr">
+        <label>Mot de passe</label>
+        <input id="teacherPassword" type="password" placeholder="••••••••">
+        <button id="teacherLoginBtn" class="primary">Se connecter</button>
+        <button id="demoTeacherBtn" class="secondary">Entrer en mode démonstration</button>
+        <p class="tiny">En production, le compte maître utilise Firebase Authentication.</p>
+        <div id="teacherLoginMsg" class="msg"></div>
+      </div>
+    </section>
+
+    <section id="teacherDashboard" class="screen">
+      <div class="dash-head">
+        <div>
+          <p class="eyebrow">Espace maître</p>
+          <h1>Mon atelier</h1>
+        </div>
+        <button id="teacherLogoutBtn" class="secondary">Déconnexion</button>
+      </div>
+
+      <div class="teacher-layout">
+        <aside class="sidebar-card">
+          <h2>Atelier</h2>
+          <label>Nom de l’atelier</label>
+          <input id="workshopName" value="Atelier du jour">
+          <label>Nombre de places</label>
+          <select id="seatCount">
+            <option>4</option><option>6</option><option>8</option><option selected>10</option>
+          </select>
+          <button id="createWorkshopBtn" class="primary">Créer / réinitialiser l’atelier</button>
+          <div id="workshopInfo" class="workshop-code-box hidden"></div>
+
+          <hr>
+          <h3>Attribuer une mission</h3>
+          <label>Participant</label>
+          <select id="missionSeat"></select>
+          <label>Mission</label>
+          <select id="missionTemplate">
+            <option value="download_doc">Télécharger un document</option>
+            <option value="fill_form">Remplir un formulaire avec la touche Tab</option>
+            <option value="keyboard_skills">Maîtriser les touches essentielles du clavier</option>
+            <option value="mouse_nav">Explorer des sites administratifs à la souris</option>
+            <option value="missing_piece">Pièce manquante au dossier</option>
+            <option value="suspicious_mail">Reconnaître un e-mail suspect</option>
+            <option value="full_admin">Parcours administratif complet</option>
+          </select>
+          <label>Niveau</label>
+          <select id="missionLevel">
+            <option value="beginner">Débutant</option>
+            <option value="intermediate">Intermédiaire</option>
+            <option value="expert">Expert</option>
+          </select>
+          <button id="assignMissionBtn" class="primary">Attribuer</button>
+        </aside>
+
+        <section class="content-card">
+          <div class="section-title">
+            <div><p class="eyebrow">Participants</p><h2>Suivi de l’atelier</h2></div>
+            <span id="participantCount" class="pill">0 connecté</span>
+          </div>
+          <div id="participantsGrid" class="participants-grid"></div>
+        </section>
+      </div>
+
+      <section class="content-card">
+        <div class="section-title">
+          <div><p class="eyebrow">Messagerie</p><h2>Messages des participants</h2></div>
+        </div>
+        <div class="message-layout">
+          <div id="teacherConversations" class="conversation-list"></div>
+          <div id="teacherThread" class="thread empty-state">Choisissez un participant.</div>
+        </div>
+      </section>
+    </section>
+
+    <section id="studentJoin" class="screen">
+      <div class="panel narrow">
+        <button class="back" data-open="landing">← Retour</button>
+        <p class="eyebrow">Participant</p>
+        <h1>Entrer dans mon atelier</h1>
+        <label>Code de l’atelier</label>
+        <input id="joinWorkshopCode" inputmode="numeric" maxlength="6" placeholder="Exemple : 482913">
+        <label>Mon code participant</label>
+        <input id="joinSeatCode" inputmode="numeric" maxlength="4" placeholder="Exemple : 2741">
+        <button id="joinStudentBtn" class="primary">Continuer</button>
+        <div id="studentJoinMsg" class="msg"></div>
+      </div>
+    </section>
+
+    <section id="studentName" class="screen">
+      <div class="panel narrow warm">
+        <div class="avatar">🙂</div>
+        <p class="eyebrow">Personnalisation</p>
+        <h1>Comment voulez-vous qu’on vous appelle ?</h1>
+        <p class="lead">Vous pouvez écrire votre prénom ou un pseudo. Il sera utilisé uniquement dans l’atelier.</p>
+        <label>Prénom ou pseudo</label>
+        <input id="studentDisplayName" maxlength="30" placeholder="Exemple : José">
+        <button id="saveStudentNameBtn" class="primary">Entrer dans mon espace</button>
+        <div id="studentNameMsg" class="msg"></div>
+      </div>
+    </section>
+
+    <section id="studentDashboard" class="screen">
+      <div class="dash-head">
+        <div>
+          <p class="eyebrow">Mon espace</p>
+          <h1>Bonjour <span data-student-name></span> 👋</h1>
+          <p id="studentWorkshopLabel"></p>
+        </div>
+        <button id="studentLogoutBtn" class="secondary">Quitter</button>
+      </div>
+
+      <div class="student-home-grid">
+        <section class="content-card">
+          <div class="section-title"><div><p class="eyebrow">À faire</p><h2>Mes missions</h2></div></div>
+          <div id="studentMissions"></div>
+        </section>
+        <section class="content-card">
+          <div class="section-title"><div><p class="eyebrow">Messages</p><h2>Ma messagerie</h2></div><span id="studentUnread" class="pill">0 nouveau</span></div>
+          <div id="studentMessagesPreview"></div>
+          <button id="openMessagesBtn" class="secondary">Ouvrir ma messagerie</button>
+        </section>
+      </div>
+
+      <section class="content-card">
+        <p class="eyebrow">Mes progrès</p>
+        <h2>Mon carnet de réussites</h2>
+        <div id="studentAchievements" class="achievements"></div>
+      </section>
+    </section>
+
+    <section id="missionScreen" class="screen">
+      <div class="mission-shell">
+        <button id="backStudentDash" class="back">← Mes missions</button>
+        <div id="missionContent"></div>
+      </div>
+    </section>
+
+    <section id="studentMessages" class="screen">
+      <div class="mission-shell">
+        <button class="back" data-open="studentDashboard">← Mon espace</button>
+        <p class="eyebrow">Messagerie</p>
+        <h1>Mes messages</h1>
+        <div class="message-layout">
+          <div id="studentConversationList" class="conversation-list"></div>
+          <div id="studentThread" class="thread"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="confirmDialog">
+    <form method="dialog" class="dialog-card">
+      <h2 id="confirmTitle">Confirmer</h2>
+      <p id="confirmText"></p>
+      <div class="dialog-actions">
+        <button value="cancel" class="secondary">Annuler</button>
+        <button value="ok" class="primary">Confirmer</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="firebase-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
