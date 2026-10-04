@@ -1,0 +1,151 @@
+/* =========================================================
+   Chapitres et leçons projetées
+   - AN.chapters.register({ id, title, icon, ... , slides: [...] })
+   - AN.lesson.open(id)  : projette la leçon (plein écran, flèches, télécommande)
+   - AN.lesson.demo(id)  : projette le 1er exercice pour le faire avec le groupe
+   Diapositive : { title, html, theme? }. Les éléments [data-reveal] apparaissent
+   un par un (flèche droite / clic), les [data-flip] se retournent au clic.
+   Aucune note formateur n'est affichée à l'écran.
+   ========================================================= */
+(function (AN) {
+  "use strict";
+  const { esc } = AN.util;
+  const list = [];
+
+  const chapters = {
+    register(ch) { list.push(ch); },
+    get all() { return list; },
+    get: id => list.find(c => c.id === id)
+  };
+
+  let session = null; // { ch, i, overlay, onKey, cleanup }
+
+  function overlay(cls) {
+    const o = document.createElement("div");
+    o.className = "lesson-overlay " + cls;
+    o.setAttribute("role", "dialog");
+    o.setAttribute("aria-modal", "true");
+    document.body.appendChild(o);
+    document.documentElement.classList.add("projecting");
+    return o;
+  }
+
+  function close() {
+    if (!session) return;
+    session.cleanup?.();
+    document.removeEventListener("keydown", session.onKey, true);
+    session.overlay.remove();
+    document.documentElement.classList.remove("projecting");
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    const back = session.onClose; session = null; back?.();
+  }
+  const toggleFull = () => document.fullscreenElement ? document.exitFullscreen().catch(() => {}) : document.documentElement.requestFullscreen?.().catch(() => {});
+
+  /* ---------------- leçon ---------------- */
+  function open(id, { onDemo, onAssign, onClose, start = 0 } = {}) {
+    const ch = chapters.get(id); if (!ch) return;
+    close();
+    const slides = typeof ch.slides === "function" ? ch.slides() : ch.slides;
+    const o = overlay("lesson");
+    session = { ch, i: Math.min(start, slides.length - 1), overlay: o, onClose };
+
+    const draw = () => {
+      const s = slides[session.i];
+      o.innerHTML = `<div class="lesson-stage" style="--ch:${ch.color || "#7050bf"}">
+          <div class="lesson-slide ${s.theme || ""}" aria-live="polite">
+            <div class="lesson-badge">${ch.icon} ${esc(ch.title)}</div>
+            ${s.title ? `<h1>${s.title}</h1>` : ""}
+            <div class="lesson-body">${s.html}</div>
+          </div>
+          <nav class="lesson-bar" aria-label="Navigation de la leçon">
+            <button type="button" data-l="prev" aria-label="Diapositive précédente" ${session.i === 0 ? "disabled" : ""}>◀</button>
+            <div class="lesson-dots">${slides.map((_, k) => `<button type="button" class="${k === session.i ? "on" : k < session.i ? "seen" : ""}" data-l="go" data-k="${k}" aria-label="Diapositive ${k + 1}"></button>`).join("")}</div>
+            <span class="lesson-count">${session.i + 1} / ${slides.length}</span>
+            <button type="button" data-l="next" aria-label="Suivant">▶</button>
+            <button type="button" data-l="full" aria-label="Plein écran" title="Plein écran (F)">⛶</button>
+            <button type="button" data-l="close" aria-label="Fermer la leçon" title="Fermer (Échap)">✕</button>
+          </nav></div>`;
+      o.querySelector('[data-l="next"]').focus({ preventScroll: true });
+    };
+    const pending = () => [...o.querySelectorAll(".lesson-slide [data-reveal]:not(.shown)")];
+    const next = () => {
+      const p = pending();
+      if (p.length) { p[0].classList.add("shown"); return; }
+      if (session.i < slides.length - 1) { session.i++; draw(); }
+    };
+    const prev = () => { if (session.i > 0) { session.i--; draw(); o.querySelectorAll("[data-reveal]").forEach(e => e.classList.add("shown")); } };
+
+    o.addEventListener("click", e => {
+      const flip = e.target.closest("[data-flip]");
+      if (flip) { flip.classList.toggle("flipped"); return; }
+      const act = e.target.closest("[data-lesson-act]");
+      if (act) { const a = act.dataset.lessonAct; if (a === "demo") { close(); onDemo?.(id); } else if (a === "assign") onAssign?.(id); return; }
+      const b = e.target.closest("[data-l]");
+      if (b) {
+        const a = b.dataset.l;
+        if (a === "next") next(); else if (a === "prev") prev(); else if (a === "close") close(); else if (a === "full") toggleFull();
+        else if (a === "go") { session.i = Number(b.dataset.k); draw(); }
+        return;
+      }
+      // clic dans la diapositive : révèle l'élément suivant (comme la télécommande)
+      if (e.target.closest(".lesson-slide") && !e.target.closest("a,button,input,select,textarea")) { if (pending().length) next(); }
+    });
+    session.onKey = e => {
+      if (e.target.closest?.("input,textarea,select") || document.querySelector("dialog[open]")) return;
+      const k = e.key;
+      if (["ArrowRight", "PageDown", " ", "Enter"].includes(k)) { e.preventDefault(); next(); }
+      else if (["ArrowLeft", "PageUp", "Backspace"].includes(k)) { e.preventDefault(); prev(); }
+      else if (k === "Home") { session.i = 0; draw(); }
+      else if (k === "End") { session.i = slides.length - 1; draw(); }
+      else if (k === "Escape" && !document.fullscreenElement) close();
+      else if (k === "f" || k === "F") toggleFull();
+    };
+    document.addEventListener("keydown", session.onKey, true);
+    draw();
+  }
+
+  /* ---------------- exercice collectif ---------------- */
+  function demo(id, { onClose, onAssign, type } = {}) {
+    const ch = chapters.get(id); if (!ch) return;
+    close();
+    const mtype = type || ch.demo;
+    const o = overlay("demo");
+    const levels = [["beginner", "Débutant"], ["intermediate", "Intermédiaire"], ["expert", "Expert"]];
+    let level = "beginner", stop = null;
+    session = { ch, overlay: o, onClose };
+    o.innerHTML = `<div class="demo-shell" style="--ch:${ch.color || "#7050bf"}">
+      <header class="demo-head"><div><span class="lesson-badge">${ch.icon} ${esc(ch.title)} · exercice collectif</span>
+        <strong>${esc(AN.catalog.label(mtype))}</strong></div>
+        <div class="demo-tools"><label>Niveau <select data-d="level">${levels.map(([v, l]) => `<option value="${v}">${l}</option>`).join("")}</select></label>
+          <button type="button" data-d="restart">↺ Recommencer</button>
+          ${onAssign ? `<button type="button" data-d="assign" class="demo-go">🚀 À vous ! Donner le chapitre au groupe</button>` : ""}
+          <button type="button" data-d="full" title="Plein écran (F)">⛶</button><button type="button" data-d="close" title="Fermer">✕</button></div></header>
+      <div class="demo-note">🎓 Mode projection : on fait l'exercice ensemble, rien n'est enregistré.</div>
+      <div class="mission-shell demo-stage"><div class="demo-content"></div></div></div>`;
+    let box = o.querySelector(".demo-content");
+    const run = () => {
+      stop?.();
+      const fresh = document.createElement("div"); // élément neuf : pas d'écouteurs en double
+      fresh.className = "demo-content";
+      box.replaceWith(fresh); box = fresh;
+      stop = AN.missions.openDemo(mtype, box, { level, onBack: close });
+    };
+    session.cleanup = () => stop?.();
+    o.querySelector('[data-d="level"]').addEventListener("change", e => { level = e.target.value; run(); });
+    o.addEventListener("click", e => {
+      const b = e.target.closest("[data-d]"); if (!b) return;
+      const a = b.dataset.d;
+      if (a === "restart") run(); else if (a === "close") close(); else if (a === "full") toggleFull(); else if (a === "assign") onAssign?.(id);
+    });
+    session.onKey = e => {
+      if (e.target.closest?.("input,textarea,select") || document.querySelector("dialog[open]")) return;
+      if (e.key === "Escape" && !document.fullscreenElement) close();
+      else if ((e.key === "f" || e.key === "F") && !e.ctrlKey) toggleFull();
+    };
+    document.addEventListener("keydown", session.onKey, true);
+    run();
+  }
+
+  AN.chapters = chapters;
+  AN.lesson = { open, demo, close, get active() { return !!session; } };
+})(window.AN);

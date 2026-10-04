@@ -16,16 +16,16 @@
 
   const box = () => $("#missionContent");
 
-  // Délégation d'événements unique sur la zone de mission
-  function installDelegation() {
-    const el = box();
+  // Délégation d'événements unique par zone de mission (élève ou projection formateur)
+  function installDelegation(el) {
     if (!el || el.dataset.delegated) return;
     el.dataset.delegated = "1";
     const route = (attr, store) => e => {
-      if (!current) return;
+      const cur = el.__an;
+      if (!cur) return;
       const t = e.target.closest(`[${attr}]`);
       if (!t || !el.contains(t)) return;
-      const fn = current.ctx[store][t.getAttribute(attr)];
+      const fn = cur.ctx[store][t.getAttribute(attr)];
       if (fn) fn(t, e);
     };
     el.addEventListener("click", route("data-act", "_acts"));
@@ -34,24 +34,38 @@
     el.addEventListener("input", route("data-input", "_inputs"));
     el.addEventListener("keydown", e => {
       // Entrée sur un élément non-bouton marqué data-act / data-dbl (ex : fichier dans l'explorateur)
-      if (e.key !== "Enter" || !current) return;
+      const cur = el.__an;
+      if (e.key !== "Enter" || !cur) return;
       const t = e.target.closest("[data-dbl],[data-act]");
-      if (!t || t.tagName === "BUTTON" || t.tagName === "INPUT") return;
+      if (!t || t.tagName === "BUTTON" || t.tagName === "INPUT" || t.tagName === "TEXTAREA") return;
       e.preventDefault();
       const name = t.getAttribute("data-dbl") || t.getAttribute("data-act");
-      const fn = (t.hasAttribute("data-dbl") ? current.ctx._dbls : current.ctx._acts)[name];
+      const fn = (t.hasAttribute("data-dbl") ? cur.ctx._dbls : cur.ctx._acts)[name];
       if (fn) fn(t, e);
     });
   }
 
-  function makeCtx(mission, def) {
-    const S = AN.student;
+  /** API « factice » pour jouer une mission en projection : rien n'est enregistré. */
+  function demoApi(onBack) {
+    const noop = async () => {};
+    return {
+      state: { seat: { displayName: "le groupe", quizHistory: {} }, messages: [] },
+      reportActivity() {}, updateMission: noop, sendSystemMessage: noop, addAchievement: noop, saveQuizHistory: noop,
+      printMemo: m => AN.student.printMemo(m), backToDashboard: onBack || (() => {}), openMessages() { AN.util.toast("En projection, la messagerie n'est pas disponible.", "info"); }
+    };
+  }
+
+  function makeCtx(mission, def, opts = {}) {
+    const S = opts.api || AN.student;
+    const demo = !!opts.demo;
     const ctx = {
       m: mission,
       def,
+      demo,
+      api: S,
       level: mission.level || "beginner",
       name: S.state.seat?.displayName || "Participant",
-      box: box(),
+      box: opts.box || box(),
       local: {},
       _acts: {}, _dbls: {}, _changes: {}, _inputs: {}, _cleanups: [],
 
@@ -87,8 +101,7 @@
         const patch = { step, status: ctx.m.status };
         if (!ctx.m.startedAt) { ctx.m.startedAt = Date.now(); patch.startedAt = ctx.m.startedAt; }
         S.reportActivity(ctx.m, step, def.steps || 3);
-        // Track step progression in analytics
-        AN.Analytics.recordStep(`step_${step}`, "enter");
+        if (!demo) AN.Analytics.recordStep(`step_${step}`, "enter");
         await S.updateMission(ctx.m.id, patch).catch(e => console.warn(e));
         def.render(ctx);
       },
@@ -102,21 +115,28 @@
         ctx.m.step = total; ctx.m.status = "done"; ctx.m.completedAt = Date.now();
         S.reportActivity(ctx.m, total, total);
         await S.updateMission(ctx.m.id, { step: total, status: "done", completedAt: ctx.m.completedAt }).catch(e => console.warn(e));
-        // Track mission completion in analytics
-        AN.Analytics.endMission(ctx.m);
-        ctx.finalScreen({ text, theme: theme || def.theme });
+        if (!demo) AN.Analytics.endMission(ctx.m);
+        ctx.finalScreen({ text, theme: theme === null ? null : (theme || def.theme) });
+      },
+      /** Note sur 20 : enregistrée comme score de la mission (visible formateur et analytics). */
+      async saveGrade(points, max) {
+        const score = max ? Math.round((20 * points) / max) : 20;
+        ctx.m.score = { score, total: 20 };
+        await S.updateMission(ctx.m.id, { score: { score, total: 20 } }).catch(() => {});
+        if (!demo) AN.Analytics.recordQuizAttempt(`grade_${ctx.m.id}`, score, 20, score >= 14, Date.now());
+        return score;
       },
       finalScreen({ text, theme, questions }) {
         const total = def.steps || 3;
         ctx.html(`
-          <p class="eyebrow">Mission terminée</p>
+          <p class="eyebrow">${demo ? "Exercice collectif terminé" : "Mission terminée"}</p>
           <h1>Bravo ${esc(ctx.name)} 🎉</h1>
           ${ctx.progress(total, total)}
           <div class="alert good" data-speak>${text || "Vous avez terminé cette mission."}</div>
           <section class="quiz" id="missionQuiz" aria-live="polite"></section>
           <div class="final-actions">
-            <button type="button" class="secondary" data-act="memo">🖨 Imprimer ma fiche-mémo</button>
-            <button type="button" class="primary" data-act="back">Retour à mon espace →</button>
+            ${demo ? "" : `<button type="button" class="secondary" data-act="memo">🖨 Imprimer ma fiche-mémo</button>`}
+            <button type="button" class="primary" data-act="back">${demo ? "Terminer la projection" : "Retour à mon espace →"}</button>
           </div>`);
         ctx.act("memo", () => S.printMemo([ctx.m]));
         ctx.act("back", () => S.backToDashboard());
@@ -129,8 +149,7 @@
             onDone: (score, total) => {
               if (total) {
                 S.updateMission(ctx.m.id, { score: { score, total } }).catch(() => {});
-                // Track quiz completion in analytics
-                AN.Analytics.recordQuizAttempt(`quiz_${ctx.m.id}`, score, total, score >= (total * 0.7), Date.now());
+                if (!demo) AN.Analytics.recordQuizAttempt(`quiz_${ctx.m.id}`, score, total, score >= (total * 0.7), Date.now());
               }
             }
           });
@@ -144,22 +163,36 @@
 
   function open(mission) {
     close();
-    installDelegation();
+    const el = box();
+    installDelegation(el);
     const def = registry[mission.type];
     if (!def) {
-      box().innerHTML = `<div class="alert bad">Cette mission n'est pas disponible dans cette version.</div>`;
+      el.innerHTML = `<div class="alert bad">Cette mission n'est pas disponible dans cette version.</div>`;
       return;
     }
     const ctx = makeCtx({ ...mission }, def);
     current = { ctx, def };
+    el.__an = current;
     AN.student.reportActivity(ctx.m, ctx.m.step || 0, def.steps || 3);
-    if (mission.status === "done") ctx.finalScreen({ text: "Vous avez déjà réussi cette mission. Vous pouvez refaire le quiz ou imprimer votre fiche-mémo.", theme: def.theme });
+    if (mission.status === "done") ctx.finalScreen({ text: "Vous avez déjà réussi cette mission. Vous pouvez la recommencer avec le bouton « ↺ Recommencer », ou imprimer votre fiche-mémo.", theme: def.theme });
     else def.render(ctx);
   }
 
   function close() {
     if (current) current.ctx._cleanups.forEach(fn => { try { fn(); } catch (e) {} });
+    if (current?.ctx.box) current.ctx.box.__an = null;
     current = null;
+  }
+
+  /** Joue une mission dans un conteneur quelconque, sans rien enregistrer (projection collective). */
+  function openDemo(type, el, { level = "beginner", onBack } = {}) {
+    installDelegation(el);
+    const def = registry[type];
+    if (!def) { el.innerHTML = `<div class="alert bad">Exercice indisponible.</div>`; return () => {}; }
+    const ctx = makeCtx({ id: "demo_" + type, type, level, step: 0, status: "assigned" }, def, { box: el, demo: true, api: demoApi(onBack) });
+    el.__an = { ctx, def };
+    def.render(ctx);
+    return () => { ctx._cleanups.forEach(fn => { try { fn(); } catch (e) {} }); el.__an = null; };
   }
 
   /** Relance la mission depuis le début (bouton « Recommencer »). */
@@ -170,5 +203,5 @@
     open(m);
   }
 
-  AN.missions = { register, open, close, restart, has: t => !!registry[t], get current() { return current; } };
+  AN.missions = { register, open, openDemo, close, restart, has: t => !!registry[t], get: t => registry[t], get current() { return current; } };
 })(window.AN);

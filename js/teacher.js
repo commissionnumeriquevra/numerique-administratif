@@ -105,7 +105,7 @@
     if (!T.teacher) return;
     renderBadges();
     renderGroupPicker();
-    ({ dashboard: renderDashboard, live: renderLive, groups: renderGroups, participants: renderParticipants, missions: renderMissions, messages: renderMessages, stats: renderStats, analytics: renderAnalytics, quick: renderQuick })[T.view]?.();
+    ({ dashboard: renderDashboard, live: renderLive, groups: renderGroups, participants: renderParticipants, missions: renderMissions, chapters: renderChapters, messages: renderMessages, stats: renderStats, analytics: renderAnalytics, quick: renderQuick })[T.view]?.();
   }
   function renderBadges() {
     const unread = T.data.messages.filter(m => m.from === "student" && !m.readByTeacher).length;
@@ -377,6 +377,58 @@
       await Promise.all(seatIds.map(sid => T.store.sendMessage(w.id, sid, AN.model.newMessage({ workshopId: w.id, seatId: sid, teacherUid: w.teacherUid, from: "system", subject: "Nouvelle mission", text: `Une nouvelle mission vous attend : ${label}. Ouvrez « Mes missions ».` }))));
       toast(`Mission attribuée à ${seatIds.length} participant${seatIds.length > 1 ? "s" : ""}.`, "good");
     } catch (e) { console.error(e); toast(e.message, "bad", 7000); }
+  }
+
+  /* ======================= CHAPITRES ======================= */
+  function chapterStats(ch) {
+    const w = active(); if (!w || !ch.parcours) return null;
+    const p = C.parcours[ch.parcours];
+    const seats = w.seats.filter(s => s.displayName);
+    const per = seats.map(s => { const ms = missionsOf(s.id).filter(m => m.parcoursLabel === p.label); return { s, total: ms.length, done: ms.filter(m => m.status === "done").length }; }).filter(x => x.total);
+    return { seats: seats.length, started: per.length, finished: per.filter(x => x.done === x.total).length, per };
+  }
+  function renderChapters() {
+    $("#chapterList").innerHTML = AN.chapters.all.map(ch => {
+      if (ch.soon) return `<article class="chapter-card soon"><div class="chapter-icon" aria-hidden="true">${ch.icon}</div><div><h3>${esc(ch.title)}</h3><p>${esc(ch.summary)}</p><span class="chip">Bientôt</span></div></article>`;
+      const p = C.parcours[ch.parcours], st = chapterStats(ch);
+      return `<article class="chapter-card" style="--ch:${ch.color}">
+        <div class="chapter-icon" aria-hidden="true">${ch.icon}</div>
+        <div class="chapter-main"><h3>${esc(ch.title)} <small>${esc(ch.duration || "")}</small></h3><p>${esc(ch.summary)}</p>
+          <ol class="chapter-levels">${p.steps.map(t => `<li>${C.icon(t)} ${esc(C.missions[t].short)}</li>`).join("")}</ol>
+          ${st ? `<div class="chapter-progress">${st.started ? `▸ ${st.started} / ${st.seats} participant(s) ont ce chapitre · ${st.finished} l'ont terminé${st.per.length ? `<div class="chapter-people">${st.per.map(x => `<span class="chip ${x.done === x.total ? "done" : ""}">${esc(seatName(x.s))} ${x.done}/${x.total}</span>`).join("")}</div>` : ""}` : "Pas encore donné à ce groupe."}</div>` : ""}
+          <div class="chapter-actions">
+            <button class="cyber-btn primary" data-ch="lesson" data-id="${ch.id}" type="button">📽 1. Projeter la leçon</button>
+            <button class="cyber-btn secondary" data-ch="demo" data-id="${ch.id}" type="button">👥 2. Niveau 1 ensemble</button>
+            <button class="cyber-btn secondary" data-ch="assign" data-id="${ch.id}" type="button">🚀 3. Donner au groupe</button>
+          </div></div></article>`;
+    }).join("");
+  }
+  async function assignChapter(id) {
+    const ch = AN.chapters.get(id), w = active();
+    if (!w) return toast("Choisissez d'abord un groupe.", "bad");
+    const p = C.parcours[ch.parcours];
+    const seats = w.seats.filter(s => s.displayName);
+    if (!seats.length) return toast("Aucun participant n'est encore connecté dans ce groupe.", "bad");
+    const already = new Set(seats.filter(s => missionsOf(s.id).some(m => m.parcoursLabel === p.label)).map(s => s.id));
+    const targets = seats.filter(s => !already.has(s.id));
+    if (!targets.length) return toast("Tous les participants ont déjà ce chapitre.", "info");
+    if (!(await confirmBox({ title: `Donner le chapitre « ${ch.title} » ?`, text: `${targets.length} participant(s) recevront les ${p.steps.length} niveaux, au niveau de difficulté de chacun. Chaque niveau se débloque quand le précédent est terminé.${already.size ? ` (${already.size} participant(s) l'ont déjà.)` : ""}`, ok: "Donner le chapitre" }))) return;
+    const list = [];
+    targets.forEach(s => {
+      const pid = uid().slice(0, 12);
+      p.steps.forEach((t, i) => list.push(AN.model.newMission({ workshopId: w.id, seatId: s.id, teacherUid: w.teacherUid, level: s.level || "beginner", type: t, parcoursId: pid, parcoursLabel: p.label, order: i })));
+    });
+    try {
+      await T.store.assignMissions(list);
+      await Promise.all(targets.map(s => T.store.sendMessage(w.id, s.id, AN.model.newMessage({ workshopId: w.id, seatId: s.id, teacherUid: w.teacherUid, from: "system", subject: "Nouveau chapitre", text: `Le chapitre « ${ch.title} » vous attend : ${p.steps.length} niveaux. Ouvrez « Mes missions » et commencez par le niveau 1.` }))));
+      toast(`Chapitre donné à ${targets.length} participant(s).`, "good");
+      AN.lesson.close();
+    } catch (e) { console.error(e); toast(e.message, "bad", 7000); }
+  }
+  function chapterAction(action, id) {
+    if (action === "lesson") AN.lesson.open(id, { onDemo: cid => chapterAction("demo", cid), onAssign: assignChapter });
+    else if (action === "demo") AN.lesson.demo(id, { onAssign: assignChapter });
+    else if (action === "assign") assignChapter(id);
   }
 
   /* ----- éditeur de missions personnalisées ----- */
@@ -689,6 +741,7 @@
     // délégation : actions de groupes et de places (toutes vues confondues)
     $("#teacherDashboard").addEventListener("click", e => {
       const g = e.target.closest("[data-g]"); if (g) return groupAction(g.dataset.g, g.dataset.id);
+      const chb = e.target.closest("[data-ch]"); if (chb) return chapterAction(chb.dataset.ch, chb.dataset.id);
       const s = e.target.closest("[data-s]"); if (s) { s.closest("details")?.removeAttribute("open"); return seatAction(s.dataset.s, s.dataset.id); }
       const t = e.target.closest(".conversation-item[data-thread]"); if (t) { T.thread = t.dataset.thread; return renderMessages(); }
       const qr = e.target.closest("[data-qr]"); if (qr) { const r = quickReplies()[qr.dataset.qr]; const ta = $("#teacherReplyText"); ta.value = AN.quickReplies.fill(r.text); T.qrPicked = r.cat; ta.focus(); return; }

@@ -15,7 +15,13 @@
     missing_piece:   { label: "Pièce manquante au dossier", short: "Pièce manquante", icon: "📎", family: "Documents" },
     appointment:     { label: "Prendre un rendez-vous en ligne", short: "Rendez-vous en ligne", icon: "📅", family: "Démarches" },
     password_reset:  { label: "Mot de passe oublié", short: "Mot de passe oublié", icon: "🔑", family: "Démarches" },
+    mail_read:       { label: "E-mail niv. 1 — Lire ses e-mails", short: "Lire ses e-mails", icon: "📬", family: "E-mail" },
+    mail_address:    { label: "E-mail niv. 2 — L'adresse e-mail", short: "Adresse e-mail", icon: "＠", family: "E-mail" },
+    mail_reply:      { label: "E-mail niv. 3 — Répondre et transférer", short: "Répondre / transférer", icon: "↩️", family: "E-mail" },
+    mail_compose:    { label: "E-mail niv. 4 — Écrire un e-mail complet", short: "Écrire un e-mail", icon: "✏️", family: "E-mail" },
+    mail_attach:     { label: "E-mail niv. 5 — Les pièces jointes", short: "Pièces jointes", icon: "📎", family: "E-mail" },
     suspicious_mail: { label: "Reconnaître un e-mail suspect", short: "E-mail suspect", icon: "🎣", family: "Sécurité" },
+    mail_challenge:  { label: "E-mail niv. 7 — Le défi de la boîte mail", short: "Défi boîte mail", icon: "🏆", family: "E-mail" },
     sms_scam:        { label: "Repérer un SMS frauduleux", short: "SMS frauduleux", icon: "📱", family: "Sécurité" },
     secure_payment:  { label: "Payer en ligne en sécurité", short: "Paiement en ligne", icon: "💳", family: "Sécurité" },
     custom:          { label: "Mission personnalisée", short: "Personnalisée", icon: "✏️", family: "Personnalisées" }
@@ -25,6 +31,7 @@
   const parcours = {
     p_bases:    { label: "Parcours « Premiers pas » (souris, clavier, formulaire)", icon: "🌱", steps: ["mouse_nav", "keyboard_skills", "fill_form"] },
     p_dossier:  { label: "Parcours administratif complet (document → dossier)", icon: "🧭", steps: ["download_doc", "find_file", "missing_piece", "appointment"] },
+    p_email:    { label: "📧 Chapitre E-mail (7 niveaux)", icon: "📧", steps: ["mail_read", "mail_address", "mail_reply", "mail_compose", "mail_attach", "suspicious_mail", "mail_challenge"] },
     p_securite: { label: "Parcours « Se protéger des arnaques »", icon: "🛡️", steps: ["suspicious_mail", "sms_scam", "password_reset", "secure_payment"] }
   };
 
@@ -41,6 +48,12 @@
     suspicious_mail: ["Urgence + menace = signal d'alerte.", "Je regarde l'adresse réelle de l'expéditeur.", "Je ne clique pas : j'ouvre moi-même le site officiel.", "Aucun service ne demande mon mot de passe ou ma carte par e-mail."],
     sms_scam: ["Colis, amende, CPF, Vitale : arnaques fréquentes par SMS.", "Un lien court ou bizarre = méfiance.", "Je ne rappelle pas un numéro inconnu surtaxé.", "Je signale les SMS frauduleux au 33700."],
     secure_payment: ["Adresse du site en https:// et nom de domaine exact.", "Je vérifie le montant et le commerçant avant de valider.", "Le code de confirmation reçu par SMS ne se donne à personne.", "Montant ou commerçant inconnu ? J'annule."],
+    mail_read: ["Un message en gras = un message non lu.", "Je clique une fois sur un message pour l'ouvrir.", "En haut : l'expéditeur (« De »), l'objet et la date.", "Le trombone 📎 signale une pièce jointe : je clique dessus pour l'ouvrir."],
+    mail_address: ["Une adresse = identifiant @ fournisseur . extension", "@ (arobase) : touche AltGr + à", "Jamais d'espace, jamais d'accent, une seule @.", "Une seule lettre fausse et le message n'arrive pas : je vérifie."],
+    mail_reply: ["↩️ Répondre : seulement à la personne qui m'a écrit.", "↩️↩️ Répondre à tous : à elle et aux personnes en copie.", "↪️ Transférer : envoyer le message à quelqu'un d'autre (avec ses pièces jointes).", "« RE : » = une réponse, « TR : » = un transfert."],
+    mail_compose: ["À : la personne à qui j'écris.", "Cc : une copie, visible par tous. Cci : une copie cachée.", "Objet : quelques mots qui résument mon message.", "Bonjour… Cordialement : la politesse au début et à la fin. Pas de MAJUSCULES."],
+    mail_attach: ["Joindre 📎 = ajouter un fichier à mon message.", "Télécharger ⬇️ = garder sur mon ordinateur un fichier reçu (dossier Téléchargements).", "Avant d'envoyer, je vérifie que la pièce jointe est bien là.", "Un .pdf est un document ; un .exe est un programme : prudence."],
+    mail_challenge: ["Arnaque ? Je ne clique pas : 🚫 Indésirable.", "Publicité inutile : 🗑️ Supprimer.", "Message important supprimé par erreur : Corbeille → Restaurer.", "🔍 La recherche retrouve un message en tapant un nom ou un mot."],
     custom: ["Je lis la consigne en entier avant de commencer.", "Je prends mon temps.", "Je n'hésite pas à demander de l'aide."]
   };
 
