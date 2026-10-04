@@ -162,6 +162,25 @@
 /* Réponses rapides */
 .qr-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
 .qr-head .icon-btn{margin-left:4px}
+.teacher-screen .quick-replies{display:block}
+.qr-picker{margin-bottom:8px}
+.qr-picker select{width:100%;max-width:420px}
+.qr-chips{display:flex;gap:7px;flex-wrap:wrap;max-height:132px;overflow-y:auto;padding:2px}
+.qr-chips button{padding:7px 10px;border-radius:999px;border:1px solid #285b63;cursor:pointer}
+.qr-chips button:hover,.qr-chips button:focus-visible{border-color:#2de7f5;color:#e9feff}
+#quickReplyManager{display:block}
+#quickReplyManager .qr-category-body{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+#quickReplyManager .qr-category-body .qr-add,#quickReplyManager .qr-category-body .empty-state{grid-column:1/-1}
+.qr-category{border:1px solid #1e3237;border-radius:12px;margin:10px 0;background:#0a1417}
+.qr-category>summary{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;font-weight:700;color:#cfeff3;list-style:none}
+.qr-category>summary::-webkit-details-marker{display:none}
+.qr-category>summary::after{content:"▸";color:#2de7f5;transition:transform .15s}
+.qr-category[open]>summary::after{transform:rotate(90deg)}
+.qr-category>summary small{margin-left:auto;color:#7fa3a8;font-weight:400;font-family:Consolas,monospace}
+.qr-category-body{padding:0 16px 14px;display:grid;gap:10px}
+.qr-category-body article{border-top:1px solid #1e3237;padding-top:10px}
+.qr-category-body article p{margin:6px 0 0;color:#a9c9cd}
+.qr-add{justify-self:start}
 
 /* =========================================================
    V8.1 — AMÉLIORATIONS UI : Hiérarchie, compacité, analytics

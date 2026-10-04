@@ -22,7 +22,16 @@
   const messagesOf = sid => T.data.messages.filter(m => m.seatId === sid).sort((a, b) => a.createdAt - b.createdAt);
   const unreadOf = sid => T.data.messages.filter(m => m.seatId === sid && m.from === "student" && !m.readByTeacher).length;
   const missionLabel = m => m.type === "custom" ? (m.custom?.title || "Mission personnalisée") : C.label(m.type);
-  const quickReplies = () => (T.data.prefs.quickReplies && T.data.prefs.quickReplies.length ? T.data.prefs.quickReplies : AN.model.defaultQuickReplies);
+  const quickReplies = () => AN.quickReplies.resolve(T.data.prefs.quickReplies);
+  /** Sélecteur de catégorie + boutons des réponses de cette catégorie (messagerie). */
+  function qrPicker() {
+    const list = quickReplies();
+    const cats = AN.quickReplies.categories.filter(c => list.some(r => r.cat === c.id));
+    if (!cats.some(c => c.id === T.qrCat)) T.qrCat = cats[0]?.id;
+    const opts = cats.map(c => `<option value="${c.id}" ${c.id === T.qrCat ? "selected" : ""}>${esc(c.label)} (${list.filter(r => r.cat === c.id).length})</option>`).join("");
+    const chips = list.map((r, i) => r.cat === T.qrCat ? `<button type="button" data-qr="${i}" title="${esc(r.text)}">${esc(r.title)}</button>` : "").join("");
+    return `<div class="qr-picker"><label class="sr-only" for="qrCat">Catégorie de réponses rapides</label><select id="qrCat" class="cyber-select">${opts}</select></div><div class="qr-chips">${chips}</div>`;
+  }
   function sortedGroups(list = groups()) {
     return [...list].sort((a, b) => (b.favorite === true) - (a.favorite === true) || (a.archived === true) - (b.archived === true) || (a.order || 0) - (b.order || 0));
   }
@@ -431,12 +440,12 @@
     if (th.dataset.thread === T.thread && th.querySelector(".thread-compose")) {
       // même conversation : on ne touche pas à la zone de saisie (brouillon et curseur conservés)
       const tm = th.querySelector(".thread-messages"); tm.innerHTML = msgsHTML; tm.scrollTop = tm.scrollHeight;
-      th.querySelector(".quick-replies").innerHTML = quickReplies().map((r, i) => `<button type="button" data-qr="${i}">${esc(r.title)}</button>`).join("");
+      if (!th.querySelector(".quick-replies").contains(document.activeElement)) th.querySelector(".quick-replies").innerHTML = qrPicker();
       return;
     }
     th.dataset.thread = T.thread;
     th.innerHTML = `<div class="thread-messages">${msgsHTML}</div>
-      <div class="thread-compose"><div class="quick-replies">${quickReplies().map((r, i) => `<button type="button" data-qr="${i}">${esc(r.title)}</button>`).join("")}</div>
+      <div class="thread-compose"><div class="quick-replies">${qrPicker()}</div>
       <label class="sr-only" for="teacherReplyText">Votre message</label><textarea id="teacherReplyText" rows="3" placeholder="Écrire une réponse… (Ctrl + Entrée pour envoyer)"></textarea>
       <button class="cyber-btn primary" id="sendTeacherReply">Envoyer</button></div>`;
     const tm = th.querySelector(".thread-messages"); tm.scrollTop = tm.scrollHeight;
@@ -446,9 +455,11 @@
     if (!w || !text || !T.thread) return;
     const targets = T.thread === "__all" ? w.seats.filter(s => s.displayName).map(s => s.id) : [T.thread];
     if (!targets.length) return toast("Aucun participant inscrit dans ce groupe.", "bad");
-    ta.value = "";
+    const cat = T.qrPicked ? AN.quickReplies.category(T.qrPicked) : null;
+    const subject = cat && !["formateur", "perso"].includes(cat.id) ? cat.subject : (T.thread === "__all" ? "Message du formateur (à tout le groupe)" : "Message du formateur");
+    ta.value = ""; T.qrPicked = null;
     try {
-      await Promise.all(targets.map(sid => T.store.sendMessage(w.id, sid, AN.model.newMessage({ workshopId: w.id, seatId: sid, teacherUid: w.teacherUid, from: "teacher", subject: T.thread === "__all" ? "Message du formateur (à tout le groupe)" : "Message du formateur", text }))));
+      await Promise.all(targets.map(sid => T.store.sendMessage(w.id, sid, AN.model.newMessage({ workshopId: w.id, seatId: sid, teacherUid: w.teacherUid, from: "teacher", subject, text }))));
       if (T.thread === "__all") toast(`Message envoyé à ${targets.length} participant(s).`, "good");
     } catch (e) { ta.value = text; toast(e.message, "bad"); }
   }
@@ -620,16 +631,27 @@
 
   /* ======================= RÉPONSES RAPIDES ======================= */
   function renderQuick() {
-    $("#quickReplyManager").innerHTML = quickReplies().map((r, i) => `<article><div class="qr-head"><strong>${esc(r.title)}</strong><span><button class="icon-btn" data-qr-edit="${i}">✎</button><button class="icon-btn danger-action" data-qr-del="${i}" aria-label="Supprimer">✕</button></span></div><p>${esc(r.text)}</p></article>`).join("");
+    const list = quickReplies();
+    $("#quickReplyManager").innerHTML = AN.quickReplies.categories.map(c => {
+      const items = list.map((r, i) => ({ r, i })).filter(x => x.r.cat === c.id);
+      if (!items.length && c.id !== "perso") return "";
+      return `<details class="qr-category" ${T.qrOpen?.has(c.id) ? "open" : ""} data-qr-cat="${c.id}">
+        <summary><span>${esc(c.label)}</span><small>${items.length} réponse(s)</small></summary>
+        <div class="qr-category-body">
+          ${items.map(({ r, i }) => `<article><div class="qr-head"><strong>${esc(r.title)}</strong><span><button class="icon-btn" data-qr-edit="${i}" aria-label="Modifier ${esc(r.title)}">✎</button><button class="icon-btn danger-action" data-qr-del="${i}" aria-label="Supprimer ${esc(r.title)}">✕</button></span></div><p>${esc(r.text)}</p></article>`).join("") || '<div class="empty-state small">Aucune réponse personnelle pour l\'instant.</div>'}
+          <button class="cyber-btn secondary qr-add" data-qr-add="${c.id}" type="button">+ Ajouter dans cette catégorie</button>
+        </div></details>`;
+    }).join("");
   }
-  async function editQuick(i) {
+  async function editQuick(i, cat = "perso") {
     const list = [...quickReplies()];
-    const r = i == null ? { title: "", text: "" } : list[i];
+    const r = i == null ? { title: "", text: "", cat } : list[i];
     const title = await promptBox({ title: i == null ? "Nouvelle réponse rapide" : "Modifier la réponse", label: "Titre (court)", value: r.title });
     if (!title) return;
-    const text = await promptBox({ title: "Texte du message", label: "Texte envoyé au participant", value: r.text });
+    const text = await promptBox({ title: "Texte du message", label: "Texte envoyé au participant ({date}, {date+15}, {num} et {code} sont remplis automatiquement)", value: r.text });
     if (!text) return;
-    if (i == null) list.push({ title, text }); else list[i] = { title, text };
+    if (i == null) list.push({ cat, title, text }); else list[i] = { ...r, title, text };
+    (T.qrOpen ||= new Set()).add(r.cat);
     await T.store.savePrefs(T.teacher.uid, { quickReplies: list }).catch(e => toast(e.message, "bad"));
   }
 
@@ -668,8 +690,8 @@
     $("#teacherDashboard").addEventListener("click", e => {
       const g = e.target.closest("[data-g]"); if (g) return groupAction(g.dataset.g, g.dataset.id);
       const s = e.target.closest("[data-s]"); if (s) { s.closest("details")?.removeAttribute("open"); return seatAction(s.dataset.s, s.dataset.id); }
-      const t = e.target.closest("[data-thread]"); if (t) { T.thread = t.dataset.thread; return renderMessages(); }
-      const qr = e.target.closest("[data-qr]"); if (qr) { const ta = $("#teacherReplyText"); ta.value = quickReplies()[qr.dataset.qr].text; ta.focus(); return; }
+      const t = e.target.closest(".conversation-item[data-thread]"); if (t) { T.thread = t.dataset.thread; return renderMessages(); }
+      const qr = e.target.closest("[data-qr]"); if (qr) { const r = quickReplies()[qr.dataset.qr]; const ta = $("#teacherReplyText"); ta.value = AN.quickReplies.fill(r.text); T.qrPicked = r.cat; ta.focus(); return; }
       if (e.target.closest("#sendTeacherReply")) return sendReply();
       const dm = e.target.closest("[data-del-mission]");
       if (dm) {
@@ -683,14 +705,24 @@
         return confirmBox({ title: `Supprimer « ${t.title} » ?`, text: "Les missions déjà attribuées restent visibles chez les participants.", ok: "Supprimer", danger: true }).then(ok => ok && T.store.deleteTemplate(t.id));
       }
       const qe = e.target.closest("[data-qr-edit]"); if (qe) return editQuick(Number(qe.dataset.qrEdit));
+      const qa = e.target.closest("[data-qr-add]"); if (qa) return editQuick(null, qa.dataset.qrAdd);
       const qd = e.target.closest("[data-qr-del]");
-      if (qd) { const list = quickReplies().filter((_, i) => i !== Number(qd.dataset.qrDel)); return T.store.savePrefs(T.teacher.uid, { quickReplies: list }); }
+      if (qd) {
+        const r = quickReplies()[Number(qd.dataset.qrDel)];
+        return confirmBox({ title: `Supprimer « ${r.title} » ?`, ok: "Supprimer", danger: true }).then(ok => {
+          if (!ok) return;
+          (T.qrOpen ||= new Set()).add(r.cat);
+          const list = quickReplies().filter((_, i) => i !== Number(qd.dataset.qrDel));
+          return T.store.savePrefs(T.teacher.uid, { quickReplies: list }).catch(er => toast(er.message, "bad"));
+        });
+      }
     });
     $("#teacherDashboard").addEventListener("change", e => {
       const s = e.target.closest("[data-s-change]"); if (s) return seatAction(s.dataset.sChange, s.dataset.id, s.value);
       if (e.target.id === "assignAll") { $$("#assignSeats input").forEach(i => { i.checked = e.target.checked; }); return; }
       if (e.target.closest("#assignSeats")) return updateAssignAll();
       if (e.target.id === "missionTemplate") return describeChoice();
+      if (e.target.id === "qrCat") { T.qrCat = e.target.value; e.target.closest(".quick-replies").innerHTML = qrPicker(); return $("#qrCat")?.focus(); }
     });
     $("#teacherDashboard").addEventListener("keydown", e => { if (e.target.id === "teacherReplyText" && e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); sendReply(); } });
     $("#liveGrid").addEventListener("focusout", () => setTimeout(() => { if (T.pendingLive && T.view === "live") renderLive(); }, 50));
@@ -705,7 +737,8 @@
     $("#tplQuestions").addEventListener("click", e => { if (e.target.closest("[data-q-remove]")) e.target.closest(".q-edit").remove(); });
     $("#tplSave").addEventListener("click", saveTemplate);
     $("#tplCancel").addEventListener("click", () => { $("#tplEditor").classList.add("hidden"); T.editingTemplate = null; });
-    $("#addQuickReply").addEventListener("click", () => editQuick(null));
+    $("#addQuickReply").addEventListener("click", () => editQuick(null, "perso"));
+    $("#quickReplyManager").addEventListener("toggle", e => { const d = e.target.closest("[data-qr-cat]"); if (!d) return; T.qrOpen ||= new Set(); d.open ? T.qrOpen.add(d.dataset.qrCat) : T.qrOpen.delete(d.dataset.qrCat); }, true);
     $("#resetQuickReplies").addEventListener("click", async () => { if (await confirmBox({ title: "Rétablir les réponses par défaut ?", ok: "Rétablir" })) T.store.savePrefs(T.teacher.uid, { quickReplies: [] }); });
   }
 

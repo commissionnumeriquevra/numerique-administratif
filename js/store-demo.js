@@ -40,15 +40,7 @@
         readByStudent: from === "student",
         readByTeacher: from !== "student"
       };
-    },
-    defaultQuickReplies: [
-      { title: "Pièce manquante", text: "Il manque un ou plusieurs documents à votre demande. Relisez la liste des pièces demandées et transmettez les bons documents." },
-      { title: "Mauvais document", text: "Le document transmis ne correspond pas à la pièce demandée. Vérifiez le nom du document et renvoyez le bon fichier." },
-      { title: "Document illisible", text: "Le document reçu n'est pas assez lisible. Merci de transmettre une copie plus nette." },
-      { title: "Dossier complet", text: "Merci. Votre dossier est maintenant complet." },
-      { title: "Encouragement", text: "Prenez votre temps et relisez l'étape affichée à l'écran. Vous êtes sur la bonne voie !" },
-      { title: "J'arrive", text: "J'ai bien vu votre message, je viens vous voir dans un instant." }
-    ]
+    }
   };
 
   /* ---------- stockage local ---------- */
