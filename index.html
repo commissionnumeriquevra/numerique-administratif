@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Atelier numérique — Démarches administratives</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🧭%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="stylesheet" href="css/missions.css">
+  <link rel="stylesheet" href="css/teacher.css">
+</head>
+<body>
+  <a class="skip-link" href="#app">Aller au contenu</a>
+
+  <header class="topbar">
+    <div class="topbar-brand"><strong>Atelier numérique</strong><span class="subtitle">Simulations administratives</span></div>
+    <div class="topbar-tools">
+      <div class="a11y-bar" role="group" aria-label="Confort de lecture">
+        <button id="a11yMinus" type="button" aria-label="Réduire la taille du texte">A−</button>
+        <button id="a11yPlus" type="button" aria-label="Agrandir la taille du texte">A+</button>
+        <button id="a11yContrast" type="button" aria-pressed="false" aria-label="Contraste renforcé"><span aria-hidden="true">🌓</span> Contraste</button>
+        <button id="a11yRead" type="button" aria-label="Lire la page à voix haute">🔊 Lire</button>
+      </div>
+      <button id="homeBtn" class="ghost hidden" type="button">Accueil</button>
+    </div>
+  </header>
+
+  <main id="app">
+    <!-- ===================== ACCUEIL ===================== -->
+    <section id="landing" class="screen active">
+      <div class="hero-card">
+        <div class="hero-icon" aria-hidden="true">🧭</div>
+        <p class="eyebrow">Plateforme de formation</p>
+        <h1>Bienvenue dans l'atelier</h1>
+        <p class="lead">Choisissez votre espace. Vous pouvez vous tromper : ici, tout est fait pour apprendre.</p>
+        <div class="role-grid">
+          <button class="role-card" data-open="studentJoin" type="button">
+            <span class="big" aria-hidden="true">👤</span>
+            <strong>Je participe à l'atelier</strong>
+            <span>J'entre avec mes deux codes, je choisis mon prénom ou un pseudo, puis je fais mes missions.</span>
+          </button>
+          <button class="role-card teacher-role" data-open="teacherLogin" type="button">
+            <span class="big" aria-hidden="true">🧑‍🏫</span>
+            <strong>Je suis le formateur</strong>
+            <span>Créer un groupe, attribuer des missions, suivre la séance en direct.</span>
+          </button>
+        </div>
+        <div id="modeBanner" class="demo-banner"></div>
+      </div>
+    </section>
+
+    <!-- ===================== CONNEXION FORMATEUR ===================== -->
+    <section id="teacherLogin" class="screen">
+      <div class="panel narrow">
+        <button class="back" data-open="landing" type="button">← Retour</button>
+        <p class="eyebrow">Espace formateur</p>
+        <h1>Connexion</h1>
+        <div id="teacherLoginForm">
+          <label for="teacherEmail">E-mail</label>
+          <input id="teacherEmail" type="email" autocomplete="username" placeholder="formateur@exemple.fr">
+          <label for="teacherPassword">Mot de passe</label>
+          <input id="teacherPassword" type="password" autocomplete="current-password">
+          <button id="teacherLoginBtn" class="primary" type="button">Se connecter</button>
+          <div class="or-sep"><span>ou</span></div>
+        </div>
+        <button id="demoTeacherBtn" class="secondary" type="button">Entrer en mode démonstration</button>
+        <p class="tiny">Le mode démonstration fonctionne sans Internet : les données restent dans ce navigateur. Ouvrez un deuxième onglet pour jouer un participant.</p>
+        <div id="teacherLoginMsg" class="msg" role="alert"></div>
+      </div>
+    </section>
+
+    <!-- ===================== ESPACE FORMATEUR ===================== -->
+    <section id="teacherDashboard" class="screen teacher-screen">
+      <div class="teacher-shell">
+        <aside class="teacher-sidebar">
+          <div class="brand-chip"><div class="brand-mark" aria-hidden="true">&gt;_</div><div><strong>MASTER HUB</strong><small>Atelier numérique</small></div></div>
+          <nav class="teacher-nav" aria-label="Espace formateur">
+            <button class="teacher-nav-btn" data-view="dashboard" type="button">⌁ Tableau de bord</button>
+            <button class="teacher-nav-btn" data-view="live" type="button">◉ En direct <span class="nav-badge"></span></button>
+            <button class="teacher-nav-btn" data-view="groups" type="button">▦ Groupes</button>
+            <button class="teacher-nav-btn" data-view="participants" type="button">☺ Participants</button>
+            <button class="teacher-nav-btn" data-view="missions" type="button">✦ Missions</button>
+            <button class="teacher-nav-btn" data-view="messages" type="button">✉ Messagerie <span class="nav-badge"></span></button>
+            <button class="teacher-nav-btn" data-view="stats" type="button">% Statistiques</button>
+            <button class="teacher-nav-btn" data-view="analytics" type="button">📊 Analytics</button>
+            <button class="teacher-nav-btn" data-view="quick" type="button">⚡ Réponses rapides</button>
+          </nav>
+          <div class="sidebar-footer" id="syncStatus"></div>
+        </aside>
+
+        <section class="teacher-main">
+          <header class="teacher-topbar">
+            <div><p class="terminal-kicker">// MASTER_CONSOLE</p><h1 id="teacherHello">Bonjour</h1><p class="teacher-sub" id="teacherSub">Pilotez vos groupes, missions et messages en temps réel.</p></div>
+            <div class="teacher-top-actions">
+              <label class="sr-only" for="activeGroupSelect">Groupe actif</label>
+              <select id="activeGroupSelect" class="cyber-select"></select>
+              <button id="newGroupBtn" class="cyber-btn secondary" type="button">+ Nouveau groupe</button>
+              <button id="teacherLogoutBtn" class="cyber-btn danger" type="button">Déconnexion</button>
+            </div>
+          </header>
+
+          <!-- Tableau de bord -->
+          <div id="setupAlerts" class="setup-alerts hidden" role="alert"></div>
+          <section id="tv-dashboard" class="teacher-view">
+            <div class="metric-grid five">
+              <article class="metric-card cyan"><span class="metric-icon">▦</span><div><small>Groupes actifs</small><strong id="metricGroups">0</strong></div></article>
+              <article class="metric-card green"><span class="metric-icon">◉</span><div><small>En ligne</small><strong id="metricOnline">0</strong></div></article>
+              <article class="metric-card amber"><span class="metric-icon">✦</span><div><small>Missions en cours</small><strong id="metricMissions">0</strong></div></article>
+              <article class="metric-card cyan"><span class="metric-icon">✉</span><div><small>Messages non lus</small><strong id="metricMessages">0</strong></div></article>
+              <article class="metric-card red"><span class="metric-icon">✋</span><div><small>Demandes d'aide</small><strong id="metricHelp">0</strong></div></article>
+            </div>
+            <div class="teacher-search-row">
+              <div class="cyber-search"><span aria-hidden="true">⌕</span><label class="sr-only" for="teacherGlobalSearch">Rechercher</label><input id="teacherGlobalSearch" type="search" placeholder="Rechercher un groupe, un code ou un participant…"></div>
+              <select id="groupFilterStatus" class="cyber-select" aria-label="Filtrer les groupes"><option value="all">Tous les groupes</option><option value="active">Actifs</option><option value="favorite">Favoris</option><option value="archived">Archivés</option></select>
+            </div>
+            <div class="teacher-two-cols">
+              <section class="cyber-panel"><div class="panel-head"><div><p class="terminal-kicker">// GROUPS</p><h2>Mes groupes</h2></div><button class="mini-cyber-btn" data-jump="groups" type="button">Gérer →</button></div><div id="groupCards" class="group-card-grid"></div></section>
+              <section class="cyber-panel"><div class="panel-head"><div><p class="terminal-kicker">// ACTIVITY</p><h2>Activité récente</h2></div></div><div id="activityFeed" class="activity-feed"></div></section>
+            </div>
+          </section>
+
+          <!-- En direct -->
+          <section id="tv-live" class="teacher-view">
+            <section class="cyber-panel">
+              <div class="panel-head"><div><p class="terminal-kicker">// LIVE_ROOM</p><h2>La salle en direct</h2><p id="liveSummary"></p></div>
+                <div class="group-card-actions" data-needs-group><button id="liveProject" class="cyber-btn secondary" type="button">📽 Projeter le code</button><button id="livePrint" class="cyber-btn secondary" type="button">🖨 Imprimer les codes</button><button class="cyber-btn primary" data-jump="missions" type="button">+ Attribuer</button></div></div>
+              <div id="liveGrid" class="live-grid"></div>
+            </section>
+          </section>
+
+          <!-- Groupes -->
+          <section id="tv-groups" class="teacher-view">
+            <section class="cyber-panel">
+              <div class="panel-head"><div><p class="terminal-kicker">// GROUP_MANAGER</p><h2>Créer un groupe</h2><p>Chaque place reçoit un code personnel à 4 chiffres. Le code de l'atelier (6 chiffres) est commun.</p></div></div>
+              <div class="group-create-grid">
+                <div><label for="workshopName">Nom du groupe</label><input id="workshopName" placeholder="Ex : Mardi matin — débutants" maxlength="60"></div>
+                <div><label for="seatCount">Nombre de places</label><select id="seatCount"><option>4</option><option>6</option><option>8</option><option selected>10</option><option>12</option></select></div>
+                <div class="align-end"><button id="createWorkshopBtn" class="cyber-btn primary" type="button">+ Créer le groupe</button></div>
+              </div>
+              <div id="workshopInfo" class="workshop-code-box hidden" role="status"></div>
+            </section>
+            <section class="cyber-panel"><p class="terminal-kicker">// ALL_GROUPS</p><h2>Mes groupes</h2><p>Renommez, mettez en favori, archivez, réordonnez. Ces réglages vous suivent sur tous vos ordinateurs.</p><div id="groupsManager" class="groups-manager"></div></section>
+          </section>
+
+          <!-- Participants -->
+          <section id="tv-participants" class="teacher-view">
+            <section class="cyber-panel"><div class="panel-head"><div><p class="terminal-kicker">// USER_DIRECTORY</p><h2>Participants</h2></div><div class="cyber-search slim"><span aria-hidden="true">⌕</span><input id="participantSearch" type="search" placeholder="Filtrer…" aria-label="Filtrer les participants"></div></div><div id="participantsDirectory" class="participants-directory"></div></section>
+          </section>
+
+          <!-- Missions -->
+          <section id="tv-missions" class="teacher-view">
+            <section class="cyber-panel">
+              <p class="terminal-kicker">// MISSION_CONTROL</p><h2>Attribuer une mission</h2>
+              <div class="mission-control-grid">
+                <div><label for="missionTemplate">Mission ou parcours</label><select id="missionTemplate"></select><p id="missionDescription" class="hint-line"></p></div>
+                <div><label for="missionLevel">Niveau</label><select id="missionLevel"><option value="seat">Niveau de chaque participant</option><option value="beginner">Débutant pour tous</option><option value="intermediate">Intermédiaire pour tous</option><option value="expert">Expert pour tous</option></select></div>
+              </div>
+              <fieldset class="assign-box"><legend>Pour qui ?</legend>
+                <label class="seat-check all"><input type="checkbox" id="assignAll"><span><b>Tout le groupe</b></span></label>
+                <div id="assignSeats" class="assign-seats"></div>
+              </fieldset>
+              <button id="assignMissionBtn" class="cyber-btn primary big" type="button">Attribuer la mission</button>
+            </section>
+            <section class="cyber-panel"><p class="terminal-kicker">// ASSIGNED</p><h2>Missions du groupe</h2><div id="assignedList" class="assigned-list"></div></section>
+            <section class="cyber-panel">
+              <div class="panel-head"><div><p class="terminal-kicker">// CUSTOM_MISSIONS</p><h2>Mes missions personnalisées</h2><p>Créez vos propres exercices sans coder : une consigne, un message automatique et un petit quiz.</p></div><button id="newTemplateBtn" class="cyber-btn secondary" type="button">+ Nouvelle mission</button></div>
+              <div id="templateList" class="template-list"></div>
+              <div id="tplEditor" class="tpl-editor hidden">
+                <h3 id="tplEditorTitle">Nouvelle mission personnalisée</h3>
+                <label for="tplTitle">Titre</label><input id="tplTitle" maxlength="80" placeholder="Ex : Trouver les horaires de la médiathèque">
+                <label for="tplInstructions">Consigne pour le participant</label><textarea id="tplInstructions" rows="4" maxlength="2000" placeholder="Ex : Ouvrez le site du réseau des médiathèques et trouvez les horaires du samedi."></textarea>
+                <label for="tplLink">Lien à ouvrir (facultatif)</label><input id="tplLink" type="url" placeholder="https://…">
+                <details class="tpl-more"><summary>Message automatique (facultatif)</summary>
+                  <label for="tplMsgSubject">Objet</label><input id="tplMsgSubject" maxlength="120">
+                  <label for="tplMsgText">Texte envoyé dans la messagerie quand la mission commence</label><textarea id="tplMsgText" rows="3" maxlength="2000"></textarea>
+                </details>
+                <h4>Quiz de fin (facultatif)</h4>
+                <div id="tplQuestions"></div>
+                <button id="tplAddQuestion" class="cyber-btn secondary" type="button">+ Ajouter une question</button>
+                <div class="final-actions"><button id="tplCancel" class="cyber-btn secondary" type="button">Annuler</button><button id="tplSave" class="cyber-btn primary" type="button">Enregistrer</button></div>
+              </div>
+            </section>
+          </section>
+
+          <!-- Messagerie -->
+          <section id="tv-messages" class="teacher-view">
+            <section class="cyber-panel"><p class="terminal-kicker">// MESSAGE_CENTER</p><h2>Messagerie du groupe</h2>
+              <div class="message-layout cyber-message-layout"><div id="teacherConversations" class="conversation-list"></div><div id="teacherThread" class="thread"></div></div>
+            </section>
+          </section>
+
+          <!-- Statistiques -->
+          <section id="tv-stats" class="teacher-view">
+            <div class="panel-head"><select id="statsScope" class="cyber-select" aria-label="Périmètre"><option value="group">Groupe actif</option><option value="all">Tous mes groupes</option></select><button id="exportCsvBtn" class="cyber-btn secondary" type="button">⇩ Exporter le bilan (CSV / Excel)</button></div>
+            <div class="metric-grid">
+              <article class="metric-card cyan"><span class="metric-icon">%</span><div><small>Progression moyenne</small><strong id="statProgress">0%</strong></div></article>
+              <article class="metric-card green"><span class="metric-icon">✓</span><div><small>Missions terminées</small><strong id="statCompleted">0%</strong></div></article>
+              <article class="metric-card amber"><span class="metric-icon">?</span><div><small>Réussite aux quiz</small><strong id="statQuiz">0%</strong></div></article>
+              <article class="metric-card red"><span class="metric-icon">!</span><div><small>À accompagner (&lt; 50 %)</small><strong id="statAttention">0</strong></div></article>
+            </div>
+            <div class="teacher-two-cols">
+              <section class="cyber-panel"><p class="terminal-kicker">// PARTICIPANTS</p><h2>Progression par participant</h2><div id="statsParticipants" class="stats-participant-list"></div></section>
+              <section class="cyber-panel"><p class="terminal-kicker">// MISSIONS</p><h2>Par mission</h2><p>Une réussite faible au quiz indique une notion à revoir ensemble.</p><div id="statsMissions"></div></section>
+            </div>
+          </section>
+
+          <!-- Analytics : Points forts, faibles et progression personnalisée -->
+          <section id="tv-analytics" class="teacher-view">
+            <div class="panel-head">
+              <div>
+                <p class="terminal-kicker">// LEARNING_ANALYTICS</p>
+                <h2>Points forts et faibles</h2>
+                <p>Analyse comportementale : temps/missions, mouvements souris, hésitations, erreurs.</p>
+              </div>
+              <div class="group-card-actions">
+                <select id="analyticsParticipant" class="cyber-select" aria-label="Participant"></select>
+                <button id="exportAnalyticsBtn" class="cyber-btn secondary" type="button">⇩ Exporter</button>
+              </div>
+            </div>
+            <section class="cyber-panel">
+              <div id="analyticsNotAvailable" class="empty-state">Sélectionnez un participant pour voir son analyse détaillée.</div>
+              <div id="analyticsContent" class="hidden">
+                <div class="analytics-grid">
+                  <article class="metric-card cyan">
+                    <span class="metric-icon">⏱</span>
+                    <div>
+                      <small>Temps moyen par mission</small>
+                      <strong id="analyticTime">-</strong>
+                    </div>
+                  </article>
+                  <article class="metric-card green">
+                    <span class="metric-icon">💡</span>
+                    <div>
+                      <small>Autonomie</small>
+                      <strong id="analyticAuto">-</strong>
+                    </div>
+                  </article>
+                  <article class="metric-card amber">
+                    <span class="metric-icon">⚠️</span>
+                    <div>
+                      <small>Hésitations</small>
+                      <strong id="analyticHesitation">-</strong>
+                    </div>
+                  </article>
+                  <article class="metric-card red">
+                    <span class="metric-icon">❌</span>
+                    <div>
+                      <small>Taux d'erreur</small>
+                      <strong id="analyticErrors">-</strong>
+                    </div>
+                  </article>
+                </div>
+
+                <div class="analytics-section">
+                  <h3>Points forts</h3>
+                  <div id="analyticsStrengths" class="analytics-list"></div>
+                </div>
+
+                <div class="analytics-section">
+                  <h3>Domaines de progression</h3>
+                  <div id="analyticsWeaknesses" class="analytics-list"></div>
+                </div>
+
+                <div class="analytics-section">
+                  <h3>Étapes difficiles</h3>
+                  <div id="analyticsDifficultSteps" class="analytics-table"></div>
+                </div>
+
+                <div class="analytics-section">
+                  <h3>Recommandations personnalisées</h3>
+                  <div id="analyticsRecommendation" class="analytics-box"></div>
+                </div>
+              </div>
+            </section>
+          </section>
+
+          <!-- Réponses rapides -->
+          <section id="tv-quick" class="teacher-view">
+            <section class="cyber-panel"><div class="panel-head"><div><p class="terminal-kicker">// QUICK_REPLIES</p><h2>Réponses pré-enregistrées</h2><p>Elles apparaissent en un clic dans la messagerie.</p></div><div class="group-card-actions"><button id="resetQuickReplies" class="cyber-btn secondary" type="button">Rétablir par défaut</button><button id="addQuickReply" class="cyber-btn primary" type="button">+ Ajouter</button></div></div>
+              <div id="quickReplyManager" class="quick-reply-manager"></div></section>
+          </section>
+        </section>
+      </div>
+    </section>
+
+    <!-- ===================== PARTICIPANT : CONNEXION ===================== -->
+    <section id="studentJoin" class="screen">
+      <div class="panel narrow">
+        <button class="back" data-open="landing" type="button">← Retour</button>
+        <p class="eyebrow">Participant</p>
+        <h1>Entrer dans mon atelier</h1>
+        <p class="lead">Vos deux codes sont écrits sur le papier remis par le formateur.</p>
+        <label for="joinWorkshopCode">Code de l'atelier <small>(6 chiffres)</small></label>
+        <input id="joinWorkshopCode" class="code-input" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="482913">
+        <label for="joinSeatCode">Mon code personnel <small>(4 chiffres)</small></label>
+        <input id="joinSeatCode" class="code-input" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="2741">
+        <button id="joinStudentBtn" class="primary" type="button">Continuer</button>
+        <div id="studentJoinMsg" class="msg" role="alert"></div>
+      </div>
+    </section>
+
+    <section id="studentName" class="screen">
+      <div class="panel narrow warm">
+        <div class="avatar" aria-hidden="true">🙂</div>
+        <p class="eyebrow">Personnalisation</p>
+        <h1>Comment voulez-vous qu'on vous appelle ?</h1>
+        <p class="lead">Votre prénom ou un pseudo. Il sert uniquement dans l'atelier.</p>
+        <label for="studentDisplayName">Prénom ou pseudo</label>
+        <input id="studentDisplayName" maxlength="30" autocomplete="off" placeholder="Exemple : José">
+        <button id="saveStudentNameBtn" class="primary" type="button">Entrer dans mon espace</button>
+        <div id="studentNameMsg" class="msg" role="alert"></div>
+      </div>
+    </section>
+
+    <!-- ===================== PARTICIPANT : ESPACE ===================== -->
+    <section id="studentDashboard" class="screen">
+      <div class="dash-head">
+        <div><p class="eyebrow">Mon espace</p><h1>Bonjour <span data-student-name></span> 👋</h1><p id="studentWorkshopLabel" class="muted"></p></div>
+        <button id="studentLogoutBtn" class="secondary" type="button">Quitter</button>
+      </div>
+      <div class="student-home-grid">
+        <section class="content-card"><div class="section-title"><div><p class="eyebrow">À faire</p><h2>Mes missions</h2></div></div><div id="studentMissions" aria-live="polite"></div></section>
+        <section class="content-card">
+          <div class="section-title"><div><p class="eyebrow">Messages</p><h2>Ma messagerie</h2></div><span id="studentUnread" class="pill">à jour</span></div>
+          <div id="studentMessagesPreview"></div>
+          <button id="openMessagesBtn" class="secondary full" type="button">Ouvrir ma messagerie</button>
+        </section>
+      </div>
+      <section class="content-card">
+        <div class="section-title"><div><p class="eyebrow">Mes progrès</p><h2>Mon carnet de réussites</h2></div><button id="printCarnetBtn" class="secondary hidden" type="button">🖨 Imprimer mes fiches-mémo</button></div>
+        <div id="studentAchievements" class="achievements"></div>
+      </section>
+    </section>
+
+    <section id="missionScreen" class="screen">
+      <div class="mission-shell">
+        <div class="mission-toolbar">
+          <button id="backStudentDash" class="back" type="button">← Mes missions</button>
+          <div><button id="missionInbox" class="ghost-btn" type="button">✉ Ma messagerie</button><button id="missionRestart" class="ghost-btn" type="button">↺ Recommencer</button></div>
+        </div>
+        <div id="missionContent"></div>
+      </div>
+    </section>
+
+    <section id="studentMessages" class="screen">
+      <div class="mission-shell">
+        <button id="messagesBack" class="back" type="button">← Mon espace</button>
+        <p class="eyebrow">Messagerie</p>
+        <h1>Mes messages</h1>
+        <div id="studentThread" class="thread student-thread" aria-live="polite"></div>
+        <div class="thread-compose">
+          <label for="studentReplyText">Écrire au formateur</label>
+          <textarea id="studentReplyText" rows="3" placeholder="Votre message…"></textarea>
+          <button id="sendStudentReply" class="primary" type="button">Envoyer</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <button id="helpBtn" class="help-fab hidden" type="button" aria-pressed="false">✋ J'ai besoin d'aide</button>
+  <div id="toasts" class="toasts" aria-live="polite" aria-atomic="false"></div>
+  <div id="projector" class="projector hidden" role="dialog" aria-label="Code de l'atelier"></div>
+  <div id="printArea" class="print-area"></div>
+
+  <dialog id="confirmDialog">
+    <form method="dialog" class="dialog-card">
+      <h2 id="confirmTitle">Confirmer</h2>
+      <p id="confirmText"></p>
+      <div class="dialog-actions"><button value="cancel" class="secondary">Annuler</button><button value="ok" id="confirmOk" class="primary">Confirmer</button></div>
+    </form>
+  </dialog>
+  <dialog id="promptDialog">
+    <form method="dialog" class="dialog-card">
+      <h2 id="promptTitle"></h2>
+      <label id="promptLabel" for="promptInput"></label>
+      <textarea id="promptInput" rows="3"></textarea>
+      <div class="dialog-actions"><button value="cancel" class="secondary" formnovalidate>Annuler</button><button value="ok" id="promptOk" class="primary">Valider</button></div>
+    </form>
+  </dialog>
+
+  <script src="firebase-config.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/store-demo.js"></script>
+  <script src="js/store-firebase.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/quiz-banks.js"></script>
+  <script src="js/quiz-banks-new.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/a11y.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/missions/runtime.js"></script>
+  <script src="js/missions/basics.js"></script>
+  <script src="js/missions/documents.js"></script>
+  <script src="js/missions/demarches.js"></script>
+  <script src="js/missions/securite.js"></script>
+  <script src="js/student.js"></script>
+  <script src="js/teacher.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

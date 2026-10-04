@@ -1,0 +1,128 @@
+rules_version = '2';
+// =========================================================
+// Atelier numérique — règles de sécurité Firestore (V8)
+// Principe : un participant ne voit et ne modifie QUE sa place ;
+// un formateur ne gère QUE ses propres groupes.
+// =========================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function me() { return request.auth.uid; }
+    function isTeacher() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(me()))
+        && get(/databases/$(database)/documents/users/$(me())).data.role == "teacher";
+    }
+    function workshop(wid) { return get(/databases/$(database)/documents/workshops/$(wid)).data; }
+    function seat(wid, sid) { return get(/databases/$(database)/documents/workshops/$(wid)/seats/$(sid)).data; }
+    function teacherOwns(wid) { return isTeacher() && workshop(wid).teacherUid == me(); }
+    function ownsSeat(wid, sid) { return signedIn() && seat(wid, sid).studentUid == me(); }
+    function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+
+    // ----- comptes formateurs : créés à la main dans la console -----
+    match /users/{uid} {
+      allow read: if signedIn() && me() == uid;
+      allow write: if false;
+    }
+    match /teacherPrefs/{uid} {
+      allow read, write: if isTeacher() && me() == uid;
+    }
+    match /templates/{id} {
+      allow read, delete: if isTeacher() && resource.data.teacherUid == me();
+      allow create: if isTeacher() && request.resource.data.teacherUid == me();
+      allow update: if isTeacher() && resource.data.teacherUid == me() && request.resource.data.teacherUid == me();
+    }
+
+    // ----- codes : lecture d'un document précis uniquement (pas de liste) -----
+    match /codes/{code} {
+      allow get: if signedIn();
+      allow list, update: if false;
+      allow create: if isTeacher() && request.resource.data.teacherUid == me();
+      allow delete: if isTeacher() && resource.data.teacherUid == me();
+    }
+    match /joinKeys/{key} {
+      allow get: if signedIn();
+      allow list, update: if false;
+      allow create: if isTeacher() && request.resource.data.teacherUid == me();
+      allow delete: if isTeacher() && resource.data.teacherUid == me();
+    }
+
+    // ----- ateliers -----
+    match /workshops/{wid} {
+      allow get: if signedIn();
+      allow list: if isTeacher() && resource.data.teacherUid == me();
+      allow create: if isTeacher() && request.resource.data.teacherUid == me();
+      allow update: if isTeacher() && resource.data.teacherUid == me() && request.resource.data.teacherUid == me();
+      allow delete: if isTeacher() && resource.data.teacherUid == me();
+
+      match /seats/{sid} {
+        allow read: if teacherOwns(wid) || (signedIn() && resource.data.studentUid == me());
+        allow create: if teacherOwns(wid) && request.resource.data.teacherUid == me();
+        allow delete: if teacherOwns(wid);
+        allow update: if
+          // le formateur propriétaire
+          (teacherOwns(wid) && request.resource.data.teacherUid == resource.data.teacherUid)
+          // un participant prend sa place : il doit prouver qu'il connaît les deux codes (joinKey)
+          || (signedIn()
+              && changed().hasOnly(['studentUid', 'claimed', 'joinKey', 'lastSeen'])
+              && request.resource.data.studentUid == me()
+              && request.resource.data.claimed == true
+              && get(/databases/$(database)/documents/joinKeys/$(request.resource.data.joinKey)).data.seatId == sid
+              && get(/databases/$(database)/documents/joinKeys/$(request.resource.data.joinKey)).data.workshopId == wid)
+          // le participant met à jour sa propre place (nom, présence, aide, quiz)
+          || (signedIn()
+              && resource.data.studentUid == me()
+              && request.resource.data.studentUid == me()
+              && changed().hasOnly(['displayName', 'lastSeen', 'activity', 'help', 'quizHistory'])
+              && request.resource.data.displayName is string
+              && request.resource.data.displayName.size() <= 30);
+
+        match /missions/{mid} {
+          allow read: if teacherOwns(wid) || ownsSeat(wid, sid);
+          allow create: if teacherOwns(wid) && request.resource.data.teacherUid == me()
+            && request.resource.data.workshopId == wid && request.resource.data.seatId == sid;
+          allow delete: if teacherOwns(wid);
+          allow update: if teacherOwns(wid)
+            || (ownsSeat(wid, sid)
+                && changed().hasOnly(['status', 'step', 'updatedAt', 'startedAt', 'completedAt', 'score'])
+                && request.resource.data.status in ['assigned', 'in_progress', 'done']);
+        }
+
+        match /messages/{mid} {
+          allow read: if teacherOwns(wid) || ownsSeat(wid, sid);
+          allow create: if request.resource.data.workshopId == wid
+            && request.resource.data.seatId == sid
+            && request.resource.data.teacherUid == workshop(wid).teacherUid
+            && request.resource.data.text is string
+            && request.resource.data.text.size() <= 2000
+            && (
+              (ownsSeat(wid, sid) && request.resource.data.from in ['student', 'system'])
+              || (teacherOwns(wid) && request.resource.data.from in ['teacher', 'system'])
+            );
+          allow update: if (ownsSeat(wid, sid) && changed().hasOnly(['readByStudent']))
+            || (teacherOwns(wid) && changed().hasOnly(['readByTeacher']));
+          allow delete: if teacherOwns(wid);
+        }
+
+        match /achievements/{key} {
+          allow read, delete: if teacherOwns(wid) || ownsSeat(wid, sid);
+          allow create, update: if (teacherOwns(wid) || ownsSeat(wid, sid))
+            && request.resource.data.label is string
+            && request.resource.data.label.size() <= 120;
+        }
+      }
+    }
+
+    // ----- requêtes « tous mes groupes » du formateur (collection group) -----
+    match /{path=**}/seats/{sid} {
+      allow read: if signedIn() && resource.data.teacherUid == me();
+    }
+    match /{path=**}/missions/{mid} {
+      allow read: if signedIn() && resource.data.teacherUid == me();
+    }
+    match /{path=**}/messages/{mid} {
+      allow read: if signedIn() && resource.data.teacherUid == me();
+    }
+  }
+}
