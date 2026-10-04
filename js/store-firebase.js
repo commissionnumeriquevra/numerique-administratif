@@ -147,11 +147,12 @@
         for (const sub of ["missions", "messages", "achievements"]) {
           (await fb.getDocs(P.sub(wid, s.id, sub))).docs.forEach(d => refs.push(d.ref));
         }
-        refs.push(fb.doc(fb.db, "joinKeys", s.joinKey));
+        if (s.joinKey) refs.push(fb.doc(fb.db, "joinKeys", s.joinKey));
         refs.push(P.s(wid, s.id));
         await batchDelete(refs);
       }
-      if (w.exists()) await fb.deleteDoc(fb.doc(fb.db, "codes", w.data().code)).catch(() => {});
+      const code = w.exists() ? w.data().code : null;
+      if (code) await fb.deleteDoc(fb.doc(fb.db, "codes", String(code))).catch(() => {});
       await fb.deleteDoc(P.w(wid)); // en dernier : les règles s'appuient sur ce document
     },
     async addSeat(wid) {
@@ -183,7 +184,7 @@
       let code = randomDigits(4); while (used.has(code)) code = randomDigits(4);
       const joinKey = AN.model.joinKey(w.code, code);
       const b = fb.writeBatch(fb.db);
-      b.delete(fb.doc(fb.db, "joinKeys", s.joinKey));
+      if (s.joinKey) b.delete(fb.doc(fb.db, "joinKeys", s.joinKey));
       b.set(fb.doc(fb.db, "joinKeys", joinKey), { workshopId: wid, seatId: sid, teacherUid: w.teacherUid });
       b.update(P.s(wid, sid), { seatCode: code, joinKey, displayName: "", claimed: false, studentUid: "", level: "beginner", lastSeen: 0 });
       await b.commit();

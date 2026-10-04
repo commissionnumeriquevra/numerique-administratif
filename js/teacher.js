@@ -96,7 +96,7 @@
     if (!T.teacher) return;
     renderBadges();
     renderGroupPicker();
-    ({ dashboard: renderDashboard, live: renderLive, groups: renderGroups, participants: renderParticipants, missions: renderMissions, messages: renderMessages, stats: renderStats, quick: renderQuick })[T.view]?.();
+    ({ dashboard: renderDashboard, live: renderLive, groups: renderGroups, participants: renderParticipants, missions: renderMissions, messages: renderMessages, stats: renderStats, analytics: renderAnalytics, quick: renderQuick })[T.view]?.();
   }
   function renderBadges() {
     const unread = T.data.messages.filter(m => m.from === "student" && !m.readByTeacher).length;
@@ -235,7 +235,7 @@
         if (T.activeWid === id) T.activeWid = null;
         toast("Groupe supprimé.", "good");
       }
-    } catch (e) { toast(e.message, "bad", 7000); }
+    } catch (e) { console.error(e); toast(e.message, "bad", 7000); }
   }
 
   function appUrl() { return location.protocol.startsWith("http") ? location.origin + location.pathname.replace(/index\.html$/, "") : "(adresse de l'application)"; }
@@ -281,7 +281,7 @@
         if (T.thread === sid) T.thread = null;
         toast("Place libérée avec un nouveau code.", "good");
       }
-    } catch (e) { toast(e.message, "bad", 7000); }
+    } catch (e) { console.error(e); toast(e.message, "bad", 7000); }
   }
 
   /* ======================= PARTICIPANTS ======================= */
@@ -367,7 +367,7 @@
       const label = k === "p" ? C.parcours[id].label : k === "t" ? T.data.templates.find(x => x.id === id)?.title : C.label(id);
       await Promise.all(seatIds.map(sid => T.store.sendMessage(w.id, sid, AN.model.newMessage({ workshopId: w.id, seatId: sid, teacherUid: w.teacherUid, from: "system", subject: "Nouvelle mission", text: `Une nouvelle mission vous attend : ${label}. Ouvrez « Mes missions ».` }))));
       toast(`Mission attribuée à ${seatIds.length} participant${seatIds.length > 1 ? "s" : ""}.`, "good");
-    } catch (e) { toast(e.message, "bad", 7000); }
+    } catch (e) { console.error(e); toast(e.message, "bad", 7000); }
   }
 
   /* ----- éditeur de missions personnalisées ----- */
@@ -489,6 +489,135 @@
     AN.util.downloadBlob(`bilan_atelier_${new Date().toISOString().slice(0, 10)}.csv`, new Blob([csv], { type: "text/csv;charset=utf-8" }));
   }
 
+  /* ======================= ANALYTICS — Points forts/faibles ======================= */
+  function renderAnalytics() {
+    const participants = [];
+    groups().forEach(w => w.seats.filter(s => s.displayName).forEach(s => {
+      participants.push({ id: s.id, name: s.displayName, wid: w.id, group: w.name });
+    }));
+
+    const sel = $("#analyticsParticipant");
+    const selected = sel.value;
+    sel.innerHTML = participants.length
+      ? `<option value="">Sélectionnez un participant…</option>` + participants.map(p => `<option value="${p.id}">${esc(p.name)} (${esc(p.group)})</option>`).join("")
+      : `<option value="">Aucun participant</option>`;
+    if (selected && participants.some(p => p.id === selected)) sel.value = selected;
+
+    if (!selected) {
+      $("#analyticsContent").classList.add("hidden");
+      $("#analyticsNotAvailable").classList.remove("hidden");
+      return;
+    }
+
+    const p = participants.find(x => x.id === selected);
+    if (!p) return;
+
+    const missions = missionsOf(p.id);
+    if (!missions.length) {
+      $("#analyticsContent").classList.add("hidden");
+      $("#analyticsNotAvailable").textContent = "Aucune mission attribuée à ce participant.";
+      return;
+    }
+
+    // Analyser toutes les missions terminées
+    const completed = missions.filter(m => m.status === "done");
+    if (!completed.length) {
+      $("#analyticsContent").classList.add("hidden");
+      $("#analyticsNotAvailable").textContent = "Aucune mission terminée. Les analyses apparaîtront après completion.";
+      return;
+    }
+
+    const avgTime = Math.round(completed.reduce((s, m) => s + (m.completedAt - m.startedAt), 0) / completed.length / 1000 / 60);
+    const quizzes = completed.filter(m => m.score?.total);
+    const avgQuizScore = quizzes.length ? Math.round(quizzes.reduce((s, m) => s + (m.score.score / m.score.total) * 100, 0) / quizzes.length) : 0;
+    const helpUsed = missions.filter(m => m.hints > 0).length;
+    const avgHints = missions.filter(m => m.hints > 0).reduce((s, m) => s + m.hints, 0) / Math.max(1, missions.filter(m => m.hints > 0).length);
+
+    // Génération des recommandations
+    const strengths = [];
+    const weaknesses = [];
+
+    if (avgTime < 5) strengths.push("💨 Exécution très rapide");
+    else if (avgTime > 15) weaknesses.push("⏱ Travail ralenti, considérer du soutien");
+
+    if (avgQuizScore > 80) strengths.push("✨ Excellente compréhension");
+    else if (avgQuizScore < 50) weaknesses.push("❓ Difficultés persistantes");
+    else strengths.push("📚 Bonne progression");
+
+    if (helpUsed === 0) strengths.push("🎯 Très autonome");
+    else if (helpUsed > missions.length * 0.5) weaknesses.push("⚠️ Recours fréquent aux indices");
+
+    const difficultMissions = missions.filter(m => m.score && m.score.score / m.score.total < 0.5);
+    const strongMissions = missions.filter(m => m.score && m.score.score / m.score.total >= 0.8);
+
+    // Affichage
+    $("#analyticsContent").classList.remove("hidden");
+    $("#analyticsNotAvailable").classList.add("hidden");
+
+    const fmt = (s) => String(s).padStart(2, "0");
+    const timeStr = avgTime > 60 ? `${fmt(Math.floor(avgTime/60))}:${fmt(avgTime%60)}` : `${avgTime}min`;
+
+    $("#analyticTime").textContent = timeStr;
+    $("#analyticAuto").textContent = helpUsed === 0 ? "100%" : Math.round((1 - helpUsed / missions.length) * 100) + "%";
+    $("#analyticHesitation").textContent = missions.filter(m => (m.lastActivityAt - m.startedAt) / 1000 > 60).length + " pauses";
+    $("#analyticErrors").textContent = difficultMissions.length > 0 ? (difficultMissions.length + " mission(s)") : "0%";
+
+    $("#analyticsStrengths").innerHTML = strengths.length
+      ? strengths.map(s => `<div class="analytics-item"><strong>${s}</strong></div>`).join("")
+      : `<div class="analytics-item">Aucun point fort relevé pour le moment.</div>`;
+
+    $("#analyticsWeaknesses").innerHTML = weaknesses.length
+      ? weaknesses.map(w => `<div class="analytics-item weakness"><strong>${w}</strong></div>`).join("")
+      : `<div class="analytics-item">Pas de domaine de progression identifié.</div>`;
+
+    $("#analyticsDifficultSteps").innerHTML = difficultMissions.length
+      ? difficultMissions.map(m => {
+          const missionName = missionLabel(m);
+          const score = m.score ? m.score.score + "/" + m.score.total : "—";
+          const slowness = m.completedAt - m.startedAt > 600000 ? "1.5x+" : "1x";
+          return `<div class="analytics-row"><span class="step-name">${esc(missionName)}</span><span>Niveau ${levelName(m.level)}</span><span class="slowness">${score}</span></div>`;
+        }).join("")
+      : `<div class="analytics-item">Très bonne maîtrise générale !</div>`;
+
+    const recommendation = avgQuizScore > 75 && p.level === "beginner"
+      ? `✅ Peut progresser vers <b>Intermédiaire</b>`
+      : avgQuizScore < 50
+      ? `📖 Reprendre les notions : ${difficultMissions.slice(0, 2).map(m => missionLabel(m)).join(", ")}`
+      : difficultMissions.length > 0
+      ? `📌 Focus sur : ${difficultMissions.map(m => missionLabel(m)).join(", ")}`
+      : `👍 Progression normale. Continuer.`;
+
+    $("#analyticsRecommendation").innerHTML = recommendation;
+  }
+  function exportAnalyticsCsv() {
+    const participants = [];
+    groups().forEach(w => w.seats.filter(s => s.displayName).forEach(s => {
+      participants.push({ id: s.id, name: s.displayName, wid: w.id, group: w.name });
+    }));
+    const selected = $("#analyticsParticipant").value;
+    if (!selected) return toast("Sélectionnez d'abord un participant.", "bad");
+    const p = participants.find(x => x.id === selected);
+    if (!p) return;
+    const missions = missionsOf(p.id);
+    if (!missions.length) return toast("Aucune mission pour ce participant.", "bad");
+
+    const rows = [["Mission", "Niveau", "Statut", "Temps (min)", "Score quiz", "Indices utilisés", "Terminée le"]];
+    missions.forEach(m => {
+      const duration = m.completedAt && m.startedAt ? Math.round((m.completedAt - m.startedAt) / 1000 / 60) : "—";
+      rows.push([
+        missionLabel(m),
+        levelName(m.level),
+        m.status === "done" ? "terminée" : m.status === "in_progress" ? "en cours" : "à faire",
+        duration,
+        m.score?.total ? `${m.score.score}/${m.score.total}` : "—",
+        m.hints || 0,
+        m.completedAt ? new Date(m.completedAt).toLocaleDateString("fr-FR") : ""
+      ]);
+    });
+    const csv = "﻿" + rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(";")).join("\r\n");
+    AN.util.downloadBlob(`analytics_${p.name}_${new Date().toISOString().slice(0, 10)}.csv`, new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  }
+
   /* ======================= RÉPONSES RAPIDES ======================= */
   function renderQuick() {
     $("#quickReplyManager").innerHTML = quickReplies().map((r, i) => `<article><div class="qr-head"><strong>${esc(r.title)}</strong><span><button class="icon-btn" data-qr-edit="${i}">✎</button><button class="icon-btn danger-action" data-qr-del="${i}" aria-label="Supprimer">✕</button></span></div><p>${esc(r.text)}</p></article>`).join("");
@@ -516,6 +645,8 @@
     $("#participantSearch").addEventListener("input", renderParticipants);
     $("#statsScope").addEventListener("change", renderStats);
     $("#exportCsvBtn").addEventListener("click", exportCsv);
+    $("#analyticsParticipant").addEventListener("change", renderAnalytics);
+    $("#exportAnalyticsBtn").addEventListener("click", exportAnalyticsCsv);
     $("#livePrint").addEventListener("click", () => active() && printCodes(active()));
     $("#liveProject").addEventListener("click", () => active() && project(active()));
 
