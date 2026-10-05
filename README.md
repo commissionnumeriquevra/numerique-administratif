@@ -2,7 +2,7 @@
 
 Application d'entraînement aux démarches administratives en ligne, pour les ateliers de médiation numérique.
 Un **formateur** crée un groupe, distribue des codes, attribue des missions et suit la salle **en direct**.
-Les **participants** entrent avec deux codes et un prénom ou pseudo : aucun e-mail, aucune donnée personnelle.
+Les **participants** entrent avec deux codes et un prénom ou pseudo : aucun e-mail, aucune donnée personnelle..
 
 ---
 
