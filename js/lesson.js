@@ -166,6 +166,7 @@
     });
     session.onKey = e => {
       if (e.target.closest?.("input,textarea,select") || document.querySelector("dialog[open]")) return;
+      if (e.key === "Escape" && o.querySelector(".bk-fs")) return; // Échap sert à quitter la fausse alerte du navigateur simulé
       if (e.key === "Escape" && !document.fullscreenElement) close();
       else if ((e.key === "f" || e.key === "F") && !e.ctrlKey) toggleFull();
     };

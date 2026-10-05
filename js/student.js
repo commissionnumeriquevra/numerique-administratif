@@ -104,6 +104,11 @@
     const msg = AN.model.newMessage({ workshopId: state.workshop.id, seatId: state.seat.id, teacherUid: state.workshop.teacherUid, from: "system", subject, text });
     await state.store.sendMessage(...W(), msg);
   }
+  /** Message de l'élève au formateur (ex : réponse d'une mission réelle). */
+  async function sendToTeacher(subject, text) {
+    const msg = AN.model.newMessage({ workshopId: state.workshop.id, seatId: state.seat.id, teacherUid: state.workshop.teacherUid, from: "student", subject, text });
+    await state.store.sendMessage(...W(), msg);
+  }
   function reportActivity(m, step, total) {
     if (!state.seat) return;
     state.store.updateMySeat(...W(), { lastSeen: Date.now(), activity: { missionId: m.id, type: m.type, label: m.type === "custom" ? (m.custom?.title || C.label("custom")) : C.missions[m.type]?.short || m.type, step, total, at: Date.now() } }).catch(() => {});
@@ -288,5 +293,5 @@
     document.addEventListener("visibilitychange", () => { if (!document.hidden && state.seat) state.store.updateMySeat(...W(), { lastSeen: Date.now() }).catch(() => {}); });
   }
 
-  AN.student = { state, bind, resume, reset, join, updateMission, addAchievement, sendSystemMessage, reportActivity, saveQuizHistory, backToDashboard, openMessages, printMemo, renderDashboard };
+  AN.student = { state, bind, resume, reset, join, updateMission, addAchievement, sendSystemMessage, sendToTeacher, reportActivity, saveQuizHistory, backToDashboard, openMessages, printMemo, renderDashboard };
 })(window.AN);

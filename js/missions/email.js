@@ -20,8 +20,8 @@
   const shouting = t => { const l = String(t).replace(/[^a-zA-ZÀ-ÿ]/g, ""); return l.length > 12 && l.replace(/[^A-ZÀ-Þ]/g, "").length / l.length > 0.6; };
 
   /** Cadre d'un niveau : en-tête, consigne, panneau (tâches / questions / retours) et boîte mail. */
-  function frame(ctx, { level, title, step, consigne, help, noClient }) {
-    ctx.html(`${ctx.header(`Chapitre E-mail · Niveau ${level}`, title, step)}
+  function frame(ctx, { level, title, step, consigne, help, noClient, chapter = "E-mail" }) {
+    ctx.html(`${ctx.header(`Chapitre ${chapter} · Niveau ${level}`, title, step)}
       <p class="consigne" data-speak>${consigne}</p>
       ${help ? ctx.help(help) : ""}
       <div class="mk-mission ${ctx.demo ? "mk-demo" : ""}">
@@ -886,4 +886,5 @@
       ctx.finalScreen({ theme: null });
     }
   });
+  AN.missionKit = { frame, tasksHTML, inlineQuiz, finish };
 })(window.AN);

@@ -23,6 +23,13 @@
     mail_fraud:      { label: "E-mail niv. 6 — Repérer un e-mail frauduleux", short: "E-mail frauduleux", icon: "🕵️", family: "E-mail" },
     suspicious_mail: { label: "Reconnaître un e-mail suspect", short: "E-mail suspect", icon: "🎣", family: "Sécurité" },
     mail_challenge:  { label: "E-mail niv. 7 — Le défi de la boîte mail", short: "Défi boîte mail", icon: "🏆", family: "E-mail" },
+    nav_open:        { label: "Navigateur niv. 1 — Ouvrir un site", short: "Ouvrir un site", icon: "🧭", family: "Navigateur" },
+    nav_buttons:     { label: "Navigateur niv. 2 — Les boutons, les onglets, les favoris", short: "Boutons et onglets", icon: "🗂️", family: "Navigateur" },
+    nav_search:      { label: "Navigateur niv. 3 — Faire une recherche", short: "Faire une recherche", icon: "🔎", family: "Navigateur" },
+    nav_results:     { label: "Navigateur niv. 4 — Choisir le bon résultat", short: "Le bon résultat", icon: "🎯", family: "Navigateur" },
+    nav_fakesite:    { label: "Navigateur niv. 5 — Vrai ou faux site ?", short: "Vrai ou faux site", icon: "🕵️", family: "Navigateur" },
+    nav_alert:       { label: "Navigateur niv. 6 — Fausses alertes et fenêtres pièges", short: "Fausses alertes", icon: "🚨", family: "Navigateur" },
+    nav_real:        { label: "Navigateur niv. 7 — Mission réelle sur Internet", short: "Mission réelle", icon: "🌍", family: "Navigateur" },
     sms_scam:        { label: "Repérer un SMS frauduleux", short: "SMS frauduleux", icon: "📱", family: "Sécurité" },
     secure_payment:  { label: "Payer en ligne en sécurité", short: "Paiement en ligne", icon: "💳", family: "Sécurité" },
     custom:          { label: "Mission personnalisée", short: "Personnalisée", icon: "✏️", family: "Personnalisées" }
@@ -33,6 +40,7 @@
     p_bases:    { label: "Parcours « Premiers pas » (souris, clavier, formulaire)", icon: "🌱", steps: ["mouse_nav", "keyboard_skills", "fill_form"] },
     p_dossier:  { label: "Parcours administratif complet (document → dossier)", icon: "🧭", steps: ["download_doc", "find_file", "missing_piece", "appointment"] },
     p_email:    { label: "📧 Chapitre E-mail (7 niveaux)", icon: "📧", steps: ["mail_read", "mail_address", "mail_reply", "mail_compose", "mail_attach", "mail_fraud", "mail_challenge"] },
+    p_nav:      { label: "🧭 Chapitre Navigateurs et recherche (7 niveaux)", icon: "🧭", steps: ["nav_open", "nav_buttons", "nav_search", "nav_results", "nav_fakesite", "nav_alert", "nav_real"] },
     p_securite: { label: "Parcours « Se protéger des arnaques »", icon: "🛡️", steps: ["suspicious_mail", "sms_scam", "password_reset", "secure_payment"] }
   };
 
@@ -56,6 +64,13 @@
     mail_attach: ["Joindre 📎 = ajouter un fichier à mon message.", "Télécharger ⬇️ = garder sur mon ordinateur un fichier reçu (dossier Téléchargements).", "Avant d'envoyer, je vérifie que la pièce jointe est bien là.", "Un .pdf est un document ; un .exe est un programme : prudence."],
     mail_fraud: ["🫶 Lire un message est sans danger. Le danger : cliquer, ouvrir une pièce jointe inattendue, donner des informations.", "Les 5 questions : 🔍 Qui m'écrit vraiment ? 🤔 Est-ce que je l'attendais ? ⏰ Me met-on la pression ? 🔑 Que me demande-t-on ? 🔗 Où mène le lien ?", "Je clique sur le nom de l'expéditeur pour voir l'adresse : je regarde la fin, après le @. « .gouv.fr » = l'État ; Gmail, Hotmail = jamais une administration.", "Jamais par e-mail : mot de passe, code reçu par SMS, numéro de carte bancaire.", "Le vrai nom d'un site est juste avant le premier « / » : impots.gouv.fr ✅ — impots.gouv.fr.rembourse.com ❌. Le cadenas 🔒 ne prouve rien.", "Dans le doute : je ne clique pas, je vais moi-même sur le site ou j'appelle le numéro que je connais.", "J'ai donné ma carte ? J'appelle ma banque tout de suite (numéro au dos de la carte). Aide : cybermalveillance.gouv.fr — Signaler : signal-spam.fr, 33700 (SMS)."],
     mail_challenge: ["Arnaque ? Je ne clique pas : 🚫 Indésirable.", "Publicité inutile : 🗑️ Supprimer.", "Message important supprimé par erreur : Corbeille → Restaurer.", "🔍 La recherche retrouve un message en tapant un nom ou un mot."],
+    nav_open: ["Le navigateur (Chrome, Edge, Firefox…) est la porte d'entrée d'Internet.", "La barre d'adresse est tout en haut : je clique dedans, je tape l'adresse exacte, puis Entrée.", "Une adresse : sans espace, sans accent, avec des points (www.mairie-valbourg.fr).", "Le menu d'un site m'emmène vers ses rubriques ; un lien m'emmène vers une autre page."],
+    nav_buttons: ["← revient à la page d'avant, → refait le chemin.", "⟳ actualise : la page est rechargée (premier réflexe si elle bloque).", "＋ ouvre un nouvel onglet ; ✕ ferme un onglet (je lis son nom avant !).", "☆ garde un site en favori : un clic pour y revenir."],
+    nav_search: ["Un moteur de recherche (Google, Bing, Qwant…) trouve des sites pour moi.", "Des mots-clés, pas une phrase : QUOI + OÙ (+ QUAND). Ex. : horaires déchetterie Valbourg.", "Les accents et majuscules ne sont pas obligatoires dans une recherche.", "Je lis les résultats avant de cliquer."],
+    nav_results: ["« Sponsorisé » = une publicité payée, souvent tout en haut.", "Pour une démarche, je cherche le site officiel : .gouv.fr, service-public.fr, le site de ma mairie.", "Un site qui fait payer une démarche gratuite est un intermédiaire : je reviens en arrière.", "Les forums donnent des avis, pas des démarches."],
+    nav_fakesite: ["Le vrai nom du site est juste avant le premier « / » : impots.gouv.fr ✅ — impots-gouv-remboursement.com ❌.", "Le cadenas 🔒 = connexion chiffrée. Il ne prouve PAS que le site est honnête.", "« Non sécurisé » : je ne tape jamais de mot de passe ni de carte.", "Fautes, urgence, compte à rebours, carte bancaire demandée = faux site."],
+    nav_alert: ["Une alerte virus dans le navigateur, avec un numéro à appeler, est TOUJOURS fausse.", "Je n'appelle pas, je ne clique pas dedans : Échap, puis je ferme l'onglet ✕.", "Si ça bloque : je ferme le navigateur, ou j'éteins l'ordinateur.", "J'ai appelé ? Je raccroche. On a pris la main ? J'éteins, j'appelle ma banque, cybermalveillance.gouv.fr.", "Cookies : j'ai le droit de « Tout refuser ». « Vous avez gagné » : je ferme avec ✕."],
+    nav_real: ["Nouvel onglet : ＋ ou Ctrl + T. Je garde l'onglet de départ ouvert.", "Mots-clés → je lis les résultats → j'évite les « Sponsorisé » → je vérifie le vrai nom du site.", "Pour chercher une information, je n'ai jamais besoin de donner mes coordonnées.", "Une fenêtre bizarre : Échap, je ferme l'onglet, je demande de l'aide."],
     custom: ["Je lis la consigne en entier avant de commencer.", "Je prends mon temps.", "Je n'hésite pas à demander de l'aide."]
   };
 

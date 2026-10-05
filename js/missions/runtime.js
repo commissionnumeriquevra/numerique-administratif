@@ -50,7 +50,7 @@
     const noop = async () => {};
     return {
       state: { seat: { displayName: "le groupe", quizHistory: {} }, messages: [] },
-      reportActivity() {}, updateMission: noop, sendSystemMessage: noop, addAchievement: noop, saveQuizHistory: noop,
+      reportActivity() {}, updateMission: noop, sendSystemMessage: noop, sendToTeacher: noop, addAchievement: noop, saveQuizHistory: noop,
       printMemo: m => AN.student.printMemo(m), backToDashboard: onBack || (() => {}), openMessages() { AN.util.toast("En projection, la messagerie n'est pas disponible.", "info"); }
     };
   }
@@ -142,7 +142,7 @@
         ctx.act("back", () => S.backToDashboard());
         const qs = questions || (ctx.m.type === "custom" ? ctx.m.custom?.questions : null);
         if (theme || (qs && qs.length)) {
-          AN.quiz.mount($("#missionQuiz"), {
+          AN.quiz.mount(ctx.box.querySelector("#missionQuiz"), {
             theme, level: ctx.level, questions: qs || undefined,
             history: S.state.seat?.quizHistory || {},
             onHistory: h => S.saveQuizHistory(h),
@@ -154,7 +154,7 @@
             }
           });
         } else {
-          $("#missionQuiz").remove();
+          ctx.box.querySelector("#missionQuiz")?.remove();
         }
       }
     };

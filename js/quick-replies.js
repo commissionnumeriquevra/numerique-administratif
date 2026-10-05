@@ -111,6 +111,9 @@
     r("formateur", "Demandez de l'aide", "Si vous êtes bloqué(e), cliquez sur le bouton « Demander de l'aide » : je viendrai vous voir."),
     r("formateur", "C'était un piège", "Ce message était un piège ! Regardez l'adresse du lien : ce n'est pas un site officiel. Dans ce cas, on ne clique jamais."),
     r("formateur", "Piège évité", "Bien joué, vous n'êtes pas tombé(e) dans le piège ! Un organisme officiel ne vous demande jamais vos codes ni votre carte bancaire par message."),
+    r("formateur", "Mission réelle réussie", "Bravo, mission réussie ! Vous avez trouvé la bonne information, sur le bon site. Vous pouvez être fier(e) de vous : vous savez maintenant chercher seul(e) sur Internet."),
+    r("formateur", "Mission : vérifier le site", "Bonne réponse ! Mais regardez le site où vous l'avez trouvée : ce n'est pas le site officiel. Relisez le vrai nom dans la barre d'adresse, juste avant le premier « / », puis répondez-moi ici avec le bon site."),
+    r("formateur", "Mission : presque", "Presque ! L'information n'est pas tout à fait la bonne. Vérifiez la date ou le jour demandé, puis répondez-moi directement ici. Je passe vous voir si besoin."),
     r("formateur", "Pause", "On fait une petite pause de 10 minutes. Vous pourrez reprendre exactement où vous en étiez."),
     r("formateur", "Fin de séance", "La séance se termine dans 5 minutes. Terminez l'étape en cours : votre progression est enregistrée.")
   ];
@@ -129,9 +132,15 @@
 
   /** Liste effective : réponses enregistrées par le formateur, ou bibliothèque par défaut.
       Une ancienne liste (sans catégories) est fusionnée avec la nouvelle bibliothèque. */
+  const ADDED = ["Mission réelle réussie", "Mission : vérifier le site", "Mission : presque"];
   function resolve(saved) {
     if (!saved || !saved.length) return defaults;
-    if (saved.some(x => x.cat)) return saved.map(x => ({ ...x, cat: categories.some(c => c.id === x.cat) ? x.cat : "perso" }));
+    if (saved.some(x => x.cat)) {
+      const list = saved.map(x => ({ ...x, cat: categories.some(c => c.id === x.cat) ? x.cat : "perso" }));
+      // réponses ajoutées avec le chapitre Navigateurs : proposées même si la liste a déjà été personnalisée
+      const added = defaults.filter(d => ADDED.includes(d.title) && !list.some(x => x.title === d.title));
+      return [...list, ...added];
+    }
     const custom = saved.filter(x => !oldDefaultTitles.includes(x.title)).map(x => ({ ...x, cat: "perso" }));
     return [...defaults, ...custom];
   }

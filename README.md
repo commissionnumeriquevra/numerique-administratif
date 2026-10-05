@@ -2,9 +2,21 @@
 
 Application d'entraînement aux démarches administratives en ligne, pour les ateliers de médiation numérique.
 Un **formateur** crée un groupe, distribue des codes, attribue des missions et suit la salle **en direct**.
-Les **participants** entrent avec deux codes et un prénom ou pseudo : aucun e-mail, aucune donnée personnelle..
+Les **participants** entrent avec deux codes et un prénom ou pseudo : aucun e-mail, aucune donnée personnelle.
 
 ---
+
+## Chapitres du programme
+
+Chaque séance dure 30 minutes au plus : un cours court projeté, des jeux en direct sur les PC (façon Kahoot), puis les exercices de chacun.
+
+- **📧 E-mail** : 5 séances, 13 jeux, 7 niveaux notés sur 20.
+- **🧭 Navigateurs et recherche** : 3 séances, 10 jeux, 7 niveaux notés sur 20.
+  - Séance 1 : navigateur, moteur ou site ; les boutons ; taper une adresse ; onglets et favoris.
+  - Séance 2 : les mots-clés ; lire une page de résultats ; les annonces « Sponsorisé » ; les sites officiels.
+  - Séance 3 : le vrai nom d'un site ; le cadenas ; les faux sites ; les fausses alertes virus ; cookies et fenêtres pièges.
+  - Les exercices se font dans un **navigateur simulé** (onglets, flèches, favoris, cadenas, moteur « Cherchetout »).
+  - Le **niveau 7 est une mission réelle** : le participant choisit une mission, cherche sur le vrai Internet, puis répond dans l'application. Sa réponse arrive dans la **messagerie du formateur**, qui la valide avec les réponses rapides « Mission réelle… ».
 
 ## Nouveautés de la V8
 

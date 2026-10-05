@@ -181,6 +181,15 @@
         if (!t) return "Pas de réponse";
         if (t === target) return "Exact";
         if (/\s/.test(t)) return "Un espace en trop";
+        if (!target.includes("@")) { // adresse de site web
+          if (t.toLowerCase() === target) return "Des majuscules";
+          if (/[àâäéèêëîïôöùûüç]/i.test(t)) return "Un accent";
+          if (target.startsWith("www.") && !t.startsWith("www.")) return "Le « www. » oublié";
+          if (target.includes("-") && !t.includes("-")) return "Le tiret - oublié";
+          if (t.replace(/\./g, "") === target.replace(/\./g, "")) return "Un point oublié ou en trop";
+          if (t.split(".").pop() !== target.split(".").pop()) return "La fin (.fr) différente";
+          return "Une lettre différente";
+        }
         if (!t.includes("@")) return "L'arobase @ oubliée";
         if (t.toLowerCase() === target) return "Des majuscules";
         if (/[àâäéèêëîïôöùûüç]/i.test(t) && !/[àâäéèêëîïôöùûüç]/i.test(target)) return "Un accent";
