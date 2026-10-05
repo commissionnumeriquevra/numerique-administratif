@@ -397,9 +397,9 @@
           <ol class="chapter-levels">${p.steps.map(t => `<li>${C.icon(t)} ${esc(C.missions[t].short)}</li>`).join("")}</ol>
           ${st ? `<div class="chapter-progress">${st.started ? `▸ ${st.started} / ${st.seats} participant(s) ont ce chapitre · ${st.finished} l'ont terminé${st.per.length ? `<div class="chapter-people">${st.per.map(x => `<span class="chip ${x.done === x.total ? "done" : ""}">${esc(seatName(x.s))} ${x.done}/${x.total}</span>`).join("")}</div>` : ""}` : "Pas encore donné à ce groupe."}</div>` : ""}
           <div class="chapter-actions">
-            <button class="cyber-btn primary" data-ch="lesson" data-id="${ch.id}" type="button">📽 1. Projeter la leçon</button>
-            <button class="cyber-btn secondary" data-ch="demo" data-id="${ch.id}" type="button">👥 2. Niveau 1 ensemble</button>
-            <button class="cyber-btn secondary" data-ch="assign" data-id="${ch.id}" type="button">🚀 3. Donner au groupe</button>
+            ${(ch.lessons || [{ id: "", title: "Projeter la leçon", icon: "📽" }]).map((l, k) => `<button class="cyber-btn ${k ? "secondary" : "primary"}" data-ch="lesson" data-id="${ch.id}" data-lesson="${l.id}" type="button">${l.icon || "📽"} ${esc(l.title)}</button>`).join("")}
+            <button class="cyber-btn secondary" data-ch="demo" data-id="${ch.id}" type="button">👥 Niveau 1 ensemble</button>
+            <button class="cyber-btn secondary" data-ch="assign" data-id="${ch.id}" type="button">🚀 Donner au groupe</button>
           </div></div></article>`;
     }).join("");
   }
@@ -425,9 +425,9 @@
       AN.lesson.close();
     } catch (e) { console.error(e); toast(e.message, "bad", 7000); }
   }
-  function chapterAction(action, id) {
-    if (action === "lesson") AN.lesson.open(id, { onDemo: cid => chapterAction("demo", cid), onAssign: assignChapter });
-    else if (action === "demo") AN.lesson.demo(id, { onAssign: assignChapter });
+  function chapterAction(action, id, lesson, type) {
+    if (action === "lesson") AN.lesson.open(id, { lesson, onDemo: (cid, t) => chapterAction("demo", cid, null, t), onAssign: assignChapter });
+    else if (action === "demo") AN.lesson.demo(id, { type, onAssign: assignChapter });
     else if (action === "assign") assignChapter(id);
   }
 
@@ -741,7 +741,7 @@
     // délégation : actions de groupes et de places (toutes vues confondues)
     $("#teacherDashboard").addEventListener("click", e => {
       const g = e.target.closest("[data-g]"); if (g) return groupAction(g.dataset.g, g.dataset.id);
-      const chb = e.target.closest("[data-ch]"); if (chb) return chapterAction(chb.dataset.ch, chb.dataset.id);
+      const chb = e.target.closest("[data-ch]"); if (chb) return chapterAction(chb.dataset.ch, chb.dataset.id, chb.dataset.lesson || null);
       const s = e.target.closest("[data-s]"); if (s) { s.closest("details")?.removeAttribute("open"); return seatAction(s.dataset.s, s.dataset.id); }
       const t = e.target.closest(".conversation-item[data-thread]"); if (t) { T.thread = t.dataset.thread; return renderMessages(); }
       const qr = e.target.closest("[data-qr]"); if (qr) { const r = quickReplies()[qr.dataset.qr]; const ta = $("#teacherReplyText"); ta.value = AN.quickReplies.fill(r.text); T.qrPicked = r.cat; ta.focus(); return; }

@@ -130,20 +130,9 @@
       </div>
       <ul class="l-rules" data-reveal><li>📝 un objet clair</li><li>👋 Bonjour… Cordialement</li><li>🔇 pas de MAJUSCULES (= crier)</li><li>👀 je relis avant d'envoyer</li></ul>` },
 
-    { title: "Attention aux faux messages 🎣", html: `
-      <div class="l-scam">
-        <div class="ls-mail">
-          <div><small>De :</small> Assurance Maladie &lt;<mark data-reveal>remboursement@ameIi-securite.info</mark>&gt;</div>
-          <div><small>Objet :</small> <mark data-reveal>⚠ URGENT : remboursement en attente !!!</mark></div>
-          <p><mark data-reveal>Cher client,</mark> un remboursement de 87,40 € vous attend. <mark data-reveal>Sans réponse avant minuit, il sera annulé.</mark></p>
-          <p><mark data-reveal>Saisissez votre carte bancaire</mark> : <u>Recevoir mon remboursement</u></p>
-        </div>
-        <ul class="l-list small">
-          <li data-reveal>🔍 Une adresse d'expéditeur bizarre</li><li data-reveal>⏰ L'urgence et la menace</li>
-          <li data-reveal>🙈 « Cher client » au lieu de mon nom</li><li data-reveal>💳 On me demande ma carte ou mes codes</li>
-        </ul>
-      </div>
-      <div class="l-callout" data-reveal>🖱️ Je <b>survole</b> le lien sans cliquer : sa vraie adresse s'affiche en bas. Le cadenas 🔒 veut dire « connexion chiffrée », <b>pas</b> « site fiable » : je vérifie toujours le nom du site.</div>` },
+    { title: "Et les faux messages ? 🎣", html: `
+      <p class="l-lead">Vous recevrez peut-être un jour un faux message, qui imite une administration ou une banque.</p>
+      <div class="l-callout" data-reveal>🫶 <b>Pas d'inquiétude :</b> lire un message est sans danger. Nous consacrons une séance entière à ce sujet, avec une méthode simple en 5 questions.</div>` },
 
     { title: "Quiz express", html: `
       <div class="l-flips wide">
@@ -164,10 +153,175 @@
       </div>` }
   ];
 
+
+  /* =========================================================
+     LEÇON 2 — Déjouer les e-mails frauduleux
+     Public souvent inquiet : on rassure d'abord, puis une méthode
+     unique (5 questions), des exemples concrets, et un plan
+     d'action calme si l'on s'est fait piéger.
+     ========================================================= */
+  const url = (parts) => `<div class="l-url">${parts.map(([t, cls, lab]) => `<span class="u ${cls}"><b>${t}</b>${lab ? `<small>${lab}</small>` : ""}</span>`).join("")}</div>`;
+  const fraudSlides = () => [
+    { theme: "cover", title: "Déjouer les e-mails frauduleux", html: `
+      <p class="l-lead">Ne plus avoir peur de sa boîte mail : reconnaître un faux message, calmement.</p>
+      <div class="l-goals">
+        <div data-reveal>🫶 Ce qui est dangereux… et ce qui ne l'est pas</div><div data-reveal>🧭 Une méthode en 5 questions</div><div data-reveal>🔍 Lire une adresse et un lien</div>
+        <div data-reveal>🎣 Les arnaques les plus fréquentes</div><div data-reveal>🛟 Les 3 gestes dans le doute</div><div data-reveal>🆘 Que faire si j'ai cliqué</div>
+      </div>` },
+
+    { title: "D'abord, rassurez-vous", html: `
+      <div class="l-grid2">
+        <div class="l-safe" data-reveal><h3>✅ Sans danger</h3><ul><li>Recevoir un faux message</li><li>L'<b>ouvrir</b> et le <b>lire</b></li><li>Le supprimer</li><li>Le mettre dans les indésirables</li></ul></div>
+        <div class="l-risk" data-reveal><h3>⚠️ Le danger vient de ce qu'on vous <u>demande</u></h3><ul><li>Cliquer sur le lien</li><li>Ouvrir une pièce jointe inattendue</li><li>Donner un code, un mot de passe, sa carte</li><li>Appeler le numéro indiqué</li><li>Payer</li></ul></div>
+      </div>
+      <div class="l-callout" data-reveal>💌 Recevoir un faux message ne veut pas dire que vous avez fait une erreur : les escrocs l'envoient <b>au hasard, à des milliers d'adresses</b>.</div>` },
+
+    { title: "Le faux agent à la porte 🚪", html: `
+      <div class="l-door">
+        <div class="l-bubble">🔔 « Bonjour, je viens de la compagnie d'électricité. Il faut vérifier votre compteur <b>tout de suite</b>, sinon on vous coupe le courant <b>ce soir</b> ! »</div>
+        <div class="l-card" data-reveal><h3>Que faites-vous ?</h3><p>Je <b>n'ouvre pas</b>. J'appelle <b>moi-même</b> la compagnie, au numéro que je connais.</p></div>
+        <div class="l-card big" data-reveal><h3>Un faux e-mail, c'est pareil</h3><p>Un <b>costume</b> (un nom connu), de l'<b>urgence</b>, et une <b>demande</b>.<br>Même réflexe : je ne clique pas, je vérifie par moi-même.</p></div>
+      </div>
+      <div class="l-callout" data-reveal>🫶 <b>Vous avez toujours le droit de ne rien faire.</b> Un vrai organisme ne vous en voudra jamais d'avoir vérifié.</div>` },
+
+    { title: "La méthode des 5 questions", html: `
+      <ol class="l-five">
+        <li data-reveal><span>🔍</span><b>Qui m'écrit vraiment ?</b><small>Je regarde l'adresse, pas seulement le nom.</small></li>
+        <li data-reveal><span>🤔</span><b>Est-ce que je l'attendais ?</b><small>Un colis, un remboursement… que je n'ai pas demandé ?</small></li>
+        <li data-reveal><span>⏰</span><b>Me met-on la pression ?</b><small>Urgence, menace, cadeau trop beau.</small></li>
+        <li data-reveal><span>🔑</span><b>Que me demande-t-on ?</b><small>Un code, une carte, un mot de passe, un paiement ?</small></li>
+        <li data-reveal><span>🔗</span><b>Où mène le lien ?</b><small>Je survole sans cliquer, je lis le vrai nom du site.</small></li>
+      </ol>
+      <div class="l-callout" data-reveal>🚩 Si <b>une seule</b> réponse vous inquiète : ne cliquez pas, vérifiez par vous-même.</div>` },
+
+    { title: "1 · Qui m'écrit vraiment ? 🔍", theme: "dense", html: `
+      <div class="l-grid2">
+        <div class="l-card" data-reveal><h3>🎭 Le nom affiché = un costume</h3><p>N'importe qui peut écrire « Assurance Maladie » ou « Impôts » comme nom d'expéditeur.</p>
+          <div class="l-from">De : <b>Assurance Maladie</b> ▾</div></div>
+        <div class="l-card big" data-reveal><h3>🪪 L'adresse = la carte d'identité</h3><p>Je clique sur le nom (ou je passe la souris dessus) pour voir l'adresse complète.</p>
+          <div class="l-from">&lt;remboursement@<mark>ameli-securite.info</mark>&gt;</div></div>
+      </div>
+      <p class="l-lead" data-reveal>Je regarde <b>ce qui suit le @</b> :</p>
+      <div class="l-flips">
+        ${flip("…@impots.gouv.fr", "✅ « .gouv.fr » est réservé à l'État français", true)}
+        ${flip("…@impots-gouv.info", "❌ Un tiret et « .info » : ce n'est pas l'État", false)}
+        ${flip("impots.service@gmail.com", "❌ Une administration n'écrit jamais depuis Gmail, Hotmail ou Orange", false)}
+        ${flip("…@ameli-securite.info", "❌ Le vrai site de l'Assurance Maladie est ameli.fr", false)}
+      </div>
+      <p class="l-note" data-reveal>Une adresse correcte ne suffit pas toujours : on se pose aussi les 4 autres questions.</p>` },
+
+    { title: "2 · Je l'attendais ? 3 · Me presse-t-on ?", html: `
+      <div class="l-card" data-reveal><h3>🤔 Est-ce que je m'attendais à ce message ?</h3>
+        <p>Un <b>colis</b>… alors que je n'ai rien commandé ? Un <b>remboursement</b>… que je n'ai pas demandé ? Un <b>gain</b>… à un jeu auquel je n'ai pas joué ?</p></div>
+      <div class="l-levers">
+        <div data-reveal><span>😨</span><b>La peur</b><small>amende, compte bloqué, plainte, coupure</small></div>
+        <div data-reveal><span>⏰</span><b>L'urgence</b><small>« sous 24 h », « dernier avis », « avant minuit »</small></div>
+        <div data-reveal><span>🎁</span><b>L'appât</b><small>remboursement, cadeau, gain inattendu</small></div>
+        <div data-reveal><span>💔</span><b>L'émotion</b><small>un proche en difficulté qui a besoin d'argent</small></div>
+      </div>
+      <div class="l-callout" data-reveal>🧠 La pression sert à vous <b>empêcher de réfléchir</b>. Un vrai organisme vous laisse toujours le temps.</div>` },
+
+    { title: "4 · Que me demande-t-on ? 🔑", theme: "never", html: `
+      <div class="l-never">
+        <h3>Par e-mail, un vrai organisme ne vous demande <u>JAMAIS</u> :</h3>
+        <ul>
+          <li data-reveal>🔑 votre <b>mot de passe</b></li>
+          <li data-reveal>📱 le <b>code reçu par SMS</b></li>
+          <li data-reveal>💳 votre <b>numéro de carte bancaire</b> (ni les 3 chiffres au dos)</li>
+          <li data-reveal>💶 de <b>payer</b> pour recevoir ou débloquer quelque chose</li>
+          <li data-reveal>🖥️ d'<b>installer un programme</b></li>
+        </ul>
+        <p data-reveal>Ni votre banque, ni les impôts, ni l'Assurance Maladie, ni La Poste, ni la police.</p>
+      </div>` },
+
+    { title: "5 · Où mène le lien ? 🔗", html: `
+      <div class="l-card" data-reveal><h3>① Je survole, sans cliquer</h3><p>Je pose la souris sur le lien : sa <b>vraie adresse</b> s'affiche en bas de l'écran.</p></div>
+      <div class="l-card" data-reveal><h3>② Je lis le vrai nom du site : juste avant le premier « / »</h3>
+        ${url([["https://", "dim", ""], ["www.", "dim", ""], ["impots.gouv.fr", "ok", "le vrai nom ✅"], ["/accueil", "dim", "la page"]])}
+        ${url([["https://", "dim", ""], ["impots.gouv.fr.", "mask", "un déguisement !"], ["remboursement-dossier.com", "ko", "le vrai nom ❌"], ["/accueil", "dim", ""]])}</div>
+      <div class="l-callout" data-reveal>👉 Ce qui compte, c'est <b>la fin du nom</b>, juste avant le premier « / ». Le début peut être un déguisement.</div>` },
+
+    { title: "Lien officiel ou piège ?", theme: "dense", html: `
+      <div class="l-flips">
+        ${flip("https://www.ameli.fr/assure", "✅ Le vrai nom est ameli.fr", true)}
+        ${flip("http://ameli-carte-vitale.info/renouveler", "❌ Le vrai nom est ameli-carte-vitale.info", false)}
+        ${flip("https://www.antai.gouv.fr", "✅ Site officiel des amendes (.gouv.fr)", true)}
+        ${flip("https://antai-paiement-amende.com", "❌ Faux : le vrai est antai.gouv.fr", false)}
+        ${flip("https://impots.gouv.fr.remboursement-rapide.com", "❌ Le vrai nom est remboursement-rapide.com", false)}
+        ${flip("https://www.impots-gouv.fr/connexion", "❌ Un tiret à la place du point : ce n'est pas impots.gouv.fr", false)}
+      </div>` },
+
+    { title: "Le cadenas 🔒 ne suffit pas", html: `
+      <div class="l-grid2">
+        <div class="l-card" data-reveal><h3>🔒 https / cadenas, cela veut dire…</h3><p>La connexion est <b>chiffrée</b> : personne ne peut espionner ce que vous tapez sur le chemin.</p></div>
+        <div class="l-card big" data-reveal><h3>…mais PAS que le site est honnête</h3><p>Les sites d'arnaque ont <b>aussi</b> un cadenas. Un escroc peut chiffrer la connexion vers <b>son</b> faux site.</p></div>
+      </div>
+      <div class="l-callout" data-reveal>✅ Je vérifie toujours <b>le nom du site</b> (question 5).</div>` },
+
+    { title: "Vrai ou faux ?", html: `
+      <div class="l-grid2">
+        <div class="l-mail good"><div class="lm-h">De : Impôts &lt;ne-pas-repondre@impots.gouv.fr&gt;<br>Objet : Votre avis d'impôt est disponible</div>
+          <p>Bonjour Madame Martin,</p><p>Votre avis d'impôt est disponible dans votre espace particulier. Connectez-vous sur impots.gouv.fr pour le consulter.</p>
+          <div class="l-badges"><span data-reveal class="l-tag ok">✅ adresse en .gouv.fr</span><span data-reveal class="l-tag ok">✅ m'appelle par mon nom</span><span data-reveal class="l-tag ok">✅ aucune urgence</span><span data-reveal class="l-tag ok">✅ ne demande rien de secret</span></div></div>
+        <div class="l-mail bad"><div class="lm-h">De : Impots.gouv &lt;remboursement@impots-gouv-fr.info&gt;<br>Objet : Remboursement de 248,60 € – DERNIER DÉLAI</div>
+          <p>Cher contribuable,</p><p>Vous avez droit à un remboursement. Saisissez votre carte bancaire <b>sous 48 h</b>, sinon il sera annulé.</p><p><u>Recevoir mon remboursement</u></p>
+          <div class="l-badges"><span data-reveal class="l-tag ko">🚩 adresse en .info</span><span data-reveal class="l-tag ko">🚩 « Cher contribuable »</span><span data-reveal class="l-tag ko">🚩 urgence 48 h</span><span data-reveal class="l-tag ko">🚩 demande la carte bancaire</span></div></div>
+      </div>
+      <p class="l-note" data-reveal>Même devant un vrai message, on peut toujours préférer aller soi-même sur le site plutôt que cliquer.</p>` },
+
+    { title: "Les arnaques les plus fréquentes", html: `
+      <div class="l-scams">
+        <div data-reveal><span>📦</span><b>Le faux colis</b><small>« Frais de 1,99 € à régler »</small><em>→ Je suis mon colis sur le site du transporteur, avec le numéro de ma commande.</em></div>
+        <div data-reveal><span>💳</span><b>La fausse carte Vitale</b><small>« Votre carte expire, commandez-la »</small><em>→ Je vais moi-même sur ameli.fr ou dans l'application.</em></div>
+        <div data-reveal><span>💶</span><b>Le faux remboursement</b><small>impôts, énergie, Assurance Maladie</small><em>→ Je vérifie dans mon espace personnel, sur le site officiel.</em></div>
+        <div data-reveal><span>🚓</span><b>La fausse amende</b><small>« Majoration sous 24 h »</small><em>→ Le seul site officiel : antai.gouv.fr</em></div>
+        <div data-reveal><span>🏦</span><b>Le faux « compte bloqué »</b><small>« Confirmez votre identité »</small><em>→ J'appelle mon conseiller, au numéro que je connais.</em></div>
+        <div data-reveal><span>🎓</span><b>Le faux compte formation</b><small>« Vos droits expirent demain »</small><em>→ Le vrai site : moncompteformation.gouv.fr. Aucune urgence.</em></div>
+        <div data-reveal><span>📹</span><b>Le chantage</b><small>« On vous a filmé, payez »</small><em>→ C'est un mensonge envoyé à des milliers de personnes. Je ne paie pas, je ne réponds pas, je supprime.</em></div>
+      </div>` },
+
+    { title: "Dans le doute : 3 gestes 🛟", html: `
+      <ol class="l-gestures">
+        <li data-reveal><span>✋</span><div><b>Je ne clique pas.</b><small>Ni sur le lien, ni sur la pièce jointe, ni sur « répondre ».</small></div></li>
+        <li data-reveal><span>🔎</span><div><b>Je vérifie par moi-même.</b><small>Je tape moi-même l'adresse du site officiel, j'ouvre l'application, ou j'appelle le numéro que je connais (au dos de ma carte, sur un courrier reçu).</small></div></li>
+        <li data-reveal><span>🚫</span><div><b>Je range.</b><small>« Indésirable » : les suivants iront directement au bon endroit. Je peux aussi le signaler sur signal-spam.fr</small></div></li>
+      </ol>
+      <div class="l-callout" data-reveal>🤝 Et je peux toujours <b>demander</b> à un proche ou au médiateur numérique de la médiathèque.</div>` },
+
+    { title: "Et si j'ai cliqué ? 🆘", html: `
+      <p class="l-lead">Pas de panique. Se faire avoir n'est pas une honte : ces escrocs sont des professionnels. On agit calmement, et vite.</p>
+      <table class="l-plan"><tbody>
+        <tr data-reveal><td>J'ai cliqué, mais je n'ai <b>rien rempli</b></td><td>Je ferme la page. En général, ce n'est pas grave. Je garde mon ordinateur à jour.</td></tr>
+        <tr data-reveal><td>J'ai tapé mon <b>mot de passe</b></td><td>Je le change tout de suite, sur le vrai site (et partout où j'utilise le même).</td></tr>
+        <tr data-reveal><td>J'ai donné ma <b>carte bancaire</b> ou un <b>code reçu par SMS</b></td><td>J'appelle ma banque <b>immédiatement</b> pour bloquer la carte (numéro au dos de la carte).</td></tr>
+        <tr data-reveal><td>J'ai <b>perdu de l'argent</b></td><td>Je préviens ma banque et je porte plainte (commissariat ou gendarmerie).</td></tr>
+      </tbody></table>
+      <div class="l-callout" data-reveal>🆘 Aide gratuite et conseils : <b>cybermalveillance.gouv.fr</b> · Signaler un e-mail : <b>signal-spam.fr</b> · Un SMS : le <b>33700</b></div>` },
+
+    { title: "Quiz express", html: `
+      <div class="l-flips wide">
+        ${flip("Ouvrir et lire un faux message, c'est dangereux ?", "Non. Le danger, c'est cliquer, ouvrir une pièce jointe inattendue ou donner des informations.")}
+        ${flip("Ma banque m'écrit pour me demander le code reçu par SMS…", "C'est une arnaque : ce code ne se donne <b>jamais</b>, à personne.")}
+        ${flip("Le lien est https://impots.gouv.fr.aide-rapide.net : c'est le site des impôts ?", "Non : le vrai nom, juste avant le « / », est <b>aide-rapide.net</b>.")}
+        ${flip("J'ai donné ma carte bancaire sur un faux site…", "J'appelle ma banque <b>tout de suite</b> pour bloquer la carte.")}
+      </div>` },
+
+    { theme: "cover", title: "À vous de jouer !", html: `
+      <ol class="l-five small"><li><span>🔍</span><b>Qui m'écrit vraiment ?</b></li><li><span>🤔</span><b>Est-ce que je l'attendais ?</b></li><li><span>⏰</span><b>Me met-on la pression ?</b></li><li><span>🔑</span><b>Que me demande-t-on ?</b></li><li><span>🔗</span><b>Où mène le lien ?</b></li></ol>
+      <div class="l-actions">
+        <button type="button" class="l-btn" data-lesson-act="demo" data-type="mail_fraud">👥 Faire l'enquête ensemble</button>
+        <button type="button" class="l-btn alt" data-lesson-act="assign">🚀 Donner le chapitre au groupe</button>
+      </div>` }
+  ];
+
   AN.chapters.register({
     id: "email", title: "E-mail", icon: "📧", color: "#3979b7",
     summary: "Lire, écrire, répondre, transférer, joindre un fichier et déjouer les arnaques.",
-    duration: "≈ 5 séances", parcours: "p_email", demo: "mail_read", slides
+    duration: "≈ 5 séances", parcours: "p_email", demo: "mail_read", slides,
+    lessons: [
+      { id: "base", title: "Leçon 1 : la messagerie", icon: "📽", slides },
+      { id: "fraude", title: "Leçon 2 : déjouer les arnaques", icon: "🛡️", badge: "Déjouer les arnaques", slides: fraudSlides }
+    ]
   });
 
   /* Chapitres du programme annuel, à venir (affichés grisés côté formateur). */

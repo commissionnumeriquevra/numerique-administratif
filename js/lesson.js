@@ -42,10 +42,17 @@
   const toggleFull = () => document.fullscreenElement ? document.exitFullscreen().catch(() => {}) : document.documentElement.requestFullscreen?.().catch(() => {});
 
   /* ---------------- leçon ---------------- */
-  function open(id, { onDemo, onAssign, onClose, start = 0 } = {}) {
+  /** Un chapitre peut contenir plusieurs leçons (ch.lessons) ; sinon ch.slides. */
+  function lessonOf(ch, lessonId) {
+    const l = (ch.lessons || []).find(x => x.id === lessonId) || (ch.lessons || [])[0];
+    const src = l ? l.slides : ch.slides;
+    return { lesson: l, slides: typeof src === "function" ? src() : src };
+  }
+
+  function open(id, { onDemo, onAssign, onClose, start = 0, lesson: lessonId } = {}) {
     const ch = chapters.get(id); if (!ch) return;
     close();
-    const slides = typeof ch.slides === "function" ? ch.slides() : ch.slides;
+    const { lesson, slides } = lessonOf(ch, lessonId);
     const o = overlay("lesson");
     session = { ch, i: Math.min(start, slides.length - 1), overlay: o, onClose };
 
@@ -53,7 +60,7 @@
       const s = slides[session.i];
       o.innerHTML = `<div class="lesson-stage" style="--ch:${ch.color || "#7050bf"}">
           <div class="lesson-slide ${s.theme || ""}" aria-live="polite">
-            <div class="lesson-badge">${ch.icon} ${esc(ch.title)}</div>
+            <div class="lesson-badge">${lesson?.icon || ch.icon} ${esc(lesson?.badge || ch.title)}</div>
             ${s.title ? `<h1>${s.title}</h1>` : ""}
             <div class="lesson-body">${s.html}</div>
           </div>
@@ -79,7 +86,7 @@
       const flip = e.target.closest("[data-flip]");
       if (flip) { flip.classList.toggle("flipped"); return; }
       const act = e.target.closest("[data-lesson-act]");
-      if (act) { const a = act.dataset.lessonAct; if (a === "demo") { close(); onDemo?.(id); } else if (a === "assign") onAssign?.(id); return; }
+      if (act) { const a = act.dataset.lessonAct; if (a === "demo") { close(); onDemo?.(id, act.dataset.type); } else if (a === "assign") onAssign?.(id); return; }
       const b = e.target.closest("[data-l]");
       if (b) {
         const a = b.dataset.l;

@@ -669,4 +669,221 @@
       ctx.finalScreen({ theme: null });
     }
   });
+
+  /* =========================================================
+     NIVEAU 6 — Repérer un e-mail frauduleux (méthode des 5 questions)
+     Public inquiet : explications détaillées, ton rassurant,
+     vrais ET faux messages pour apprendre à faire la différence.
+     ========================================================= */
+  const FIVE = ["🔍 Qui m'écrit vraiment ?", "🤔 Est-ce que je l'attendais ?", "⏰ Me met-on la pression ?", "🔑 Que me demande-t-on ?", "🔗 Où mène le lien ?"];
+  const hostOf = u => (String(u).match(/^[a-z]+:\/\/([^/?#]+)/i) || [, u])[1];
+  const realDomain = host => { const p = host.split("."); return p.slice(host.endsWith(".gouv.fr") ? -3 : -2).join("."); };
+  function urlAnatomy(u) {
+    const proto = (u.match(/^[a-z]+:\/\//i) || [""])[0], host = hostOf(u), rest = u.slice(proto.length + host.length);
+    const dom = realDomain(host);
+    let pre = host.slice(0, host.length - dom.length), www = "";
+    if (pre.startsWith("www.")) { www = "www."; pre = pre.slice(4); } // « www. » est normal, pas un déguisement
+    return `<span class="url-anat"><span class="dim">${esc(proto + www)}</span>${pre ? `<span class="pre" title="déguisement">${esc(pre)}</span>` : ""}<span class="dom">${esc(dom)}</span><span class="dim">${esc(rest)}</span></span>`;
+  }
+  const addrAnatomy = email => { const [user, dom] = String(email).split("@"); return `<span class="url-anat"><span class="dim">${esc(user)}@</span><span class="dom">${esc(dom)}</span></span>`; };
+
+  const SENDERS = [
+    { name: "Impôts", email: "ne-pas-repondre@impots.gouv.fr", ok: true, why: "Après le @ : impots.gouv.fr. La fin « .gouv.fr » est réservée aux services de l'État." },
+    { name: "Assurance Maladie", email: "remboursement@ameli-securite.info", ok: false, why: "Après le @ : ameli-securite.info. Le vrai site de l'Assurance Maladie est ameli.fr : ici, on a ajouté « -securite » et la fin est .info." },
+    { name: "Médiathèque de Valbourg", email: "mediatheque@valbourg.fr", ok: true, why: "C'est l'adresse habituelle de votre médiathèque, celle qui vous écrit d'habitude." },
+    { name: "Impots.gouv", email: "impots.service.client@gmail.com", ok: false, why: "Une administration n'écrit jamais depuis une adresse Gmail, Hotmail, Orange ou Free. Le nom « Impots.gouv » n'est qu'un costume." },
+    { name: "La Poste", email: "suivi@laposte-colis-livraison.top", ok: false, why: "Après le @ : laposte-colis-livraison.top. Le mot « laposte » est noyé dans un autre nom, qui finit par .top : ce n'est pas La Poste." },
+    { name: "Banque du Valbourg", email: "service@banque-valbourg.fr.securite-client.com", ok: false, why: "Piège : ce qui compte, c'est la FIN de l'adresse : securite-client.com. Le début « banque-valbourg.fr » n'est qu'un déguisement." }
+  ];
+  const LINKS = [
+    { u: "https://www.impots.gouv.fr/accueil", ok: true, why: "Le vrai nom, juste avant le premier « / », est impots.gouv.fr : c'est le site officiel." },
+    { u: "https://impots.gouv.fr.remboursement-dossier.com/accueil", ok: false, why: "Le début « impots.gouv.fr. » est un déguisement. Le vrai nom, à la fin, est remboursement-dossier.com." },
+    { u: "https://www.ameli.fr/assure", ok: true, why: "Le vrai nom est ameli.fr : c'est le site de l'Assurance Maladie." },
+    { u: "http://ameli-carte-vitale.info/renouvellement", ok: false, why: "Le vrai nom est ameli-carte-vitale.info, pas ameli.fr. Les mots « ameli » et « carte vitale » servent à vous mettre en confiance." },
+    { u: "https://antai-paiement-amende.com/payer", ok: false, why: "Le seul site officiel des amendes est antai.gouv.fr. Le cadenas « https » ne prouve rien." },
+    { u: "https://www.antai.gouv.fr", ok: true, why: "antai.gouv.fr est bien le site officiel des amendes (.gouv.fr)." },
+    { u: "https://www.impots-gouv.fr/connexion", ok: false, why: "Regardez bien : un tiret remplace le point. impots-gouv.fr n'est pas impots.gouv.fr." }
+  ];
+  function fraudMails(ctx) {
+    const link = (url, txt) => `<p><a href="#" class="mk-link" data-url="${url}">${txt}</a></p>`;
+    return [
+      { id: "f_impots", from: { name: "Impots.gouv", email: "remboursement@impots-gouv-fr.info" }, subject: "Remboursement de 248,60 € en attente – dernier délai", date: "Aujourd'hui 07:41", unread: true, fraud: true,
+        context: "Vous n'avez fait aucune demande de remboursement.",
+        body: `<p>Cher contribuable,</p><p>Après un dernier calcul de vos impôts, vous avez droit à un remboursement de <b>248,60 €</b>.</p><p>Pour le recevoir, confirmez vos coordonnées bancaires <b>sous 48 heures</b>. Passé ce délai, le remboursement sera définitivement annulé.</p>${link("http://impots-gouv-fr.info/remboursement/carte", "Recevoir mon remboursement")}<p>Direction Générale des Finances Publiques</p>`,
+        checks: [[1, "L'adresse finit par impots-gouv-fr.info : ce n'est pas « .gouv.fr ». Le nom « Impots.gouv » n'est qu'un costume."],
+          [1, "Vous n'avez rien demandé. Un vrai remboursement d'impôt arrive tout seul sur votre compte bancaire, sans rien saisir."],
+          [1, "« Sous 48 heures », « définitivement annulé » : on vous presse pour vous empêcher de réfléchir."],
+          [1, "On vous demande vos coordonnées bancaires : les impôts ne le demandent jamais par e-mail."],
+          [1, "En survolant le bouton, on lit impots-gouv-fr.info : ce n'est pas impots.gouv.fr."]] },
+      { id: "r_impots", from: { name: "Impôts", email: "ne-pas-repondre@impots.gouv.fr" }, subject: "Votre avis d'impôt est disponible", date: "Hier 10:02", unread: true, fraud: false,
+        context: "Comme chaque année à cette période, vous attendez votre avis d'impôt.",
+        body: `<p>Bonjour ${esc(ctx.name)},</p><p>Votre avis d'impôt sur le revenu est disponible dans votre espace particulier.</p><p>Pour le consulter, connectez-vous sur impots.gouv.fr, rubrique « Documents ».</p><p>Ceci est un message automatique, merci de ne pas y répondre.</p>`,
+        checks: [[0, "impots.gouv.fr : la fin « .gouv.fr » est réservée à l'État."], [0, "Vous attendiez ce document : c'est la bonne période."], [0, "Aucune urgence, aucune menace."], [0, "On ne vous demande rien : ni code, ni carte, ni paiement."], [0, "Pas de bouton : on vous invite à aller vous-même sur le site. C'est le bon réflexe."]] },
+      { id: "f_colis", from: { name: "Service Livraison", email: "notification@suivi-colis-express.top" }, subject: "Votre colis n'a pas pu être livré", date: "Hier 18:20", unread: true, fraud: true,
+        context: "Vous n'attendez aucun colis.",
+        body: `<p>Bonjour,</p><p>Votre colis n° FR8812645 n'a pas pu être livré : l'adresse est incomplète.</p><p>Pour programmer une nouvelle livraison, réglez les frais de <b>1,99 €</b> avant demain.</p>${link("https://suivi-colis-express.top/frais-livraison", "Programmer la livraison")}`,
+        checks: [[1, "suivi-colis-express.top n'est le site d'aucun transporteur connu."], [1, "Vous n'avez rien commandé : pourquoi un colis ?"], [1, "« Avant demain » : encore de l'urgence."], [1, "Un petit montant (1,99 €) pour paraître sans risque : le vrai but est de voler votre numéro de carte."], [1, "Le lien a un cadenas (https), mais le nom du site est suivi-colis-express.top : le cadenas ne prouve rien."]] },
+      { id: "r_pharma", from: P.pharma, subject: "Votre commande est prête", date: "Lun. 08:30", unread: true, fraud: false,
+        context: "Vous avez commandé un médicament à votre pharmacie avant-hier.",
+        body: "<p>Bonjour,</p><p>Votre commande est disponible. Vous pouvez venir la récupérer aux heures d'ouverture.</p><p>Pharmacie du Centre</p>",
+        checks: [[0, "C'est l'adresse de votre pharmacie."], [0, "Vous avez passé commande : vous attendiez ce message."], [0, "Aucune pression."], [0, "On ne vous demande rien."], [0, "Aucun lien."]] },
+      { id: "f_banque", from: { name: "Banque du Valbourg", email: "securite@banque-valbourg-alerte.com" }, subject: "⚠ Activité inhabituelle : votre compte sera suspendu", date: "Lun. 06:12", unread: true, fraud: true,
+        context: "Votre banque est la Banque du Valbourg. Ses messages viennent d'une adresse qui finit par @banque-valbourg.fr",
+        body: `<p>Cher(e) client(e),</p><p>Nous avons détecté une activité inhabituelle sur votre compte. Par sécurité, il sera <b>suspendu aujourd'hui</b>.</p><p>Pour l'éviter, confirmez votre identité : identifiant, mot de passe et <b>le code que vous allez recevoir par SMS</b>.</p>${link("http://banque-valbourg-alerte.com/verification", "Confirmer mon identité")}`,
+        checks: [[1, "L'adresse habituelle de votre banque finit par banque-valbourg.fr. Ici : banque-valbourg-alerte.com."], [1, "Vous n'avez rien fait d'inhabituel."], [1, "« Suspendu aujourd'hui » : la peur et l'urgence."], [1, "On demande votre mot de passe ET le code SMS. C'est exactement ce qu'une banque ne demande JAMAIS : avec ce code, l'escroc valide un paiement à votre place."], [1, "Le lien mène vers banque-valbourg-alerte.com, pas vers votre banque."]] },
+      { id: "r_media", from: P.media, subject: "Rappel : vos livres sont à rendre samedi", date: "Dim. 09:00", unread: true, fraud: false,
+        context: "Vous avez emprunté 3 livres il y a 3 semaines.",
+        body: `<p>Bonjour ${esc(ctx.name)},</p><p>Vos 3 livres sont à rendre avant samedi. Vous pouvez aussi les prolonger à l'accueil de la médiathèque.</p><p>Bonne lecture !<br>L'équipe de la médiathèque</p>`,
+        checks: [[0, "C'est l'adresse habituelle de la médiathèque."], [0, "Vous avez bien emprunté des livres."], [0, "Un simple rappel, sans menace."], [0, "On ne vous demande rien de secret."], [0, "Aucun lien."]] },
+      ...ctx.byLevel({ beginner: [], intermediate: [1], expert: [1] }).map(() => (
+        { id: "f_amende", from: { name: "ANTAI", email: "avis@antai-paiement-amende.com" }, subject: "Avis de contravention impayée", date: "Sam. 19:44", unread: true, fraud: true,
+          context: "Vous n'avez reçu aucune amende par courrier.",
+          body: `<p>Madame, Monsieur,</p><p>Sauf erreur de notre part, votre amende de <b>35 €</b> reste impayée. Sans règlement <b>sous 24 h</b>, elle sera majorée à 135 €.</p>${link("https://antai-paiement-amende.com/payer", "Payer mon amende")}`,
+          checks: [[1, "Le site officiel des amendes est antai.gouv.fr. Ici : antai-paiement-amende.com."], [1, "Vous n'avez reçu aucune amende par courrier."], [1, "« Sous 24 h », « majorée » : la peur de payer plus."], [1, "On vous demande de payer par un lien."], [1, "Le lien mène vers antai-paiement-amende.com."]] }))
+    ];
+  }
+  function investigation(m, ok) {
+    return `<div class="fiche ${m.fraud ? "fraud" : "safe"}">
+      <div class="fiche-head">${ok ? "✅ Bonne réponse !" : "Pas tout à fait…"} Ce message est <b>${m.fraud ? "🚩 une ARNAQUE" : "✅ NORMAL"}</b>.</div>
+      <table class="fiche-table"><tbody>${m.checks.map(([flag, txt], i) => `<tr class="${flag ? "flag" : "ok"}"><th>${FIVE[i]}</th><td><span aria-hidden="true">${flag ? "🚩" : "✅"}</span> ${esc(txt)}</td></tr>`).join("")}</tbody></table>
+      <div class="fiche-do">${m.fraud ? "👉 <b>Le bon geste :</b> ne pas cliquer, puis ranger ce message avec le bouton <b>🚫 Indésirable</b> (au-dessus du message)." : "👉 Vous pouvez le garder en toute tranquillité. Et même pour un vrai message, on peut toujours aller soi-même sur le site plutôt que cliquer."}</div></div>`;
+  }
+
+  R("mail_fraud", {
+    steps: 4,
+    render(ctx) {
+      const step = ctx.m.step || 0, L = ctx.local;
+      const G = MAIL().grader(L.grade ||= {});
+      const me = meOf(ctx);
+      const reassure = `<div class="mk-reassure">🫶 Rappel : <b>lire un message est sans danger.</b> Ici, tout est fictif : vous pouvez vous tromper sans risque.</div>`;
+
+      if (step === 0) {
+        const list = ctx.byLevel({ beginner: SENDERS.slice(0, 4), intermediate: SENDERS.slice(0, 5), expert: SENDERS });
+        L.s ||= {};
+        const f = frame(ctx, { level: 6, title: "Qui m'écrit vraiment ? 🔍", step: 0, noClient: true,
+          consigne: "Le nom affiché peut être un <b>costume</b>. Pour chaque expéditeur, cliquez sur « 👁 Voir l'adresse », puis dites si c'est <b>fiable</b> ou <b>suspect</b>.",
+          help: "Regardez ce qui est écrit APRÈS le @, et surtout la fin. « .gouv.fr » = l'État. Gmail, Hotmail… = jamais une administration." });
+        const draw = () => {
+          f.panel.innerHTML = reassure + `<div class="sender-grid">${list.map((x, i) => {
+            const st = L.s[i] || {};
+            return `<div class="sender-card ${st.answered != null ? (st.answered === x.ok ? "right" : "wrong") + (x.ok ? " is-ok" : " is-trap") : ""}">
+              <div class="sender-from">De : <b>${esc(x.name)}</b></div>
+              ${st.shown ? `<div class="sender-addr">${addrAnatomy(x.email)}</div>` : `<button type="button" class="secondary" data-show="${i}">👁 Voir l'adresse</button>`}
+              ${st.shown && st.answered == null ? `<div class="sender-btns"><button type="button" class="secondary" data-i="${i}" data-v="1">✅ Fiable</button><button type="button" class="secondary" data-i="${i}" data-v="0">🚩 Suspect</button></div>` : ""}
+              ${st.answered != null ? `<p class="sender-why"><b>${x.ok ? "✅ Fiable" : "🚩 Suspect"}.</b> ${esc(x.why)}</p>` : ""}</div>`;
+          }).join("")}</div>
+          ${list.every((_, i) => L.s[i]?.answered != null) ? `<button type="button" class="primary" data-next>Étape suivante : les liens →</button>` : ""}`;
+          f.panel.querySelectorAll("[data-show]").forEach(b => b.addEventListener("click", () => { (L.s[b.dataset.show] ||= {}).shown = true; draw(); }));
+          f.panel.querySelectorAll("[data-v]").forEach(b => b.addEventListener("click", () => {
+            const i = Number(b.dataset.i), v = b.dataset.v === "1", x = list[i];
+            L.s[i].answered = v;
+            (v === x.ok ? G.ok : G.ko)("snd_" + i, `${x.name} <${x.email}> était ${x.ok ? "fiable" : "suspect"}`, x.why);
+            draw();
+          }));
+          f.panel.querySelector("[data-next]")?.addEventListener("click", () => ctx.go(1));
+        };
+        draw();
+        return;
+      }
+
+      if (step === 1) {
+        const list = ctx.byLevel({ beginner: LINKS.slice(0, 5), intermediate: LINKS.slice(0, 6), expert: LINKS });
+        L.l ||= {};
+        const f = frame(ctx, { level: 6, title: "Où mène ce lien ? 🔗", step: 1, noClient: true,
+          consigne: "Le vrai nom d'un site se trouve <b>juste avant le premier « / »</b>. C'est la <b>fin</b> de ce nom qui compte : le début peut être un déguisement. Pour chaque lien : site officiel ou piège ?",
+          help: "Exemple : dans https://www.impots.gouv.fr/accueil, le vrai nom est impots.gouv.fr." });
+        const draw = () => {
+          f.panel.innerHTML = `<div class="url-demo">Exemple : ${urlAnatomy("https://www.impots.gouv.fr/accueil")} <small>→ en vert : le vrai nom du site</small></div>
+            <div class="addr-check">${list.map((x, i) => {
+              const a = L.l[i];
+              return `<div class="addr-row ${a != null ? (a === x.ok ? "right" : "wrong") + (x.ok ? " is-ok" : " is-trap") : ""}">${a != null ? urlAnatomy(x.u) : `<code>${esc(x.u)}</code>`}
+                <span>${a == null ? `<button type="button" class="secondary" data-i="${i}" data-v="1">✅ Officiel</button><button type="button" class="secondary" data-i="${i}" data-v="0">🚩 Piège</button>` : `<b>${a === x.ok ? "✅" : "❌"} ${x.ok ? "Officiel" : "Piège"}</b>`}</span>
+                ${a != null ? `<small>${esc(x.why)}</small>` : ""}</div>`;
+            }).join("")}</div>
+            ${Object.keys(L.l).length === list.length ? `<button type="button" class="primary" data-next>Étape suivante : l'enquête →</button>` : ""}`;
+          f.panel.querySelectorAll("[data-v]").forEach(b => b.addEventListener("click", () => {
+            const i = Number(b.dataset.i), v = b.dataset.v === "1", x = list[i];
+            L.l[i] = v;
+            (v === x.ok ? G.ok : G.ko)("url_" + i, `${x.u} était ${x.ok ? "le site officiel" : "un piège"}`, x.why);
+            draw();
+          }));
+          f.panel.querySelector("[data-next]")?.addEventListener("click", () => ctx.go(2));
+        };
+        draw();
+        return;
+      }
+
+      if (step === 2) {
+        L.mails ||= fraudMails(ctx);
+        L.dec ||= {};
+        const f = frame(ctx, { level: 6, title: "L'enquête dans la boîte mail 🕵️", step: 2,
+          consigne: "Ouvrez <b>chaque message</b>, posez-vous les 5 questions, puis décidez : <b>normal</b> ou <b>arnaque</b> ? Une fiche d'enquête vous expliquera tout.",
+          help: "Cliquez sur « ▾ voir l'adresse » à côté du nom. Posez la souris sur les boutons SANS cliquer pour voir où ils mènent (en bas de la boîte)." });
+        const total = L.mails.length;
+        const panelFor = m => {
+          const done = Object.keys(L.dec).length;
+          const head = `<div class="mk-progress-line">🕵️ ${done} / ${total} messages analysés</div>`;
+          if (!m) {
+            f.panel.innerHTML = head + `<p>👈 Cliquez sur un message de la liste pour l'ouvrir.</p>` + (done === total ? `<button type="button" class="primary" data-next>J'ai tout analysé →</button>` : "");
+          } else if (L.dec[m.id] == null) {
+            f.panel.innerHTML = head + `<div class="mk-context">📌 <b>Ce que vous savez :</b> ${esc(m.context)}</div>
+              <div class="five-mini">${FIVE.map(q => `<span>${q}</span>`).join("")}</div>
+              <h3>Ce message « ${esc(m.subject)} » est…</h3>
+              <div class="sender-btns big"><button type="button" class="secondary" data-d="0">✅ Normal</button><button type="button" class="secondary" data-d="1">🚩 Une arnaque</button></div>`;
+          } else {
+            f.panel.innerHTML = head + investigation(m, L.dec[m.id] === m.fraud) + (done === total ? `<button type="button" class="primary" data-next>J'ai tout analysé →</button>` : `<p class="muted">Ouvrez le message suivant dans la liste.</p>`);
+          }
+          f.panel.querySelectorAll("[data-d]").forEach(b => b.addEventListener("click", () => {
+            const v = b.dataset.d === "1";
+            L.dec[m.id] = v;
+            (v === m.fraud ? G.ok : G.ko)("dec_" + m.id, `« ${m.subject} » était ${m.fraud ? "une arnaque" : "un message normal"}`, m.fraud ? "C'était une arnaque : relisez sa fiche d'enquête." : "C'était un vrai message : tous les signaux étaient rassurants.");
+            panelFor(m);
+          }));
+          f.panel.querySelector("[data-next]")?.addEventListener("click", endStep);
+        };
+        const endStep = () => {
+          L.mails.filter(x => x.fraud).forEach(x => {
+            if (L.client.byId(x.id)?.folder !== "spam") G.ko("spam_" + x.id, `Ranger « ${x.subject} » dans les Indésirables`, "Le bon geste après avoir repéré une arnaque : le bouton 🚫 Indésirable. Les suivantes iront directement au bon endroit.");
+          });
+          ctx.go(3);
+        };
+        L.client?.destroy();
+        L.client = MAIL().client(f.host, { me, big: ctx.demo, hideAddr: true, mails: L.mails, features: { compose: false, reply: false, replyAll: false, forward: false, attach: false, search: false },
+          onEvent: (type, d, c) => {
+            const m = d?.mail || d;
+            if (type === "open") panelFor(d.mail);
+            if (type === "hover" && m) c.flash(`🔍 Ce lien mène vers <b>${esc(realDomain(hostOf(d.url)))}</b> (regardez en bas de la boîte).`, m.fraud ? "warn" : "info", 4000);
+            if (type === "link") {
+              if (m.fraud) { G.ko("click_" + m.id, "Ne pas cliquer sur le lien d'un message suspect", "Dans la vraie vie, si cela arrive : fermez la page sans rien remplir. En général, il ne s'est rien passé."); c.flash("Oups, vous avez cliqué ! Pas de panique : ici rien ne s'est passé. Dans la vraie vie, on ferme simplement la page <b>sans rien remplir</b>. La prochaine fois : on survole sans cliquer.", "warn", 8000); }
+              else c.flash("Ce lien était sûr. Mais le meilleur réflexe reste de taper soi-même l'adresse du site.", "info", 5000);
+            }
+            if (type === "spam") {
+              if (m.fraud) { G.ok("spam_" + m.id, `Ranger « ${m.subject} » dans les Indésirables`); c.flash("🚫 Bien rangé ! Les messages de cet expéditeur iront désormais dans les Indésirables.", "good", 3500); }
+              else { G.ko("spam_" + m.id, "Ne pas ranger un vrai message en indésirable", `« ${m.subject} » était un vrai message. Dans le dossier Indésirables, ouvrez-le puis cliquez sur « ✅ Ce n'est pas un indésirable ».`); c.flash("Ce message était normal ! Allez le récupérer dans 🚫 Indésirables.", "warn", 5000); }
+              panelFor(null);
+            }
+            if (type === "delete" && m.fraud) c.flash("Supprimé, c'est bien. « 🚫 Indésirable » est encore mieux : il apprend à trier tout seul.", "info", 4500);
+          } });
+        panelFor(null);
+        return;
+      }
+
+      if (step === 3) {
+        const f = frame(ctx, { level: 6, title: "Et si… ? 🆘", step: 3, noClient: true,
+          consigne: "Les situations qui font peur, et quoi faire calmement. Se faire piéger n'est pas une honte : ces escrocs sont des professionnels." });
+        inlineQuiz(f.panel, { G, key: "etsi", questions: [
+          { q: "Vous avez cliqué sur le lien d'un faux message, mais vous n'avez <b>rien rempli</b>. Que faites-vous ?", choices: ["Je ferme la page et je supprime le message", "J'éteins l'ordinateur et je ne m'en sers plus", "Je remplis quand même, pour voir"], ok: 0, why: "En général, il ne s'est rien passé : le danger, c'est de remplir. On ferme la page, on garde son ordinateur à jour, et on continue sa journée." },
+          { q: "Vous avez donné votre <b>numéro de carte bancaire</b> sur un faux site.", choices: ["J'attends de voir mon prochain relevé", "J'appelle ma banque tout de suite pour bloquer la carte", "Je réponds à l'e-mail pour annuler"], ok: 1, why: "Le numéro de la banque est au dos de la carte. Plus on bloque vite, moins l'escroc peut l'utiliser." },
+          { q: "Un message dit : « On vous a filmé avec votre webcam. Payez 500 €, sinon on publie la vidéo. »", choices: ["Je paie pour être tranquille", "C'est un mensonge envoyé à des milliers de personnes : je ne réponds pas, je supprime", "Je réponds pour négocier"], ok: 1, why: "Ce chantage est envoyé au hasard, en masse : il n'y a pas de vidéo. Ne payez jamais. Si vous êtes inquiet, parlez-en à une personne de confiance ou consultez cybermalveillance.gouv.fr." },
+          { q: "Vous n'êtes <b>pas sûr</b> qu'un message soit vrai. Que faites-vous ?", choices: ["Je clique pour vérifier", "Je vais moi-même sur le site officiel, ou j'appelle le numéro que je connais", "Je le transfère à tous mes contacts pour leur demander"], ok: 1, why: "Vérifier par soi-même, c'est la règle d'or. Et vous pouvez toujours demander au médiateur numérique de la médiathèque." },
+          ...ctx.byLevel({ beginner: [], intermediate: [], expert: [
+            { q: "Vous avez tapé votre <b>mot de passe</b> sur un faux site.", choices: ["Je le change tout de suite, sur le vrai site", "Ce n'est pas grave", "J'attends un e-mail de confirmation"], ok: 0, why: "Changez-le sur le vrai site, et partout où vous utilisiez le même mot de passe." }
+          ] })
+        ], onDone: () => finish(ctx, G, { key: "mail_fraud", label: "Je sais repérer un e-mail frauduleux avec les 5 questions",
+          intro: "Vous avez maintenant une méthode : les 5 questions. 🫶 Dans le doute, vous avez toujours le droit de ne rien faire et de vérifier par vous-même. Imprimez votre fiche-mémo et gardez-la près de l'ordinateur." }) });
+        return;
+      }
+      ctx.finalScreen({ theme: null });
+    }
+  });
 })(window.AN);

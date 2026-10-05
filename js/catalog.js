@@ -20,6 +20,7 @@
     mail_reply:      { label: "E-mail niv. 3 — Répondre et transférer", short: "Répondre / transférer", icon: "↩️", family: "E-mail" },
     mail_compose:    { label: "E-mail niv. 4 — Écrire un e-mail complet", short: "Écrire un e-mail", icon: "✏️", family: "E-mail" },
     mail_attach:     { label: "E-mail niv. 5 — Les pièces jointes", short: "Pièces jointes", icon: "📎", family: "E-mail" },
+    mail_fraud:      { label: "E-mail niv. 6 — Repérer un e-mail frauduleux", short: "E-mail frauduleux", icon: "🕵️", family: "E-mail" },
     suspicious_mail: { label: "Reconnaître un e-mail suspect", short: "E-mail suspect", icon: "🎣", family: "Sécurité" },
     mail_challenge:  { label: "E-mail niv. 7 — Le défi de la boîte mail", short: "Défi boîte mail", icon: "🏆", family: "E-mail" },
     sms_scam:        { label: "Repérer un SMS frauduleux", short: "SMS frauduleux", icon: "📱", family: "Sécurité" },
@@ -31,7 +32,7 @@
   const parcours = {
     p_bases:    { label: "Parcours « Premiers pas » (souris, clavier, formulaire)", icon: "🌱", steps: ["mouse_nav", "keyboard_skills", "fill_form"] },
     p_dossier:  { label: "Parcours administratif complet (document → dossier)", icon: "🧭", steps: ["download_doc", "find_file", "missing_piece", "appointment"] },
-    p_email:    { label: "📧 Chapitre E-mail (7 niveaux)", icon: "📧", steps: ["mail_read", "mail_address", "mail_reply", "mail_compose", "mail_attach", "suspicious_mail", "mail_challenge"] },
+    p_email:    { label: "📧 Chapitre E-mail (7 niveaux)", icon: "📧", steps: ["mail_read", "mail_address", "mail_reply", "mail_compose", "mail_attach", "mail_fraud", "mail_challenge"] },
     p_securite: { label: "Parcours « Se protéger des arnaques »", icon: "🛡️", steps: ["suspicious_mail", "sms_scam", "password_reset", "secure_payment"] }
   };
 
@@ -53,6 +54,7 @@
     mail_reply: ["↩️ Répondre : seulement à la personne qui m'a écrit.", "↩️↩️ Répondre à tous : à elle et aux personnes en copie.", "↪️ Transférer : envoyer le message à quelqu'un d'autre (avec ses pièces jointes).", "« RE : » = une réponse, « TR : » = un transfert."],
     mail_compose: ["À : la personne à qui j'écris.", "Cc : une copie, visible par tous. Cci : une copie cachée.", "Objet : quelques mots qui résument mon message.", "Bonjour… Cordialement : la politesse au début et à la fin. Pas de MAJUSCULES."],
     mail_attach: ["Joindre 📎 = ajouter un fichier à mon message.", "Télécharger ⬇️ = garder sur mon ordinateur un fichier reçu (dossier Téléchargements).", "Avant d'envoyer, je vérifie que la pièce jointe est bien là.", "Un .pdf est un document ; un .exe est un programme : prudence."],
+    mail_fraud: ["🫶 Lire un message est sans danger. Le danger : cliquer, ouvrir une pièce jointe inattendue, donner des informations.", "Les 5 questions : 🔍 Qui m'écrit vraiment ? 🤔 Est-ce que je l'attendais ? ⏰ Me met-on la pression ? 🔑 Que me demande-t-on ? 🔗 Où mène le lien ?", "Je clique sur le nom de l'expéditeur pour voir l'adresse : je regarde la fin, après le @. « .gouv.fr » = l'État ; Gmail, Hotmail = jamais une administration.", "Jamais par e-mail : mot de passe, code reçu par SMS, numéro de carte bancaire.", "Le vrai nom d'un site est juste avant le premier « / » : impots.gouv.fr ✅ — impots.gouv.fr.rembourse.com ❌. Le cadenas 🔒 ne prouve rien.", "Dans le doute : je ne clique pas, je vais moi-même sur le site ou j'appelle le numéro que je connais.", "J'ai donné ma carte ? J'appelle ma banque tout de suite (numéro au dos de la carte). Aide : cybermalveillance.gouv.fr — Signaler : signal-spam.fr, 33700 (SMS)."],
     mail_challenge: ["Arnaque ? Je ne clique pas : 🚫 Indésirable.", "Publicité inutile : 🗑️ Supprimer.", "Message important supprimé par erreur : Corbeille → Restaurer.", "🔍 La recherche retrouve un message en tapant un nom ou un mot."],
     custom: ["Je lis la consigne en entier avant de commencer.", "Je prends mon temps.", "Je n'hésite pas à demander de l'aide."]
   };

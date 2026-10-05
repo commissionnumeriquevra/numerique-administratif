@@ -80,7 +80,7 @@
 .mk-send{background:#3979b7!important;color:#fff;border-color:#3979b7!important;font-weight:800}
 .mk-send:disabled{opacity:.45}
 .mk-status{min-height:1.6em;padding:3px 12px;background:#eef2f7;border-top:1px solid #dfe6ee;font-family:Consolas,ui-monospace,monospace;font-size:.85rem;color:#3b4654}
-.mk-flash{position:absolute;left:50%;top:58px;transform:translateX(-50%);width:min(92%,640px);z-index:6;border-radius:12px;padding:12px 16px;box-shadow:0 12px 30px rgba(20,30,50,.18);line-height:1.4;pointer-events:none}
+.mk-flash{position:absolute;left:12px;bottom:40px;width:min(calc(100% - 24px),480px);z-index:6;border-radius:12px;padding:12px 16px;box-shadow:0 12px 30px rgba(20,30,50,.18);line-height:1.4;pointer-events:none}
 .mk-flash.good{background:#e3f6ea;border:1px solid #2f9d68;color:#1f5e3d}
 .mk-flash.bad{background:#fbe4e1;border:1px solid #d95f56;color:#8e2e27}
 .mk-flash.warn{background:#fff3cd;border:1px solid #e0b93c;color:#6b5210}
@@ -148,3 +148,39 @@
 .mk-panel .mk-quiz.inline .choice-stack button{width:auto;flex:0 1 auto;min-height:0;padding:10px 16px;margin:0}
 .mk-panel .mk-quiz.inline h3{margin:.2em 0 .5em}
 .mk-panel .mk-quiz.inline .alert{margin:10px 0}
+.mk-addr-btn{border:1px dashed #3979b7;background:#f2f6fb;color:#1d5fa8;border-radius:8px;padding:2px 8px;cursor:pointer;font:inherit;font-size:.85rem}
+.mk-addr.revealed{background:#fff3cd;border-radius:6px;padding:1px 6px;color:#3b2f00;font-weight:700}
+
+/* ---------- Niveau 6 : repérer un e-mail frauduleux ---------- */
+.mk-reassure{background:#effaf3;border:1px solid #bfe5cd;border-radius:12px;padding:10px 14px;margin-bottom:12px;color:#1f5e3d}
+.sender-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.sender-card{background:#fff;border:2px solid #e3e3ee;border-radius:14px;padding:14px;display:grid;gap:10px;align-content:start}
+.sender-card.right{border-color:#2f9d68;background:#f1fbf5}.sender-card.wrong{border-color:#d95f56;background:#fdf3f1}
+.sender-from{font-size:1.1rem}
+.sender-addr{font-size:1.05rem}
+.sender-btns{display:flex;gap:8px;flex-wrap:wrap}
+.sender-btns button{flex:1;min-width:120px}
+.sender-btns.big button{font-size:1.1rem;padding:14px}
+.sender-why{margin:0;line-height:1.45}
+.url-anat{font-family:Consolas,ui-monospace,monospace;font-size:1.05rem;overflow-wrap:anywhere}
+.url-anat .dim{color:#8a8f9b}
+.url-anat .pre{background:#efe9dc;color:#6c6455;text-decoration:line-through wavy #b9a98a;border-radius:4px;padding:0 2px}
+.url-anat .dom{background:#ffe08a;color:#3b2f00;font-weight:800;border-radius:4px;padding:1px 4px;box-shadow:0 0 0 2px #e8c24f}
+.is-ok .url-anat .dom{background:#c9efd7;box-shadow:0 0 0 2px #2f9d68;color:#174d33}
+.is-trap .url-anat .dom{background:#ffd3cf;box-shadow:0 0 0 2px #d95f56;color:#7a201a}
+.url-demo{background:#fff;border:1px dashed #c9d6e6;border-radius:12px;padding:10px 14px;margin-bottom:12px}
+.url-demo small{color:var(--muted)}
+.mk-progress-line{font-weight:800;color:#5b3fa6;margin-bottom:8px}
+.mk-context{background:#fff6d6;border:1px solid #edd27a;border-radius:12px;padding:10px 14px;margin-bottom:10px}
+.five-mini{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.five-mini span{background:#fff;border:1px solid #e2d9f3;border-radius:999px;padding:4px 10px;font-size:.9rem}
+.fiche{border-radius:14px;border:3px solid;overflow:hidden;background:#fff}
+.fiche.fraud{border-color:#d95f56}.fiche.safe{border-color:#2f9d68}
+.fiche-head{padding:10px 14px;font-size:1.1rem}
+.fiche.fraud .fiche-head{background:#fdf0ee}.fiche.safe .fiche-head{background:#effaf3}
+.fiche-table{width:100%;border-collapse:collapse}
+.fiche-table th,.fiche-table td{padding:8px 12px;border-top:1px solid #eee;text-align:left;vertical-align:top;line-height:1.4}
+.fiche-table th{width:34%;font-weight:700;white-space:nowrap}
+.fiche-table tr.flag td{color:#8e2e27}.fiche-table tr.ok td{color:#1f5e3d}
+.fiche-do{padding:10px 14px;background:#f7f3ff;border-top:1px solid #eee}
+@media (max-width:700px){.fiche-table th{white-space:normal;width:auto;display:block;border:0;padding-bottom:0}.fiche-table td{display:block;border:0}.fiche-table tr{display:block;border-top:1px solid #eee}}

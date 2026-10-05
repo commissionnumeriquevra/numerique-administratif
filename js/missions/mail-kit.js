@@ -77,7 +77,7 @@
       return `<div class="mk-read-tools">${tools}</div>
         <h3 class="mk-read-subject">${esc(m.subject)}</h3>
         <div class="mk-read-head"><span class="mk-avatar big" aria-hidden="true">${esc(initials(m.from.name))}</span>
-          <div><div><b>${esc(m.from.name)}</b> <span class="mk-addr">&lt;${esc(m.from.email)}&gt;</span></div>
+          <div><div><b>${esc(m.from.name)}</b> ${opts.hideAddr && !m.addrShown ? `<button type="button" class="mk-addr-btn" data-mk="showAddr">▾ voir l'adresse</button>` : `<span class="mk-addr ${opts.hideAddr ? "revealed" : ""}">&lt;${esc(m.from.email)}&gt;</span>`}</div>
           <div class="mk-muted">À : ${esc(m.to || me.email)}${m.cc ? ` · Cc : ${esc(m.cc)}` : ""}</div>
           <div class="mk-muted">${esc(m.date || "")}</div></div></div>
         ${inSpam ? `<div class="mk-banner">🚫 Ce message est dans les indésirables. Ne cliquez sur aucun lien.</div>` : ""}
@@ -177,6 +177,7 @@
       restore: () => { const m = byId(st.sel); m.folder = "inbox"; st.sel = null; render(); emit("restore", m); },
       spam: () => { const m = byId(st.sel); m.folder = "spam"; st.sel = null; render(); emit("spam", m); },
       notspam: () => { const m = byId(st.sel); m.folder = "inbox"; st.sel = null; render(); emit("notspam", m); },
+      showAddr: () => { const m = byId(st.sel); m.addrShown = true; render(); emit("showAddr", m); },
       showCc: () => { readDraft(); st.compose.showCc = true; render(); container.querySelector('[data-mkf="cc"]')?.focus(); },
       discard: () => { st.compose = null; render(); emit("discard"); },
       send: () => {
