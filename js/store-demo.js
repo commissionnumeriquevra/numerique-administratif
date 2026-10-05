@@ -45,7 +45,7 @@
 
   /* ---------- stockage local ---------- */
   const KEY = "atelierNumeriqueV8";
-  const empty = () => ({ workshops: {}, seats: {}, missions: {}, messages: {}, achievements: {}, templates: {}, prefs: {}, joinKeys: {} });
+  const empty = () => ({ workshops: {}, seats: {}, missions: {}, messages: {}, achievements: {}, templates: {}, prefs: {}, joinKeys: {}, games: {}, gameAnswers: {} });
   function load() {
     try {
       const d = JSON.parse(localStorage.getItem(KEY));
@@ -168,6 +168,13 @@
     },
     async saveTemplate(t) { db.templates[t.id] = t; commit(); },
     async deleteTemplate(id) { delete db.templates[id]; commit(); },
+    /* ===== Jeux en direct ===== */
+    // rechargement juste avant d'écrire : plusieurs onglets peuvent répondre en même temps
+    async setGame(wid, game) { db = load(); db.games ||= {}; if (game) db.games[wid] = game; else delete db.games[wid]; commit(); },
+    watchGame(wid, cb) { return watch(() => (db.games || {})[wid] || null, cb); },
+    async submitGameAnswer(wid, sid, data) { db = load(); db.gameAnswers ||= {}; (db.gameAnswers[wid] ||= {})[sid] = data; commit(); },
+    watchGameAnswers(wid, cb) { return watch(() => values((db.gameAnswers || {})[wid]), cb); },
+    async clearGameAnswers(wid) { if (db.gameAnswers) delete db.gameAnswers[wid]; commit(); },
     async savePrefs(teacherUid, prefs) { db.prefs[teacherUid] = { ...(db.prefs[teacherUid] || {}), ...prefs }; commit(); },
 
     /* ===== Participant ===== */

@@ -34,6 +34,9 @@
     const { store, workshop, seat } = state;
     // Initialize analytics
     AN.Analytics.init(store, workshop.id, seat.id, state.uid);
+    // Jeux en direct : la fenêtre de jeu s'ouvre toute seule quand le formateur lance un jeu
+    AN.live.playerInit({ store, wid: workshop.id, sid: seat.id, name: () => state.seat?.displayName || "Participant" });
+    if (store.watchGame) state.unsubs.push(store.watchGame(workshop.id, g => { if (state.seat?.displayName) AN.live.onGame(g); }));
     state.unsubs.push(store.watchSeat(workshop.id, seat.id, s => {
       const helpResolved = state.seat?.help?.requested && !s.help?.requested;
       state.seat = s;
@@ -62,6 +65,7 @@
   }
   function reset() {
     stopWatchers();
+    AN.live?.closePlayer();
     AN.missions.close();
     Object.assign(state, { store: null, uid: null, workshop: null, seat: null, missions: [], messages: [], achievements: [], knownMsg: null, currentMissionId: null });
     try { sessionStorage.removeItem(SESSION); } catch (e) {}

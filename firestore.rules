@@ -56,6 +56,20 @@ service cloud.firestore {
       allow update: if isTeacher() && resource.data.teacherUid == me() && request.resource.data.teacherUid == me();
       allow delete: if isTeacher() && resource.data.teacherUid == me();
 
+      // ----- jeux en direct pendant la projection -----
+      match /live/{doc} {
+        allow read: if signedIn();
+        allow write: if teacherOwns(wid);
+      }
+      match /gameAnswers/{sid} {
+        allow read: if teacherOwns(wid) || ownsSeat(wid, sid);
+        allow delete: if teacherOwns(wid);
+        allow create, update: if ownsSeat(wid, sid)
+          && request.resource.data.seatId == sid
+          && request.resource.data.name is string
+          && request.resource.data.name.size() <= 30;
+      }
+
       match /seats/{sid} {
         allow read: if teacherOwns(wid) || (signedIn() && resource.data.studentUid == me());
         allow create: if teacherOwns(wid) && request.resource.data.teacherUid == me();

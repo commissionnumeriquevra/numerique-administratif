@@ -210,6 +210,24 @@
     },
     async saveTemplate(t) { const { id, ...rest } = t; await fb.setDoc(fb.doc(fb.db, "templates", id), rest); },
     async deleteTemplate(id) { await fb.deleteDoc(fb.doc(fb.db, "templates", id)); },
+    /* ===== Jeux en direct =====
+       workshops/{wid}/live/game        état du jeu (écrit par le formateur)
+       workshops/{wid}/gameAnswers/{sid} réponses d'un participant */
+    async setGame(wid, game) {
+      const ref = fb.doc(fb.db, "workshops", wid, "live", "game");
+      if (game) await fb.setDoc(ref, game); else await fb.deleteDoc(ref).catch(() => {});
+    },
+    watchGame(wid, cb) {
+      return fb.onSnapshot(fb.doc(fb.db, "workshops", wid, "live", "game"), s => cb(s.exists() ? s.data() : null), e => { console.warn("Jeu en direct :", e); cb(null); });
+    },
+    async submitGameAnswer(wid, sid, data) { await fb.setDoc(fb.doc(fb.db, "workshops", wid, "gameAnswers", sid), data); },
+    watchGameAnswers(wid, cb) {
+      return fb.onSnapshot(fb.collection(fb.db, "workshops", wid, "gameAnswers"), s => cb(data(s)), e => { console.warn("Réponses du jeu :", e); AN.util.toast("Jeu en direct : " + friendlyError(e).message + " (règles Firestore à mettre à jour ?)", "bad", 8000); });
+    },
+    async clearGameAnswers(wid) {
+      const snap = await fb.getDocs(fb.collection(fb.db, "workshops", wid, "gameAnswers"));
+      await batchDelete(snap.docs.map(d => d.ref));
+    },
     async savePrefs(teacherUid, prefs) { await fb.setDoc(fb.doc(fb.db, "teacherPrefs", teacherUid), prefs, { merge: true }); },
 
     /* ===== Participant ===== */

@@ -32,6 +32,7 @@
 
   function close() {
     if (!session) return;
+    if (session.game?.running) session.game.stop();
     session.cleanup?.();
     document.removeEventListener("keydown", session.onKey, true);
     session.overlay.remove();
@@ -49,7 +50,7 @@
     return { lesson: l, slides: typeof src === "function" ? src() : src };
   }
 
-  function open(id, { onDemo, onAssign, onClose, start = 0, lesson: lessonId } = {}) {
+  function open(id, { onDemo, onAssign, onClose, onGame, start = 0, lesson: lessonId } = {}) {
     const ch = chapters.get(id); if (!ch) return;
     close();
     const { lesson, slides } = lessonOf(ch, lessonId);
@@ -59,10 +60,10 @@
     const draw = () => {
       const s = slides[session.i];
       o.innerHTML = `<div class="lesson-stage" style="--ch:${ch.color || "#7050bf"}">
-          <div class="lesson-slide ${s.theme || ""}" aria-live="polite">
+          <div class="lesson-slide ${s.theme || ""} ${s.game ? "game" : ""}" aria-live="polite">
             <div class="lesson-badge">${lesson?.icon || ch.icon} ${esc(lesson?.badge || ch.title)}</div>
             ${s.title ? `<h1>${s.title}</h1>` : ""}
-            <div class="lesson-body">${s.html}</div>
+            <div class="lesson-body">${s.game ? AN.games.slide(s.game) : s.html}</div>
           </div>
           <nav class="lesson-bar" aria-label="Navigation de la leçon">
             <button type="button" data-l="prev" aria-label="Diapositive précédente" ${session.i === 0 ? "disabled" : ""}>◀</button>
@@ -77,17 +78,35 @@
     const pending = () => [...o.querySelectorAll(".lesson-slide [data-reveal]:not(.shown)")];
     const next = () => {
       const p = pending();
-      if (p.length) { p[0].classList.add("shown"); return; }
+      if (p.length) {
+        // data-reveal="3" : tous les éléments du groupe 3 apparaissent ensemble (pastille + explication),
+        // et les groupes numérotés apparaissent dans l'ordre des numéros.
+        const nums = p.map(e => Number(e.dataset.reveal)).filter(n => n > 0);
+        if (Number(p[0].dataset.reveal) > 0 || (nums.length && !p.some(e => !(Number(e.dataset.reveal) > 0)))) {
+          const g = String(Math.min(...nums));
+          p.filter(e => e.dataset.reveal === g).forEach(e => e.classList.add("shown"));
+        } else p[0].classList.add("shown");
+        return;
+      }
       if (session.i < slides.length - 1) { session.i++; draw(); }
     };
     const prev = () => { if (session.i > 0) { session.i--; draw(); o.querySelectorAll("[data-reveal]").forEach(e => e.classList.add("shown")); } };
 
     o.addEventListener("click", e => {
+      const launch = e.target.closest("[data-game-launch]");
+      if (launch) {
+        if (!onGame) { AN.util.toast("Les jeux se lancent depuis l'espace formateur, avec un groupe actif.", "info", 5000); return; }
+        const body = o.querySelector(".lesson-body");
+        const ctl = onGame(launch.dataset.gameLaunch, body, () => { session.game = null; if (session.i < slides.length - 1) session.i++; draw(); });
+        if (ctl) { session.game = ctl; o.querySelector(".lesson-bar")?.classList.add("locked"); }
+        return;
+      }
       const flip = e.target.closest("[data-flip]");
       if (flip) { flip.classList.toggle("flipped"); return; }
       const act = e.target.closest("[data-lesson-act]");
       if (act) { const a = act.dataset.lessonAct; if (a === "demo") { close(); onDemo?.(id, act.dataset.type); } else if (a === "assign") onAssign?.(id); return; }
       const b = e.target.closest("[data-l]");
+      if (b && session.game?.running && b.dataset.l !== "close" && b.dataset.l !== "full") return;
       if (b) {
         const a = b.dataset.l;
         if (a === "next") next(); else if (a === "prev") prev(); else if (a === "close") close(); else if (a === "full") toggleFull();
@@ -99,6 +118,7 @@
     });
     session.onKey = e => {
       if (e.target.closest?.("input,textarea,select") || document.querySelector("dialog[open]")) return;
+      if (session.game?.running) return; // pendant un jeu, le clavier ne change pas de diapositive
       const k = e.key;
       if (["ArrowRight", "PageDown", " ", "Enter"].includes(k)) { e.preventDefault(); next(); }
       else if (["ArrowLeft", "PageUp", "Backspace"].includes(k)) { e.preventDefault(); prev(); }
