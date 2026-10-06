@@ -177,3 +177,11 @@
 .l-toast-win b{display:block}
 .bk-static .z{pointer-events:auto;cursor:pointer}
 .l-meta .eq{font-size:1em}
+.bk-bubble{position:absolute;z-index:7;top:96px;right:14px;width:min(360px,calc(100% - 28px));background:#fff;border:1px solid #c9d1db;border-radius:12px;padding:14px 16px;box-shadow:0 14px 34px rgba(20,30,50,.22);display:grid;gap:8px}
+.bk-bubble h4{margin:0;font-size:1em}.bk-bubble p{margin:0;font-size:.92em}
+.bk-bubble .row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.bk-bubble button{border:1px solid #c9d1db;background:#fff;border-radius:999px;padding:7px 14px;font:inherit;cursor:pointer}
+.bk-bubble button.main{background:#1a73e8;border-color:#1a73e8;color:#fff;font-weight:700}
+.bk-bubble .pick{display:flex;gap:10px;align-items:center;width:100%;text-align:left;border-radius:10px}
+.bk-bubble .pick:hover{background:#eef3fd}
+.bk-bubble .tag{font-size:.75em;color:#5a6676}

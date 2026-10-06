@@ -255,6 +255,48 @@
           <div class="lh-reveal-side"><div class="l-verdict ${r.fake ? "ko" : "ok"}">${r.fake ? "🚩 ARNAQUE" : "✅ VRAI MESSAGE"}</div>
           <div class="lh-big-stat"><b>${list.length - normal}</b> ont buzzé · <b>${normal}</b> ont dit « normal »</div><div class="lh-why">${r.why || ""}</div></div>`;
       }
+    },
+
+    /* ---------- 6. Fabriquer (une phrase de passe solide) ---------- */
+    make: {
+      limit: r => r.limit || 90,
+      play(ctx) {
+        const r = ctx.round;
+        ctx.el.innerHTML = `<div class="lp-prompt">${r.prompt}</div>
+          <input class="lp-input lp-make" autocomplete="off" spellcheck="false" autocapitalize="off" aria-label="Votre phrase de passe" placeholder="${r.placeholder || "Votre phrase de passe d'entraînement…"}">
+          <div class="lp-make-gauge"></div>
+          ${r.hint ? `<div class="lp-hint">💡 ${r.hint}</div>` : ""}
+          <button type="button" class="lp-validate" disabled>Valider ✔</button>`;
+        const inp = ctx.el.querySelector(".lp-make"), slot = ctx.el.querySelector(".lp-make-gauge"), btn = ctx.el.querySelector(".lp-validate");
+        inp.focus();
+        const upd = () => { const s = AN.pw.strength(inp.value); slot.innerHTML = AN.pw.gauge(inp.value); btn.disabled = !inp.value.trim(); };
+        upd();
+        inp.addEventListener("input", upd);
+        const go = () => { if (inp.value.trim()) ctx.submit({ text: inp.value.trim() }, true); };
+        btn.addEventListener("click", go);
+        inp.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+      },
+      score(r, p, ms) {
+        if (!p?.text) return { points: 0, good: 0, max: 1 };
+        const s = AN.pw.strength(p.text);
+        const good = s.score >= 3 ? 1 : 0;
+        return { points: s.score * 250 + (good ? Math.round(250 * speed(ms, K.make.limit(r))) : 0), good, max: 1 };
+      },
+      myReveal: (r, a) => {
+        if (!a?.payload?.text) return `<div class="lp-answer">Pas de réponse cette fois-ci.</div><div class="lp-why">${r.why || ""}</div>`;
+        const s = AN.pw.strength(a.payload.text);
+        return `<div class="lp-answer">Votre phrase : <b class="mono">${esc(a.payload.text)}</b></div><div class="lp-yours"><b style="color:${s.color}">${s.label}</b> · un logiciel la trouverait ${s.time === "instantanément" ? "<b>instantanément</b>" : `en <b>${s.time}</b>`}</div><div class="lp-why">${r.why || ""}</div>`;
+      },
+      hostPrompt: r => `<div class="lh-prompt">${r.prompt}</div>${r.example ? `<div class="lh-make-ex">Exemple : <b>${r.example}</b></div>` : ""}`,
+      hostLive: (r, list) => { const solid = list.filter(a => AN.pw.strength(a.payload?.text).score >= 3).length; return `🛡️ <b>${solid}</b> phrase(s) solide(s) sur ${list.length}`; },
+      hostReveal(r, list) {
+        const scored = list.map(a => ({ s: AN.pw.strength(a.payload?.text || "") })).filter(x => x.s.score != null);
+        const buckets = [0, 0, 0, 0, 0]; scored.forEach(x => buckets[x.s.score]++);
+        const solid = scored.filter(x => x.s.score >= 3).length;
+        return `<div class="lh-reveal-visual"><div class="lh-big-stat"><b>${solid} / ${list.length}</b> phrases solides 🛡️</div>
+            <p class="lh-make-tip">Les phrases du groupe restent secrètes : on regarde seulement leur solidité.</p></div>
+          <div class="lh-reveal-side">${bars(AN.pw.LABELS, buckets, [3, 4])}<div class="lh-why">${r.why || ""}</div></div>`;
+      }
     }
   };
 

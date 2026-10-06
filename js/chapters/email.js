@@ -528,7 +528,6 @@
   /* Chapitres du programme annuel, à venir (affichés grisés côté formateur). */
   [
     { id: "wifi", title: "Wi-Fi et réseaux", icon: "🛜", summary: "🛜 Wi-Fi ou 📶 4G/5G, se connecter, Wi-Fi public, petites pannes." },
-    { id: "comptes", title: "Comptes et mots de passe", icon: "🔑", summary: "Créer un compte, un mot de passe solide, la double authentification." },
     { id: "fichiers", title: "Fichiers et dossiers", icon: "🗂️", summary: "Extensions, bien nommer, ranger, retrouver un téléchargement." },
     { id: "peripheriques", title: "Périphériques", icon: "🖨️", summary: "Souris, clavier, imprimante, clé USB, écran." }
   ].forEach(c => AN.chapters.register({ ...c, soon: true }));

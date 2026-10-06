@@ -706,79 +706,91 @@
     { id: "mairie", icon: "🏛️", title: "Le numéro de votre mairie", task: "Trouvez le <b>numéro de téléphone</b> de votre mairie, sur son site officiel.", tip: "Mots-clés : mairie + le nom de votre ville. Évitez les annuaires « Sponsorisé »." },
     { id: "garde", icon: "💊", title: "La pharmacie de garde", task: "Trouvez le <b>numéro de téléphone national</b> qui donne la pharmacie de garde la plus proche, la nuit.", tip: "Mots-clés : pharmacie de garde numéro." }
   ];
-  R("nav_real", {
-    steps: 3,
-    render(ctx) {
-      let step = ctx.m.step || 0;
-      const L = ctx.local, G = grader(L);
-      if (step > 0 && !L.pick) step = 0; // mission rouverte : on rechoisit
+  /**
+   * Mission réelle encadrée, réutilisable par tous les chapitres :
+   * l'élève choisit une mission, la fait sur le vrai navigateur, puis répond ici.
+   * La réponse part chez le formateur (messagerie), qui la valide.
+   */
+  const NAV_STEPS = [
+    "Ouvrez un <b>nouvel onglet</b> : le bouton <b>＋</b> en haut, ou les touches <kbd>Ctrl</kbd> + <kbd>T</kbd>. <b>Ne fermez pas</b> l'onglet de l'atelier !",
+    "Tapez vos <b>mots-clés</b> et appuyez sur <kbd>Entrée</kbd>.",
+    "Lisez les résultats : <b>évitez les « Sponsorisé »</b>, regardez le <b>vrai nom</b> du site.",
+    "Trouvez la réponse, et notez <b>l'adresse du site</b> où vous l'avez trouvée.",
+    "Revenez ici en cliquant sur l'onglet <b>« Atelier numérique »</b>."
+  ];
+  const NAV_CHECKS = [
+    { id: "name", html: "J'ai regardé le <b>vrai nom</b> du site dans la barre d'adresse", label: "Vérifier le vrai nom du site", short: "vrai nom du site vérifié", why: "Le vrai nom est en gras dans la barre d'adresse, juste avant le premier « / »." },
+    { id: "ads", html: "J'ai évité les résultats <b>« Sponsorisé »</b>", label: "Éviter les annonces « Sponsorisé »", short: "annonces évitées", why: "Les premiers résultats sont souvent des publicités." },
+    { id: "nothing", html: "Je n'ai <b>rien rempli</b> de personnel, ni rien payé", label: "Ne rien remplir de personnel", short: "rien rempli", why: "Pour chercher une information, on n'a jamais besoin de donner ses coordonnées." }
+  ];
+  function realMission(type, cfg) {
+    const { chapter, level, missions, key = type, label, steps = NAV_STEPS, checks = NAV_CHECKS, siteField: defSite,
+      warn = "🛑 Pendant la mission : on ne remplit <b>rien</b> de personnel, on ne crée pas de compte, on ne paie rien. Une fenêtre bizarre ? <kbd>Échap</kbd>, on ferme l'onglet, et on lève la main ✋.",
+      intro = "Cette fois, vous allez utiliser le <b>vrai navigateur</b> de l'ordinateur, sur le vrai Internet. Choisissez une mission :" } = cfg;
+    const fr = (ctx, o) => KIT().frame(ctx, { chapter, ...o });
+    R(type, {
+      steps: 3,
+      render(ctx) {
+        let step = ctx.m.step || 0;
+        const L = ctx.local, G = grader(L);
+        if (step > 0 && !L.pick) step = 0; // mission rouverte : on rechoisit
 
-      if (step === 0) {
-        const f = frame(ctx, { level: 7, title: "Mission réelle : choisissez votre mission", step: 0, noClient: true,
-          consigne: "Cette fois, vous allez utiliser le <b>vrai navigateur</b> de l'ordinateur, sur le vrai Internet. Choisissez une mission :" });
-        f.panel.innerHTML = `<div class="nv-pick">${REAL.map(r => `<button type="button" data-pick="${r.id}"><b>${r.icon} ${r.title}</b><span>${r.task}</span></button>`).join("")}</div>`;
-        f.panel.querySelectorAll("[data-pick]").forEach(b => b.addEventListener("click", () => { L.pick = REAL.find(r => r.id === b.dataset.pick); ctx.go(1); }));
-        return;
-      }
+        if (step === 0) {
+          const f = fr(ctx, { level, title: "Mission réelle : choisissez votre mission", step: 0, noClient: true, consigne: intro });
+          f.panel.innerHTML = `<div class="nv-pick">${missions.map(r => `<button type="button" data-pick="${r.id}"><b>${r.icon} ${r.title}</b><span>${r.task}</span></button>`).join("")}</div>`;
+          f.panel.querySelectorAll("[data-pick]").forEach(b => b.addEventListener("click", () => { L.pick = missions.find(r => r.id === b.dataset.pick); ctx.go(1); }));
+          return;
+        }
 
-      const r = L.pick;
-      if (step === 1) {
-        const f = frame(ctx, { level: 7, title: `${r.icon} ${r.title}`, step: 1, noClient: true,
-          consigne: "Voici votre mission. Lisez-la en entier, puis suivez les étapes." });
-        f.panel.innerHTML = `<div class="nv-mission"><h3>🎯 ${r.task}</h3><p>💡 ${r.tip}</p></div>
-          <ol class="nv-steps">
-            <li>Ouvrez un <b>nouvel onglet</b> : le bouton <b>＋</b> en haut, ou les touches <kbd>Ctrl</kbd> + <kbd>T</kbd>. <b>Ne fermez pas</b> l'onglet de l'atelier !</li>
-            <li>Tapez vos <b>mots-clés</b> et appuyez sur <kbd>Entrée</kbd>.</li>
-            <li>Lisez les résultats : <b>évitez les « Sponsorisé »</b>, regardez le <b>vrai nom</b> du site.</li>
-            <li>Trouvez la réponse, et notez <b>l'adresse du site</b> où vous l'avez trouvée.</li>
-            <li>Revenez ici en cliquant sur l'onglet <b>« Atelier numérique »</b>.</li>
-          </ol>
-          <div class="alert bad">🛑 Pendant la mission : on ne remplit <b>rien</b> de personnel, on ne crée pas de compte, on ne paie rien. Une fenêtre bizarre ? <kbd>Échap</kbd>, on ferme l'onglet, et on lève la main ✋.</div>
-          <div class="final-actions"><button type="button" class="secondary" data-change>← Choisir une autre mission</button><button type="button" class="primary" data-found>J'ai trouvé : je réponds →</button></div>`;
-        f.panel.querySelector("[data-found]").addEventListener("click", () => ctx.go(2));
-        f.panel.querySelector("[data-change]").addEventListener("click", () => { L.pick = null; ctx.go(0); });
-        return;
-      }
+        const r = L.pick;
+        if (step === 1) {
+          const f = fr(ctx, { level, title: `${r.icon} ${r.title}`, step: 1, noClient: true, consigne: "Voici votre mission. Lisez-la en entier, puis suivez les étapes." });
+          f.panel.innerHTML = `<div class="nv-mission"><h3>🎯 ${r.task}</h3><p>💡 ${r.tip}</p></div>
+            <ol class="nv-steps">${(r.steps || steps).map(x => `<li>${x}</li>`).join("")}</ol>
+            <div class="alert bad">${r.warn || warn}</div>
+            <div class="final-actions"><button type="button" class="secondary" data-change>← Choisir une autre mission</button><button type="button" class="primary" data-found>J'ai trouvé : je réponds →</button></div>`;
+          f.panel.querySelector("[data-found]").addEventListener("click", () => ctx.go(2));
+          f.panel.querySelector("[data-change]").addEventListener("click", () => { L.pick = null; ctx.go(0); });
+          return;
+        }
 
-      if (step === 2) {
-        const f = frame(ctx, { level: 7, title: `${r.icon} Ma réponse`, step: 2, noClient: true,
-          consigne: `Rappel de la mission : ${r.task}` });
-        f.panel.innerHTML = `<div class="nv-real">
-          <label>✍️ Ce que j'ai trouvé<textarea rows="3" data-f="answer" placeholder="Écrivez votre réponse ici…"></textarea></label>
-          <label>🌐 L'adresse du site où je l'ai trouvée<input type="text" data-f="site" placeholder="exemple : www.mairie-valbourg.fr" autocomplete="off" spellcheck="false"></label>
-          <fieldset class="nv-check"><legend><b>✅ Je vérifie</b> (cochez seulement ce qui est vrai)</legend>
-            <label><input type="checkbox" data-c="name"> J'ai regardé le <b>vrai nom</b> du site dans la barre d'adresse</label>
-            <label><input type="checkbox" data-c="ads"> J'ai évité les résultats <b>« Sponsorisé »</b></label>
-            <label><input type="checkbox" data-c="nothing"> Je n'ai <b>rien rempli</b> de personnel, ni rien payé</label></fieldset>
-          <div class="mk-fb"></div>
-          <div class="final-actions"><button type="button" class="secondary" data-back>← Revoir la mission</button><button type="button" class="primary" data-send>📤 Envoyer ma réponse au formateur</button></div></div>`;
-        const $f = s => f.panel.querySelector(s);
-        $f("[data-back]").addEventListener("click", () => ctx.go(1));
-        $f("[data-send]").addEventListener("click", async () => {
-          const answer = $f('[data-f="answer"]').value.trim(), siteRaw = $f('[data-f="site"]').value.trim();
-          const site = siteRaw.replace(/^https?:\/\//i, "").split(/[/?#\s]/)[0].toLowerCase();
-          const fb = $f(".mk-fb");
-          if (!answer) { fb.innerHTML = `<div class="alert bad">Écrivez d'abord ce que vous avez trouvé 🙂</div>`; return; }
-          if (!site) { fb.innerHTML = `<div class="alert bad">Notez aussi l'adresse du site : vous la lisez dans la barre d'adresse, tout en haut du navigateur.</div>`; return; }
-          const validAddr = B().looksLikeAddress(site);
-          const checks = { name: $f('[data-c="name"]').checked, ads: $f('[data-c="ads"]').checked, nothing: $f('[data-c="nothing"]').checked };
-          $f("[data-send]").disabled = true;
-          G.ok("answer", "Trouver une réponse sur Internet");
-          (validAddr ? G.ok : G.ko)("addr", "Noter l'adresse du site", "Une adresse ressemble à www.nom-du-site.fr : on la recopie depuis la barre d'adresse.");
-          if (r.official) { const off = r.official.some(o => site.endsWith(o.replace(/^\./, "")) || site.includes(o)); (off ? G.ok : G.ko)("official", "Utiliser le site officiel", `Pour cette mission, le site officiel était ${r.official[0]}.`); }
-          (checks.name ? G.ok : G.ko)("chk_name", "Vérifier le vrai nom du site", "Le vrai nom est en gras dans la barre d'adresse, juste avant le premier « / ».");
-          (checks.ads ? G.ok : G.ko)("chk_ads", "Éviter les annonces « Sponsorisé »", "Les premiers résultats sont souvent des publicités.");
-          (checks.nothing ? G.ok : G.ko)("chk_nothing", "Ne rien remplir de personnel", "Pour chercher une information, on n'a jamais besoin de donner ses coordonnées.");
-          const text = `🎯 Mission : ${r.title}\n✍️ Ma réponse : ${answer}\n🌐 Trouvé sur : ${siteRaw}\n${checks.name ? "✅" : "⬜"} vrai nom du site vérifié · ${checks.ads ? "✅" : "⬜"} annonces évitées · ${checks.nothing ? "✅" : "⬜"} rien rempli`;
-          try { await ctx.api.sendToTeacher?.(`🧭 Mission réelle : ${r.title}`, text.slice(0, 1900)); }
-          catch (e) { fb.innerHTML = `<div class="alert bad">La réponse n'a pas pu partir : ${esc(e.message)}. Réessayez.</div>`; $f("[data-send]").disabled = false; return; }
-          finish(ctx, G, { key: "nav_real", label: "J'ai réussi une mission sur le vrai Internet", intro: `${ctx.demo ? "En projection, la réponse n'est pas envoyée." : "📤 Votre réponse est partie chez le formateur : il vous répondra dans votre <b>messagerie</b>."}<br>Mission : <b>${esc(r.title)}</b> — votre réponse : « ${esc(answer)} » (sur ${esc(site)}).` });
-        });
-        return;
+        if (step === 2) {
+          const f = fr(ctx, { level, title: `${r.icon} Ma réponse`, step: 2, noClient: true, consigne: `Rappel de la mission : ${r.task}` });
+          const siteField = r.siteField || defSite || { label: "🌐 L'adresse du site où je l'ai trouvée", ph: "exemple : www.mairie-valbourg.fr", address: true };
+          f.panel.innerHTML = `<div class="nv-real">
+            <label>✍️ Ce que j'ai trouvé<textarea rows="3" data-f="answer" placeholder="Écrivez votre réponse ici…"></textarea></label>
+            <label>${siteField.label}<input type="text" data-f="site" placeholder="${siteField.ph}" autocomplete="off" spellcheck="false"></label>
+            <fieldset class="nv-check"><legend><b>✅ Je vérifie</b> (cochez seulement ce qui est vrai)</legend>
+              ${checks.map(c => `<label><input type="checkbox" data-c="${c.id}"> ${c.html}</label>`).join("")}</fieldset>
+            <div class="mk-fb"></div>
+            <div class="final-actions"><button type="button" class="secondary" data-back>← Revoir la mission</button><button type="button" class="primary" data-send>📤 Envoyer ma réponse au formateur</button></div></div>`;
+          const $f = s => f.panel.querySelector(s);
+          $f("[data-back]").addEventListener("click", () => ctx.go(1));
+          $f("[data-send]").addEventListener("click", async () => {
+            const answer = $f('[data-f="answer"]').value.trim(), siteRaw = $f('[data-f="site"]').value.trim();
+            const site = siteField.address ? siteRaw.replace(/^https?:\/\//i, "").split(/[/?#\s]/)[0].toLowerCase() : siteRaw;
+            const fb = $f(".mk-fb");
+            if (!answer) { fb.innerHTML = `<div class="alert bad">Écrivez d'abord ce que vous avez trouvé 🙂</div>`; return; }
+            if (!site) { fb.innerHTML = `<div class="alert bad">${siteField.address ? "Notez aussi l'adresse du site : vous la lisez dans la barre d'adresse, tout en haut du navigateur." : "Remplissez aussi la deuxième case 🙂"}</div>`; return; }
+            const ticked = Object.fromEntries(checks.map(c => [c.id, $f(`[data-c="${c.id}"]`).checked]));
+            $f("[data-send]").disabled = true;
+            G.ok("answer", "Trouver une réponse sur Internet");
+            if (siteField.address) (B().looksLikeAddress(site) ? G.ok : G.ko)("addr", "Noter l'adresse du site", "Une adresse ressemble à www.nom-du-site.fr : on la recopie depuis la barre d'adresse.");
+            if (r.official) { const off = r.official.some(o => site.endsWith(o.replace(/^\./, "")) || site.includes(o)); (off ? G.ok : G.ko)("official", "Utiliser le site officiel", `Pour cette mission, le site officiel était ${r.official[0]}.`); }
+            checks.forEach(c => (ticked[c.id] ? G.ok : G.ko)("chk_" + c.id, c.label, c.why));
+            const text = `🎯 Mission : ${r.title}\n✍️ Ma réponse : ${answer}\n${siteField.address ? "🌐 Trouvé sur" : siteField.label.replace(/<[^>]+>/g, "")} : ${siteRaw}\n${checks.map(c => `${ticked[c.id] ? "✅" : "⬜"} ${c.short}`).join(" · ")}`;
+            try { await ctx.api.sendToTeacher?.(`${cfg.icon || "🧭"} Mission réelle : ${r.title}`, text.slice(0, 1900)); }
+            catch (e) { fb.innerHTML = `<div class="alert bad">La réponse n'a pas pu partir : ${esc(e.message)}. Réessayez.</div>`; $f("[data-send]").disabled = false; return; }
+            finish(ctx, G, { key, label, intro: `${ctx.demo ? "En projection, la réponse n'est pas envoyée." : "📤 Votre réponse est partie chez le formateur : il vous répondra dans votre <b>messagerie</b>."}<br>Mission : <b>${esc(r.title)}</b> — votre réponse : « ${esc(answer)} »${siteField.address ? ` (sur ${esc(site)})` : ""}.` });
+          });
+          return;
+        }
+        ctx.finalScreen({ theme: null });
       }
-      ctx.finalScreen({ theme: null });
-    }
-  });
+    });
+  }
+  realMission("nav_real", { chapter: "Navigateur", level: 7, missions: REAL, label: "J'ai réussi une mission sur le vrai Internet" });
+  AN.realMission = realMission;
 
   AN.navKit = { WORLD, INDEX, MED, MAIRIE, FAKE_ALERT, REAL };
 })(window.AN);

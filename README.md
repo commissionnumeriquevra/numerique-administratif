@@ -17,6 +17,13 @@ Chaque séance dure 30 minutes au plus : un cours court projeté, des jeux en di
   - Séance 3 : le vrai nom d'un site ; le cadenas ; les faux sites ; les fausses alertes virus ; cookies et fenêtres pièges.
   - Les exercices se font dans un **navigateur simulé** (onglets, flèches, favoris, cadenas, moteur « Cherchetout »).
   - Le **niveau 7 est une mission réelle** : le participant choisit une mission, cherche sur le vrai Internet, puis répond dans l'application. Sa réponse arrive dans la **messagerie du formateur**, qui la valide avec les réponses rapides « Mission réelle… ».
+- **🔑 Comptes et mots de passe** : 3 séances, 9 jeux, 8 niveaux notés sur 20.
+  - Séance 1 : identifiant et mot de passe ; créer un compte ; le bouton 👁 ; se déconnecter.
+  - Séance 2 : comment font les pirates ; la phrase de passe ; le coffre-fort (Chrome et iPhone).
+  - Séance 3 : le code par SMS ; FranceConnect ; le faux conseiller ; oubli et piratage.
+  - Le **niveau 3 « Dans la peau du pirate »** montre un mot de passe faible tomber en quelques secondes, et une phrase de passe résister.
+  - Le **niveau 8 est une mission réelle** : observer une vraie page de connexion (ameli, impots.gouv, CAF…) **sans se connecter**.
+  - 🛡️ Partout : « N'utilisez jamais un vrai mot de passe ici ». Rien n'est enregistré.
 
 ## Nouveautés de la V8
 

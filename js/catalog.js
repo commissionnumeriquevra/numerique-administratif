@@ -30,6 +30,14 @@
     nav_fakesite:    { label: "Navigateur niv. 5 — Vrai ou faux site ?", short: "Vrai ou faux site", icon: "🕵️", family: "Navigateur" },
     nav_alert:       { label: "Navigateur niv. 6 — Fausses alertes et fenêtres pièges", short: "Fausses alertes", icon: "🚨", family: "Navigateur" },
     nav_real:        { label: "Navigateur niv. 7 — Mission réelle sur Internet", short: "Mission réelle", icon: "🌍", family: "Navigateur" },
+    acc_login:       { label: "Comptes niv. 1 — Se connecter, se déconnecter", short: "Se connecter", icon: "👤", family: "Comptes" },
+    acc_signup:      { label: "Comptes niv. 2 — Créer un compte", short: "Créer un compte", icon: "🆕", family: "Comptes" },
+    acc_pirate:      { label: "Comptes niv. 3 — Dans la peau du pirate", short: "Dans la peau du pirate", icon: "🕵️", family: "Comptes" },
+    acc_phrase:      { label: "Comptes niv. 4 — Fabriquer une phrase de passe", short: "Phrase de passe", icon: "🧩", family: "Comptes" },
+    acc_vault:       { label: "Comptes niv. 5 — Le coffre-fort à mots de passe", short: "Coffre-fort", icon: "🔐", family: "Comptes" },
+    acc_sms:         { label: "Comptes niv. 6 — Le code par SMS et le faux conseiller", short: "Code par SMS", icon: "📱", family: "Comptes" },
+    acc_reset:       { label: "Comptes niv. 7 — Mot de passe oublié, compte piraté", short: "Mot de passe oublié", icon: "🔑", family: "Comptes" },
+    acc_real:        { label: "Comptes niv. 8 — Mission réelle : observer une page de connexion", short: "Mission réelle", icon: "🌍", family: "Comptes" },
     sms_scam:        { label: "Repérer un SMS frauduleux", short: "SMS frauduleux", icon: "📱", family: "Sécurité" },
     secure_payment:  { label: "Payer en ligne en sécurité", short: "Paiement en ligne", icon: "💳", family: "Sécurité" },
     custom:          { label: "Mission personnalisée", short: "Personnalisée", icon: "✏️", family: "Personnalisées" }
@@ -41,6 +49,7 @@
     p_dossier:  { label: "Parcours administratif complet (document → dossier)", icon: "🧭", steps: ["download_doc", "find_file", "missing_piece", "appointment"] },
     p_email:    { label: "📧 Chapitre E-mail (7 niveaux)", icon: "📧", steps: ["mail_read", "mail_address", "mail_reply", "mail_compose", "mail_attach", "mail_fraud", "mail_challenge"] },
     p_nav:      { label: "🧭 Chapitre Navigateurs et recherche (7 niveaux)", icon: "🧭", steps: ["nav_open", "nav_buttons", "nav_search", "nav_results", "nav_fakesite", "nav_alert", "nav_real"] },
+    p_comptes:  { label: "🔑 Chapitre Comptes et mots de passe (8 niveaux)", icon: "🔑", steps: ["acc_login", "acc_signup", "acc_pirate", "acc_phrase", "acc_vault", "acc_sms", "acc_reset", "acc_real"] },
     p_securite: { label: "Parcours « Se protéger des arnaques »", icon: "🛡️", steps: ["suspicious_mail", "sms_scam", "password_reset", "secure_payment"] }
   };
 
@@ -71,6 +80,14 @@
     nav_fakesite: ["Le vrai nom du site est juste avant le premier « / » : impots.gouv.fr ✅ — impots-gouv-remboursement.com ❌.", "Le cadenas 🔒 = connexion chiffrée. Il ne prouve PAS que le site est honnête.", "« Non sécurisé » : je ne tape jamais de mot de passe ni de carte.", "Fautes, urgence, compte à rebours, carte bancaire demandée = faux site."],
     nav_alert: ["Une alerte virus dans le navigateur, avec un numéro à appeler, est TOUJOURS fausse.", "Je n'appelle pas, je ne clique pas dedans : Échap, puis je ferme l'onglet ✕.", "Si ça bloque : je ferme le navigateur, ou j'éteins l'ordinateur.", "J'ai appelé ? Je raccroche. On a pris la main ? J'éteins, j'appelle ma banque, cybermalveillance.gouv.fr.", "Cookies : j'ai le droit de « Tout refuser ». « Vous avez gagné » : je ferme avec ✕."],
     nav_real: ["Nouvel onglet : ＋ ou Ctrl + T. Je garde l'onglet de départ ouvert.", "Mots-clés → je lis les résultats → j'évite les « Sponsorisé » → je vérifie le vrai nom du site.", "Pour chercher une information, je n'ai jamais besoin de donner mes coordonnées.", "Une fenêtre bizarre : Échap, je ferme l'onglet, je demande de l'aide."],
+    acc_login: ["Un compte = un identifiant (souvent l'adresse e-mail) + un mot de passe.", "Le bouton 👁 affiche ce que je tape : pratique pour vérifier.", "Majuscules et minuscules comptent. Attention à la touche Verr. Maj !", "Sur un ordinateur partagé : jamais « Se souvenir de moi », et toujours « Se déconnecter »."],
+    acc_signup: ["Les champs avec * sont obligatoires.", "Confirmer le mot de passe = le retaper à l'identique.", "Après l'inscription : je clique sur le lien de l'e-mail de confirmation.", "Pas dans la réception ? Je regarde dans les Indésirables."],
+    acc_pirate: ["Les pirates : 1) essaient les mots de passe volés sur d'autres sites, 2) les mots de passe courants, 3) les infos que je publie.", "Prénoms, animaux, dates de naissance : les premiers essayés.", "Ajouter un « ! » ou une majuscule ne suffit pas.", "Le pirate cherche la proie facile : si ça résiste, il passe à quelqu'un d'autre."],
+    acc_phrase: ["La recette : 4 mots ou plus, sans rapport avec ma vie (ex. : Trois tomates dansent sous la pluie !).", "Pour la retenir, j'imagine la scène.", "Un mot de passe différent par site.", "Ma messagerie mérite le plus solide : c'est la clé de toutes les clés."],
+    acc_vault: ["Le coffre-fort invente, enregistre et remplit mes mots de passe.", "Ordinateur : « Utiliser le mot de passe suggéré », puis « Enregistrer ».", "iPhone : l'app « Mots de passe », déverrouillée avec Face ID ou le code.", "Je n'ai plus qu'un mot de passe à retenir : celui de mon compte Google ou Apple. Il doit être très solide."],
+    acc_sms: ["Le code reçu par SMS est une deuxième clé : je le tape moi-même sur le site.", "Je ne le donne JAMAIS : ni à un conseiller, ni à un technicien, ni à la police.", "Un doute au téléphone ? Je raccroche et j'appelle le numéro au dos de ma carte.", "Un code reçu sans rien faire ? Je change mon mot de passe."],
+    acc_reset: ["« Mot de passe oublié ? » : un lien arrive par e-mail (valable peu de temps).", "Je ne devine pas au hasard : le compte peut se bloquer.", "Compte piraté ? Je change le mot de passe en allant moi-même sur le site, et je préviens mes contacts.", "Aide : cybermalveillance.gouv.fr"],
+    acc_real: ["FranceConnect : une seule clé (celle d'ameli, des impôts…) pour les sites de l'État.", "Le lien « mot de passe oublié » est toujours près du bouton de connexion.", "J'observe sans rien taper quand on me demande juste de regarder.", "Je vérifie toujours le vrai nom du site."],
     custom: ["Je lis la consigne en entier avant de commencer.", "Je prends mon temps.", "Je n'hésite pas à demander de l'aide."]
   };
 

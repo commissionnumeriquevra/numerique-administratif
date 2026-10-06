@@ -34,6 +34,7 @@
     if (!session) return;
     if (session.game?.running) session.game.stop();
     session.cleanup?.();
+    try { session.unmount?.(); } catch (e) {}
     document.removeEventListener("keydown", session.onKey, true);
     session.overlay.remove();
     document.documentElement.classList.remove("projecting");
@@ -74,6 +75,9 @@
             <button type="button" data-l="close" aria-label="Fermer la leçon" title="Fermer (Échap)">✕</button>
           </nav></div>`;
       o.querySelector('[data-l="next"]').focus({ preventScroll: true });
+      // diapositive interactive (ex : simulateur projeté) : mount(el) peut renvoyer une fonction de nettoyage
+      try { session.unmount?.(); } catch (e) {}
+      session.unmount = !s.game && s.mount ? s.mount(o.querySelector(".lesson-body")) : null;
     };
     const pending = () => [...o.querySelectorAll(".lesson-slide [data-reveal]:not(.shown)")];
     const next = () => {

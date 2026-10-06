@@ -140,6 +140,7 @@
         <div class="bk-addr ${sec ? "" : "insecure"}">
           <button type="button" class="bk-lock" data-bk="lock" aria-label="${sec ? "Connexion sécurisée" : "Non sécurisé"}">${sec ? "🔒" : "⚠️ <span>Non sécurisé</span>"}</button>
           ${addr}
+          ${(opts.tools || []).map(t => `<button type="button" class="bk-star bk-tool" data-bk-tool="${t.id}" title="${esc(t.label)}" aria-label="${esc(t.label)}">${t.icon}</button>`).join("")}
           ${F.favorites ? `<button type="button" class="bk-star ${fav ? "on" : ""}" data-bk="star" aria-label="${fav ? "Retirer des favoris" : "Ajouter aux favoris"}" title="${fav ? "Dans vos favoris" : "Ajouter aux favoris"}">${fav ? "★" : "☆"}</button>` : ""}
         </div></div>
         ${st.lock ? `<div class="bk-lockinfo" role="dialog">${sec
@@ -173,10 +174,17 @@
         ${fs ? `<div class="bk-fs-tip">Appuyez sur <kbd>Échap</kbd> pour quitter le mode plein écran</div>` : `${tabsHTML()}${barHTML()}`}
         <div class="bk-view">${viewHTML()}</div>
         ${fs ? "" : `<div class="bk-status" aria-live="polite">${st.hover ? esc(st.hover) : "&nbsp;"}</div>`}
-        ${flashHTML()}</div>`;
+        ${flashHTML()}${bubbleHTML()}</div>`;
       if (fs) container.querySelector(".bk")?.focus({ preventScroll: true });
       if (st.editing) { const i = container.querySelector(".bk-addr-input"); if (i) { i.focus(); i.select(); } }
       bindHover();
+    }
+    /* bulle sous la barre d'adresse (enregistrer un mot de passe, remplissage automatique…) */
+    const bubbleHTML = () => st.bubble ? `<div class="bk-bubble" role="dialog">${st.bubble}</div>` : "";
+    function bubble(html) {
+      st.bubble = html || null;
+      container.querySelector(".bk-bubble")?.remove();
+      if (html) container.querySelector(".bk")?.insertAdjacentHTML("beforeend", bubbleHTML());
     }
     const flashHTML = () => st.flash ? `<div class="mk-flash bk-flash ${st.flash.kind}" role="status">${st.flash.html}</div>` : "";
     function bindHover() {
@@ -192,7 +200,7 @@
     function go(url, from = "link") {
       const t = tab(), n = normalize(url);
       t.hist = t.hist.slice(0, t.pos + 1); t.hist.push(n); t.pos = t.hist.length - 1;
-      t.flags = {}; t.reloads = 0; st.editing = false; st.lock = false; st.hover = "";
+      t.flags = {}; t.reloads = 0; st.editing = false; st.lock = false; st.hover = ""; st.bubble = null;
       render();
       emit("navigate", { url: n, from, found: !!pageFor(n), page: pageFor(n), q: queryOf(n) });
       if (n.startsWith(RESULTS)) emit("search", { q: queryOf(n), from });
@@ -256,6 +264,8 @@
     }
 
     const onClick = e => {
+      const bb = e.target.closest("[data-bk-bubble]");
+      if (bb && container.contains(bb)) { e.preventDefault(); emit("bubble", { name: bb.dataset.bkBubble, el: bb }); return; }
       const link = e.target.closest(".bk-view [data-href]");
       if (link && container.contains(link)) {
         e.preventDefault();
@@ -266,6 +276,8 @@
       }
       const act = e.target.closest(".bk-view [data-bk-act]");
       if (act && container.contains(act)) { e.preventDefault(); emit("action", { name: act.dataset.bkAct, el: act, url: urlOf(tab()) }); return; }
+      const tl = e.target.closest("[data-bk-tool]");
+      if (tl && container.contains(tl)) { emit("tool", { id: tl.dataset.bkTool, el: tl }); return; }
       const b = e.target.closest("[data-bk]");
       if (b && container.contains(b)) { handlers[b.dataset.bk]?.(b, e); return; }
       if (st.lock && !e.target.closest(".bk-lockinfo")) { st.lock = false; render(); }
@@ -308,6 +320,9 @@
       pageFor, isSecure,
       addPages(more) { Object.entries(more || {}).forEach(([k, v]) => { pages[normalize(k)] = v; }); },
       exitFullscreen() { tab().flags.fsExit = true; render(); },
+      bubble,
+      /** Relit les champs d'une page (les valeurs tapées ne sont jamais envoyées nulle part). */
+      fields() { const o = {}; container.querySelectorAll(".bk-view [name]").forEach(i => { o[i.name] = i.type === "checkbox" ? i.checked : i.value; }); return o; },
       press(name) { handlers[name]?.(container.querySelector(`[data-bk="${name}"]`) || { dataset: {} }); },
       destroy() {
         container.removeEventListener("click", onClick); container.removeEventListener("submit", onSubmit);
