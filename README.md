@@ -30,6 +30,12 @@ Chaque séance dure 30 minutes au plus : un cours court projeté, des jeux en di
   - Séance 3 : retrouver un téléchargement (tri par date) ; la recherche ; joindre un document à une démarche (date, format, taille).
   - Les exercices se font dans un **Explorateur Windows simulé** : dossiers, clic droit, glisser-déposer, couper/coller, renommer (avec l'avertissement sur l'extension), Corbeille, recherche, fenêtre « Ouvrir ».
   - Le **niveau 8 est une mission réelle** sur le vrai ordinateur : ouvrir l'Explorateur, trier, afficher les extensions, créer un dossier « Atelier numérique », **sans rien supprimer**. Les observations arrivent dans la messagerie du formateur.
+- **📶 Wi-Fi et réseaux** : 3 séances, 9 jeux, 8 niveaux notés sur 20.
+  - Séance 1 : la box, le Wi-Fi et la 4G ; lire les icônes ; se connecter à la box ; Wi-Fi ou forfait.
+  - Séance 2 : le Wi-Fi public et les faux réseaux ; « Pas d'Internet » : la méthode en 3 étapes ; redémarrer la box.
+  - Séance 3 : les arnaques box et forfait (33700) ; le partage de connexion ; les bons réflexes.
+  - Trois simulateurs : un **ordinateur Windows 11** (menu Wi-Fi, clé de sécurité, mode avion, page de connexion des Wi-Fi publics), un **smartphone** (Réglages, Wi-Fi, données mobiles, partage de connexion, consommation) et une **box** (étiquette, voyants, redémarrage).
+  - Le **niveau 8 est une mission réelle** sur son propre téléphone : icônes, mode avion, consommation, Wi-Fi de la médiathèque, **sans rien changer**. Les observations arrivent dans la messagerie du formateur.
 
 ## Nouveautés de la V8
 
@@ -129,7 +135,7 @@ js/quiz-banks*.js          questions des quiz (par thème et par niveau)
 js/quiz.js                 moteur de quiz (sans répétition, réponses mélangées)
 js/a11y.js                 taille du texte, contraste, lecture à voix haute
 js/missions/runtime.js     moteur commun des missions
-js/missions/*.js           une famille de missions par fichier (files-kit.js : l'Explorateur simulé)
+js/missions/*.js           une famille de missions par fichier (files-kit.js : l'Explorateur simulé ; net-kit.js : PC, téléphone et box)
 js/student.js              espace participant
 js/teacher.js              espace formateur
 js/app.js                  démarrage

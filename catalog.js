@@ -46,6 +46,14 @@
     fic_find:        { label: "Fichiers niv. 6 — Retrouver un fichier", short: "Retrouver", icon: "🔍", family: "Fichiers" },
     fic_send:        { label: "Fichiers niv. 7 — Joindre un document à une démarche", short: "Joindre un document", icon: "📎", family: "Fichiers" },
     fic_real:        { label: "Fichiers niv. 8 — Mission réelle sur le vrai ordinateur", short: "Mission réelle", icon: "🌍", family: "Fichiers" },
+    wifi_icons:      { label: "Wi-Fi niv. 1 — Lire les icônes du réseau", short: "Les icônes", icon: "📶", family: "Wi-Fi" },
+    wifi_box:        { label: "Wi-Fi niv. 2 — Connecter l'ordinateur à la box", short: "Ordinateur et box", icon: "📡", family: "Wi-Fi" },
+    wifi_phone:      { label: "Wi-Fi niv. 3 — Le téléphone : Wi-Fi ou 4G ?", short: "Wi-Fi ou 4G", icon: "📱", family: "Wi-Fi" },
+    wifi_public:     { label: "Wi-Fi niv. 4 — Le Wi-Fi public", short: "Wi-Fi public", icon: "☕", family: "Wi-Fi" },
+    wifi_panne:      { label: "Wi-Fi niv. 5 — « Pas d'Internet » : je dépanne", short: "Dépanner", icon: "🛠️", family: "Wi-Fi" },
+    wifi_scams:      { label: "Wi-Fi niv. 6 — Les arnaques autour de la box et du forfait", short: "Arnaques box et forfait", icon: "🚩", family: "Wi-Fi" },
+    wifi_share:      { label: "Wi-Fi niv. 7 — Le partage de connexion", short: "Partage de connexion", icon: "🔗", family: "Wi-Fi" },
+    wifi_real:       { label: "Wi-Fi niv. 8 — Mission réelle sur mon téléphone", short: "Mission réelle", icon: "🌍", family: "Wi-Fi" },
     sms_scam:        { label: "Repérer un SMS frauduleux", short: "SMS frauduleux", icon: "📱", family: "Sécurité" },
     secure_payment:  { label: "Payer en ligne en sécurité", short: "Paiement en ligne", icon: "💳", family: "Sécurité" },
     custom:          { label: "Mission personnalisée", short: "Personnalisée", icon: "✏️", family: "Personnalisées" }
@@ -59,6 +67,7 @@
     p_nav:      { label: "🧭 Chapitre Navigateurs et recherche (7 niveaux)", icon: "🧭", steps: ["nav_open", "nav_buttons", "nav_search", "nav_results", "nav_fakesite", "nav_alert", "nav_real"] },
     p_comptes:  { label: "🔑 Chapitre Comptes et mots de passe (8 niveaux)", icon: "🔑", steps: ["acc_login", "acc_signup", "acc_pirate", "acc_phrase", "acc_vault", "acc_sms", "acc_reset", "acc_real"] },
     p_fichiers: { label: "🗂️ Chapitre Fichiers et dossiers (8 niveaux)", icon: "🗂️", steps: ["fic_explore", "fic_ext", "fic_rename", "fic_folders", "fic_trash", "fic_find", "fic_send", "fic_real"] },
+    p_wifi:     { label: "📶 Chapitre Wi-Fi et réseaux (8 niveaux)", icon: "📶", steps: ["wifi_icons", "wifi_box", "wifi_phone", "wifi_public", "wifi_panne", "wifi_scams", "wifi_share", "wifi_real"] },
     p_securite: { label: "Parcours « Se protéger des arnaques »", icon: "🛡️", steps: ["suspicious_mail", "sms_scam", "password_reset", "secure_payment"] }
   };
 
@@ -105,6 +114,14 @@
     fic_find: ["Ce que je télécharge va dans Téléchargements.", "Trier par date (Modifié le, décroissant) : le plus récent est en haut.", "La loupe 🔍 cherche dans le dossier ouvert : pour chercher partout, je me place dans Ce PC.", "Un seul mot suffit : « permis », « facture »…"],
     fic_send: ["« Parcourir… » ouvre une fenêtre pour choisir un fichier sur l'ordinateur.", "Je vérifie : le bon document, la bonne date (moins de 3 mois ?), le bon côté (recto).", "Je vérifie le format (PDF, JPG…) et la taille (5 Mo maximum ?).", "Une photo de téléphone est lourde : un PDF est souvent plus léger."],
     fic_real: ["⊞ Windows + E ouvre l'Explorateur.", "Téléchargements trié par date : je retrouve vite le dernier fichier.", "J'affiche les extensions une fois pour toutes.", "Je me crée un dossier « Atelier numérique » pour ranger ce que je fais en atelier."],
+    wifi_icons: ["Éventail plein = Wi-Fi OK. Globe barré = connecté à rien. Point d'exclamation = la box n'a pas Internet.", "✈ = mode avion : tout est coupé.", "4G / 5G = j'utilise le forfait du téléphone.", "Une seule barre = signal faible : je me rapproche de la box."],
+    wifi_box: ["Le nom du Wi-Fi et la clé sont sur l'étiquette de la box.", "Menu Wi-Fi : en bas à droite de l'écran, puis la flèche ›.", "Je choisis le nom EXACT de ma box (les autres sont ceux des voisins).", "La clé se tape exactement : majuscules comprises. L'œil 👁 aide. Chez moi : « Se connecter automatiquement »."],
+    wifi_phone: ["Réglages › Wi-Fi › le nom de la box › le mot de passe.", "En Wi-Fi, le forfait n'est pas utilisé. Dehors, le téléphone passe tout seul en 4G.", "Les vidéos consomment beaucoup : je les regarde en Wi-Fi.", "Ma consommation : Réglages › Données mobiles (ou Utilisation des données)."],
+    wifi_public: ["Le bon nom du Wi-Fi public est sur l'affiche, ou à l'accueil.", "Un vrai Wi-Fi public demande seulement d'accepter les conditions.", "Jamais de mot de passe ni de carte bancaire pour un Wi-Fi.", "Banque et démarches sensibles : plutôt en 4G ou à la maison."],
+    wifi_panne: ["1) Je regarde l'icône : ✈ ? globe barré ? point d'exclamation ?", "2) Mode avion désactivé, Wi-Fi activé, bon réseau choisi.", "3) Voyants de la box rouges : je débranche, j'attends, je rebranche, j'attends 2 à 5 minutes.", "Toujours rouge ? J'appelle le numéro de mon opérateur (sur la facture)."],
+    wifi_scams: ["« Forfait épuisé, payez 1,99 € », « box suspendue » avec un lien : arnaque.", "Un faux technicien veut prendre la main sur l'ordinateur : je raccroche.", "Je signale les SMS d'arnaque au 33700, puis je les supprime.", "J'ai payé ? J'appelle ma banque tout de suite (opposition)."],
+    wifi_share: ["Box en panne ? Le téléphone peut servir de « box de secours ».", "Réglages › Données mobiles (activées), puis Partage de connexion.", "Sur l'ordinateur : je choisis le réseau du téléphone et je tape son mot de passe.", "Ça consomme le forfait : je coupe le partage dès que j'ai fini."],
+    wifi_real: ["Je sais lire la barre d'état de mon téléphone.", "Je sais où est le mode avion (et je ne l'active pas par erreur).", "Je sais trouver ma consommation du mois.", "Le Wi-Fi d'un lieu public : son nom est affiché à l'accueil."],
     custom: ["Je lis la consigne en entier avant de commencer.", "Je prends mon temps.", "Je n'hésite pas à demander de l'aide."]
   };
 
