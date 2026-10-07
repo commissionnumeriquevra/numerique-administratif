@@ -118,10 +118,10 @@
         return;
       }
       // clic dans la diapositive : révèle l'élément suivant (comme la télécommande)
-      if (e.target.closest(".lesson-slide") && !e.target.closest("a,button,input,select,textarea")) { if (pending().length) next(); }
+      if (e.target.closest(".lesson-slide") && !e.target.closest("a,button,input,select,textarea,.fx")) { if (pending().length) next(); }
     });
     session.onKey = e => {
-      if (e.target.closest?.("input,textarea,select") || document.querySelector("dialog[open]")) return;
+      if (e.target.closest?.("input,textarea,select,.fx") || document.querySelector("dialog[open]")) return;
       if (session.game?.running) return; // pendant un jeu, le clavier ne change pas de diapositive
       const k = e.key;
       if (["ArrowRight", "PageDown", " ", "Enter"].includes(k)) { e.preventDefault(); next(); }

@@ -46,7 +46,7 @@
           <button type="button" class="primary" data-next>${i + 1 < questions.length ? "Question suivante →" : "Continuer →"}</button>` : ""}</div>`;
       el.querySelectorAll("[data-k]").forEach(b => b.addEventListener("click", () => {
         answered = Number(b.dataset.k);
-        const plain = q.q.replace(/<[^>]+>/g, "");
+        const plain = q.label || q.q.replace(/<[^>]+>/g, "");
         (answered === q.ok ? G.ok : G.ko)(`${key}_${i}`, plain, answered === q.ok ? "" : q.why.replace(/<[^>]+>/g, ""));
         draw();
       }));
