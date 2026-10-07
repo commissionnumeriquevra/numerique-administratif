@@ -36,6 +36,19 @@ Chaque séance dure 30 minutes au plus : un cours court projeté, des jeux en di
   - Séance 3 : les arnaques box et forfait (33700) ; le partage de connexion ; les bons réflexes.
   - Trois simulateurs : un **ordinateur Windows 11** (menu Wi-Fi, clé de sécurité, mode avion, page de connexion des Wi-Fi publics), un **smartphone** (Réglages, Wi-Fi, données mobiles, partage de connexion, consommation) et une **box** (étiquette, voyants, redémarrage).
   - Le **niveau 8 est une mission réelle** sur son propre téléphone : icônes, mode avion, consommation, Wi-Fi de la médiathèque, **sans rien changer**. Les observations arrivent dans la messagerie du formateur.
+- **🖨️ Périphériques** : 3 séances, 9 jeux, 8 niveaux notés sur 20.
+  - Séance 1 : les périphériques ; les 5 gestes de la souris ; les touches à connaître (le clavier AZERTY s'allume à l'écran quand on tape) ; copier, coller, annuler.
+  - Séance 2 : la fenêtre d'impression (pages, couleur, copies) ; enregistrer en PDF ; les pannes d'imprimante.
+  - Séance 3 : la clé USB (copier, éjecter, prudence) ; le zoom et le confort de l'écran ; l'aide-mémoire des raccourcis.
+  - Simulateurs : terrain d'entraînement de la souris, clavier AZERTY illustré, fenêtre « Imprimer », imprimante avec sa file d'attente, Paramètres › Affichage, clé USB dans l'Explorateur.
+  - Le **niveau 8 est une mission réelle** sur l'ordinateur de la médiathèque : prises USB, Ctrl + P (puis Annuler), zoom, @. Les observations arrivent dans la messagerie du formateur.
+- **🇫🇷 FranceConnect** (chapitre final) : 3 séances, 9 jeux, 8 niveaux notés sur 20.
+  - Séance 1 : une seule clé pour l'État ; reconnaître le bouton ; vérifier franceconnect.gouv.fr ; quel compte choisir (impots.gouv.fr, ameli, MSA, L'Identité Numérique La Poste, France Identité, TrustMe).
+  - Séance 2 : se connecter en 5 étapes ; les informations transmises ; se déconnecter (deux portes) ; mot de passe oublié, état civil inexact, FranceConnect+ exigé.
+  - Séance 3 : FranceConnect+ et la validation sur le téléphone (refuser une demande surprise) ; les faux FranceConnect (appels, e-mails, faux sites).
+  - Tout se fait dans le navigateur simulé, avec des services fictifs de Valbourg et des identifiants d'exercice (bandeau SIMULATION partout).
+  - Le **niveau 8 est une mission réelle** : trouver le bouton FranceConnect d'un vrai site public (ANTS, service-public.fr…), regarder la page… **sans se connecter**.
+  - Informations vérifiées en octobre 2026 (aide.franceconnect.gouv.fr) : à revoir si la liste des comptes change.
 
 ## Nouveautés de la V8
 
@@ -135,7 +148,7 @@ js/quiz-banks*.js          questions des quiz (par thème et par niveau)
 js/quiz.js                 moteur de quiz (sans répétition, réponses mélangées)
 js/a11y.js                 taille du texte, contraste, lecture à voix haute
 js/missions/runtime.js     moteur commun des missions
-js/missions/*.js           une famille de missions par fichier (files-kit.js : l'Explorateur simulé ; net-kit.js : PC, téléphone et box)
+js/missions/*.js           une famille de missions par fichier (files-kit.js : l'Explorateur simulé ; net-kit.js : PC, téléphone et box ; per-kit.js : clavier, impression, affichage)
 js/student.js              espace participant
 js/teacher.js              espace formateur
 js/app.js                  démarrage
