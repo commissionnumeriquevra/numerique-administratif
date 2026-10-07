@@ -24,6 +24,12 @@ Chaque séance dure 30 minutes au plus : un cours court projeté, des jeux en di
   - Le **niveau 3 « Dans la peau du pirate »** montre un mot de passe faible tomber en quelques secondes, et une phrase de passe résister.
   - Le **niveau 8 est une mission réelle** : observer une vraie page de connexion (ameli, impots.gouv, CAF…) **sans se connecter**.
   - 🛡️ Partout : « N'utilisez jamais un vrai mot de passe ici ». Rien n'est enregistré.
+- **🗂️ Fichiers et dossiers** : 3 séances, 9 jeux, 8 niveaux notés sur 20.
+  - Séance 1 : l'armoire (fichier, dossier) ; l'Explorateur ; les grands dossiers ; les extensions (.pdf, .jpg, .exe…).
+  - Séance 2 : bien nommer ; renommer sans casser l'extension ; créer un dossier et ranger ; la Corbeille.
+  - Séance 3 : retrouver un téléchargement (tri par date) ; la recherche ; joindre un document à une démarche (date, format, taille).
+  - Les exercices se font dans un **Explorateur Windows simulé** : dossiers, clic droit, glisser-déposer, couper/coller, renommer (avec l'avertissement sur l'extension), Corbeille, recherche, fenêtre « Ouvrir ».
+  - Le **niveau 8 est une mission réelle** sur le vrai ordinateur : ouvrir l'Explorateur, trier, afficher les extensions, créer un dossier « Atelier numérique », **sans rien supprimer**. Les observations arrivent dans la messagerie du formateur.
 
 ## Nouveautés de la V8
 
@@ -123,7 +129,7 @@ js/quiz-banks*.js          questions des quiz (par thème et par niveau)
 js/quiz.js                 moteur de quiz (sans répétition, réponses mélangées)
 js/a11y.js                 taille du texte, contraste, lecture à voix haute
 js/missions/runtime.js     moteur commun des missions
-js/missions/*.js           une famille de missions par fichier
+js/missions/*.js           une famille de missions par fichier (files-kit.js : l'Explorateur simulé)
 js/student.js              espace participant
 js/teacher.js              espace formateur
 js/app.js                  démarrage
