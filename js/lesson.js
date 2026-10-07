@@ -124,6 +124,8 @@
       if (e.target.closest?.("input,textarea,select,.fx") || document.querySelector("dialog[open]")) return;
       if (session.game?.running) return; // pendant un jeu, le clavier ne change pas de diapositive
       const k = e.key;
+      // diapositive « clavier en direct » : on tape librement, seules les flèches et PageSuivante changent de diapositive
+      if (o.querySelector(".pk-live") && !["ArrowRight", "ArrowLeft", "PageDown", "PageUp", "Escape"].includes(k)) return;
       if (["ArrowRight", "PageDown", " ", "Enter"].includes(k)) { e.preventDefault(); next(); }
       else if (["ArrowLeft", "PageUp", "Backspace"].includes(k)) { e.preventDefault(); prev(); }
       else if (k === "Home") { session.i = 0; draw(); }

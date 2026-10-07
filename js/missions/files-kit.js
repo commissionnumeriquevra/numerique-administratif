@@ -92,7 +92,7 @@
       renaming: null, renameErr: "", menu: null, viewMenu: null, newMenu: false, sortMenu: false, clip: null,
       viewer: null, dialog: null, search: "", flash: null, trashView: false, view: opts.view || "details"
     };
-    const feat = { newFolder: true, rename: true, del: true, cut: true, search: true, sort: true, view: true, trash: true, drag: true, ...(opts.features || {}) };
+    const feat = { newFolder: true, rename: true, del: true, cut: true, copy: false, search: true, sort: true, view: true, trash: true, drag: true, ...(opts.features || {}) };
     const startNode = typeof opts.start === "string" ? findIn(root, n => n.tag === opts.start) : opts.start;
     S.cur = startNode || root.children[0];
     const emit = (type, data) => { try { opts.onEvent?.(type, data, ctl); } catch (e) { console.error(e); } };
@@ -202,8 +202,33 @@
       from.children = from.children.filter(c => c !== node); dest.children.push(node);
       S.sel = null; render(); emit("move", { file: node, from, to: dest }); return true;
     }
-    function cut(node) { if (!feat.cut || !node || S.trashView) return; if (node.special) { flash("Ce dossier fait partie de Windows : on ne le déplace pas.", "warn"); return; } S.clip = node.id; S.menu = null; render(); flash(`✂️ « ${esc(shown(node))} » est coupé. Ouvrez le dossier d'arrivée, puis cliquez sur <b>Coller</b>.`, "info", 5000); }
-    function paste(dest = S.cur) { const n = S.clip && findIn(root, x => x.id === S.clip); if (!n) return; if (move(n, dest)) S.clip = null; render(); }
+    function cut(node) { if (!feat.cut || !node || S.trashView) return; if (node.special) { flash("Ce dossier fait partie de Windows : on ne le déplace pas.", "warn"); return; } S.clip = node.id; S.clipMode = "cut"; S.menu = null; render(); flash(`✂️ « ${esc(shown(node))} » est coupé. Ouvrez le dossier d'arrivée, puis cliquez sur <b>Coller</b>.`, "info", 5000); }
+    function paste(dest = S.cur) {
+      const n = S.clip && findIn(root, x => x.id === S.clip); if (!n) return;
+      if (S.clipMode === "copy") { copyTo(n, dest); return; }
+      if (move(n, dest)) S.clip = null; render();
+    }
+    /* ----- copier (la clé USB : le fichier reste aussi à sa place) ----- */
+    const driveOf = node => pathOf(root, node).find(x => x.drive) || null;
+    function cloneNode(n) { const c = { ...n, id: nid(), children: n.children ? n.children.map(cloneNode) : undefined }; return c; }
+    function copyNode(node) { if (!feat.copy || !node || S.trashView) return; if (node.special) { flash("Ce dossier fait partie de Windows : on ne le copie pas ici.", "warn"); return; } S.clip = node.id; S.clipMode = "copy"; S.menu = null; render(); flash(`📄 « ${esc(shown(node))} » est copié. Ouvrez le dossier d'arrivée (ou la clé USB), puis cliquez sur <b>Coller</b>.`, "info", 5000); }
+    function copyTo(n, dest) {
+      if (!dest || dest.kind !== "folder") return false;
+      if (n.kind === "folder" && isInside(root, dest, n)) { flash("Impossible de copier un dossier dans lui-même 🙂", "warn"); return false; }
+      const c = cloneNode(n);
+      if (dest.children.some(x => x.name.toLowerCase() === c.name.toLowerCase())) {
+        if (parentOf(root, n) !== dest) { flash(`Il y a déjà « ${esc(n.name)} » dans ${esc(dest.name)}.`, "warn"); return false; }
+        const e = extOf(c.name); c.name = baseOf(c.name) + " - Copie" + (e ? "." + e : "");
+      }
+      dest.children.push(c); S.sel = c.id; render();
+      flash(`📋 « ${esc(shown(c))} » est copié dans <b>${esc(dest.name)}</b>.`, "good", 3500);
+      emit("copy", { file: c, src: n, to: dest, toDrive: driveOf(dest) }); return true;
+    }
+    function eject(drive) {
+      if (!drive?.drive) return;
+      if (S.copying) { flash("Attendez la fin de la copie avant d'éjecter.", "warn"); return; }
+      emit("eject", { drive });
+    }
 
     /* ----- corbeille ----- */
     function del(node) {
@@ -249,7 +274,7 @@
         ${kids.length && open && depth < 4 ? `<ul>${kids.map(k => sideItem(k, depth + 1)).join("")}</ul>` : ""}</li>`;
     }
     function row(n) {
-      const t = typeOf(n), sel = S.sel === n.id, cut = S.clip === n.id;
+      const t = typeOf(n), sel = S.sel === n.id, cut = S.clip === n.id && S.clipMode !== "copy";
       const name = S.renaming === n.id
         ? `<input class="fx-rename" value="${esc(S.showExt || n.kind === "folder" ? n.name : shown(n))}" spellcheck="false" autocomplete="off" aria-label="Nouveau nom">${S.renameErr ? `<span class="fx-rename-err" role="alert">${esc(S.renameErr)}</span>` : ""}`
         : `<span class="fx-n">${esc(shown(n))}</span>`;
@@ -260,7 +285,7 @@
     }
     function tile(n) {
       const t = typeOf(n), sel = S.sel === n.id;
-      return `<div class="fx-tile ${sel ? "sel" : ""} ${S.clip === n.id ? "cut" : ""} ${S.hint === n.id ? "fx-hint" : ""}" tabindex="0" data-fx="row" data-id="${n.id}" ${n.kind === "folder" ? `data-drop="${n.id}"` : ""} draggable="${feat.drag && !S.trashView ? "true" : "false"}">
+      return `<div class="fx-tile ${sel ? "sel" : ""} ${S.clip === n.id && S.clipMode !== "copy" ? "cut" : ""} ${S.hint === n.id ? "fx-hint" : ""}" tabindex="0" data-fx="row" data-id="${n.id}" ${n.kind === "folder" ? `data-drop="${n.id}"` : ""} draggable="${feat.drag && !S.trashView ? "true" : "false"}">
         <span class="fx-tile-ico">${n.kind === "folder" ? (n.icon || "📁") : t.family === "image" ? `<span class="fx-thumb" style="--bg:${n.bg || "#cfe3f7"}">${n.emoji || "🖼️"}</span>` : t.icon}</span>
         ${S.renaming === n.id ? `<input class="fx-rename" value="${esc(S.showExt || n.kind === "folder" ? n.name : shown(n))}" spellcheck="false" autocomplete="off" aria-label="Nouveau nom">${S.renameErr ? `<span class="fx-rename-err" role="alert">${esc(S.renameErr)}</span>` : ""}` : `<span class="fx-tile-n">${esc(shown(n))}</span>`}</div>`;
     }
@@ -294,7 +319,7 @@
       const n = m.id ? nodeById(m.id) : null;
       const items = S.trashView
         ? (n ? [["restore", "↩️ Restaurer"], ["del", "❌ Supprimer définitivement"]] : [])
-        : n ? [["open", n.kind === "folder" ? "📂 Ouvrir" : "📂 Ouvrir"], ...(feat.cut && !n.special ? [["cut", "✂️ Couper"]] : []), ...(feat.rename && !n.special ? [["rename", "✏️ Renommer"]] : []), ...(feat.del && !n.special ? [["del", "🗑️ Supprimer"]] : []), ["props", "ℹ️ Propriétés"]]
+        : n ? [["open", n.kind === "folder" ? "📂 Ouvrir" : "📂 Ouvrir"], ...(n.drive ? [["eject", "⏏️ Éjecter"]] : []), ...(feat.cut && !n.special ? [["cut", "✂️ Couper"]] : []), ...(feat.copy && !n.special ? [["copy", "📄 Copier"]] : []), ...(feat.rename && !n.special ? [["rename", "✏️ Renommer"]] : []), ...(feat.del && !n.special ? [["del", "🗑️ Supprimer"]] : []), ["props", "ℹ️ Propriétés"]]
           : [...(feat.newFolder ? [["new", "📁 Nouveau dossier"]] : []), ...(S.clip ? [["paste", "📋 Coller"]] : []), ...(feat.sort ? [["sortdate", "⇅ Trier par date"]] : [])];
       if (!items.length) return "";
       return `<div class="fx-menu" style="left:${m.x}px;top:${m.y}px" role="menu">${items.map(([a, l]) => `<button type="button" role="menuitem" data-fx="m-${a}">${l}</button>`).join("")}</div>`;
@@ -317,7 +342,8 @@
         ${opts.picker ? "" : `<div class="fx-tools">
           ${S.trashView ? trashBar : `
           ${feat.newFolder ? `<div class="fx-dd"><button type="button" class="fx-new ${S.hintTool === "new" ? "fx-hint" : ""}" data-fx="newMenu">＋ Nouveau ▾</button>${S.newMenu ? `<div class="fx-pop"><button type="button" data-fx="newFolder">📁 Dossier</button></div>` : ""}</div><span class="fx-vsep"></span>` : ""}
-          ${feat.cut ? `<button type="button" data-fx="cut" title="Couper" ${sel && !sel.special ? "" : "disabled"} class="${S.hintTool === "cut" ? "fx-hint" : ""}">✂️ Couper</button><button type="button" data-fx="paste" title="Coller" ${S.clip ? "" : "disabled"} class="${S.hintTool === "paste" ? "fx-hint" : ""}">📋 Coller</button>` : ""}
+          ${feat.cut ? `<button type="button" data-fx="cut" title="Couper" ${sel && !sel.special ? "" : "disabled"} class="${S.hintTool === "cut" ? "fx-hint" : ""}">✂️ Couper</button>${feat.copy ? `<button type="button" data-fx="copy" title="Copier" ${sel && !sel.special ? "" : "disabled"} class="${S.hintTool === "copy" ? "fx-hint" : ""}">📄 Copier</button>` : ""}<button type="button" data-fx="paste" title="Coller" ${S.clip ? "" : "disabled"} class="${S.hintTool === "paste" ? "fx-hint" : ""}">📋 Coller</button>` : ""}
+          ${(() => { const d = (sel && sel.drive) ? sel : driveOf(S.cur); return d ? `<button type="button" data-fx="eject" data-id="${d.id}" class="${S.hintTool === "eject" ? "fx-hint" : ""}">⏏️ Éjecter</button>` : ""; })()}
           ${feat.rename ? `<button type="button" data-fx="rename" ${sel && !sel.special ? "" : "disabled"} class="${S.hintTool === "rename" ? "fx-hint" : ""}">✏️ Renommer</button>` : ""}
           ${feat.del ? `<button type="button" data-fx="del" ${sel && !sel.special ? "" : "disabled"} class="${S.hintTool === "del" ? "fx-hint" : ""}">🗑️ Supprimer</button>` : ""}
           <span class="fx-vsep"></span>
@@ -375,7 +401,7 @@
           el.querySelectorAll("[data-fx=row]").forEach(r => r.classList.toggle("sel", r.dataset.id === id));
           // met à jour la barre sans tout redessiner (garde le double-clic)
           const n = nodeById(id);
-          el.querySelectorAll('[data-fx="cut"],[data-fx="rename"],[data-fx="del"],[data-fx="restore"]').forEach(x => { x.disabled = !n || !!n.special; });
+          el.querySelectorAll('[data-fx="cut"],[data-fx="copy"],[data-fx="rename"],[data-fx="del"],[data-fx="restore"]').forEach(x => { x.disabled = !n || !!n.special; });
           const pb = el.querySelector('[data-fx="pick"]'); if (pb) pb.disabled = !(n && n.kind === "file");
           const pn = el.querySelector(".fx-pickbar input"); if (pn) pn.value = n && n.kind === "file" ? n.name : "";
           const pe = el.querySelector(".fx-pick-err"); if (pe) pe.remove();
@@ -399,6 +425,8 @@
         case "viewMode": S.view = b.dataset.v; S.viewMenu = false; render(); return;
         case "ext": S.showExt = !S.showExt; S.viewMenu = false; render(); emit("showExt", { on: S.showExt }); return;
         case "cut": cut(selNode()); return;
+        case "copy": copyNode(selNode()); return;
+        case "eject": eject(findIn(root, x => x.id === b.dataset.id)); return;
         case "paste": paste(); return;
         case "rename": startRename(selNode()); return;
         case "del": del(selNode()); return;
@@ -418,7 +446,7 @@
       if (a.startsWith("m-")) {
         const n = S.menu?.id ? nodeById(S.menu.id) : null; S.menu = null;
         const act = a.slice(2);
-        if (act === "open") open(n); else if (act === "cut") cut(n); else if (act === "rename") startRename(n);
+        if (act === "open") open(n); else if (act === "cut") cut(n); else if (act === "copy") copyNode(n); else if (act === "eject") eject(n); else if (act === "rename") startRename(n);
         else if (act === "del") del(n); else if (act === "restore") restore(n); else if (act === "new") newFolder(); else if (act === "paste") paste();
         else if (act === "sortdate") { S.sort = { key: "date", dir: -1 }; render(); emit("sort", { ...S.sort }); }
         else if (act === "props" && n) { render(); flash(`ℹ️ <b>${esc(n.name)}</b> · ${esc(typeOf(n).label)}${n.kind === "file" ? " · " + fmtSize(n.size) : ""} · modifié le ${fmtDate(n.date)}<br>Emplacement : ${esc(pathOf(root, parentOf(root, n) || root).map(x => x.name).join(" › "))}`, "info", 7000); emit("props", { file: n }); }
@@ -449,6 +477,7 @@
       else if (e.key === "F2" && n) { e.preventDefault(); startRename(n); }
       else if (e.key === "Delete" && n) { e.preventDefault(); del(n); }
       else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "x" && n) { e.preventDefault(); cut(n); }
+      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "c" && n && feat.copy) { e.preventDefault(); copyNode(n); }
       else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "v") { e.preventDefault(); paste(); }
       else if (e.key === "Backspace") { e.preventDefault(); histGo(S.back, S.fwd); }
       else if (e.key === "ArrowDown" || e.key === "ArrowUp") {
@@ -466,7 +495,7 @@
       const t = e.target.closest("[data-drop]"); el.querySelectorAll(".fx-over").forEach(x => x.classList.remove("fx-over"));
       if (!t || !dragId) return; e.preventDefault();
       const n = findIn(root, x => x.id === dragId), dest = findIn(root, x => x.id === t.dataset.drop); dragId = null;
-      if (n && dest && n !== dest) { if (n.special) { flash("Ce dossier fait partie de Windows : on ne le déplace pas.", "warn"); return; } move(n, dest); }
+      if (n && dest && n !== dest) { if (n.special) { flash("Ce dossier fait partie de Windows : on ne le déplace pas.", "warn"); return; } if (driveOf(n) !== driveOf(dest)) copyTo(n, dest); else move(n, dest); }
     }
     function onDragEnd() { dragId = null; el.querySelectorAll(".fx-over").forEach(x => x.classList.remove("fx-over")); }
 
@@ -488,6 +517,9 @@
       pathOf: n => pathOf(root, n).map(x => x.name),
       parentOf: n => parentOf(root, n),
       inTrash: n => root.trash.some(t => t.node === n),
+      driveOf, copyTo,
+      addNode(parent, node) { (parent || root).children.push(node); render(); },
+      removeNode(node) { const p = parentOf(root, node); if (!p) return; if (isInside(root, S.cur, node)) { S.cur = root; S.search = ""; } if (S.clip && findIn(node, x => x.id === S.clip)) S.clip = null; p.children = p.children.filter(c => c !== node); S.sel = null; render(); },
       /** Fait clignoter un élément ou un outil (aide débutant). hint : id de nœud, "__trash", ou outil (tool) */
       hint(id, tool) { S.hint = id || null; S.hintTool = tool || null; render(); },
       get current() { return S.trashView ? null : S.cur; },

@@ -527,6 +527,5 @@
 
   /* Chapitres du programme annuel, à venir (affichés grisés côté formateur). */
   [
-    { id: "peripheriques", title: "Périphériques", icon: "🖨️", summary: "Souris, clavier, imprimante, clé USB, écran." }
   ].forEach(c => AN.chapters.register({ ...c, soon: true }));
 })(window.AN);
