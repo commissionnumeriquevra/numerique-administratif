@@ -6,7 +6,7 @@
    - Révélation en direct, statistiques du groupe, podium bienveillant.
 
    Un jeu = { id, title, icon, intro, noRank?, rounds: [ { kind, ... } ] }
-   Mécaniques (kind) : choice · spot · order · type · buzz
+   Mécaniques (kind) : choice · spot · order · type · buzz · make · bubbles · gesture · key
    ========================================================= */
 (function (AN) {
   "use strict";
@@ -25,7 +25,7 @@
       return `<div class="lg-intro"><div class="lg-intro-icon" aria-hidden="true">${g.icon || "🎮"}</div>
         <div><p class="l-lead">${g.intro}</p>
           <ul class="lg-how"><li>💻 Chacun joue sur <b>son ordinateur</b> : le jeu s'ouvre tout seul.</li>
-            <li>${g.rounds.length > 1 ? `🔢 ${g.rounds.length} manches` : "🎯 Une seule manche"} · ${kinds.includes("buzz") ? "⚡ plus vous êtes rapide, plus vous gagnez de points" : "⏱️ les bonnes réponses rapides rapportent plus"}</li>
+            <li>${g.rounds.length > 1 ? `🔢 ${g.rounds.length} manches` : "🎯 Une seule manche"} · ${kinds.includes("buzz") ? "⚡ plus vous êtes rapide, plus vous gagnez de points" : kinds.includes("bubbles") ? "🫧 30 secondes pour réveiller un maximum de bulles" : "⏱️ les bonnes réponses rapides rapportent plus"}</li>
             <li>${g.noRank ? "🤝 Pas de classement : on regarde juste les réponses du groupe." : "🏆 Podium à la fin… mais l'important, c'est de participer !"}</li></ul>
           <button type="button" class="l-btn lg-launch" data-game-launch="${esc(id)}">▶ Lancer le jeu</button></div></div>`;
     }
@@ -180,6 +180,16 @@
       classify(target, t) {
         if (!t) return "Pas de réponse";
         if (t === target) return "Exact";
+        if (!/^[\w.@-]+$/.test(target)) { // un mot avec accents, une phrase, une ville…
+          const plain = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+          if (/\d/.test(target) && /[&é"'(\-è_çà]{2,}/.test(t) && !/\d/.test(t)) return "Les chiffres (sans ⇧ Maj)";
+          if (t.toLowerCase() === target.toLowerCase()) return "Une majuscule";
+          if (plain(t) === plain(target)) return "Un accent oublié ou différent";
+          if (plain(t).toLowerCase() === plain(target).toLowerCase()) return "Accents et majuscules";
+          if (t.replace(/\s+/g, "") === target.replace(/\s+/g, "")) return "Un espace en trop ou oublié";
+          if (t.replace(/[.,;:!?]/g, "").trim() === target.replace(/[.,;:!?]/g, "").trim()) return "La ponctuation (point, virgule)";
+          return "Une lettre différente";
+        }
         if (/\s/.test(t)) return "Un espace en trop";
         if (!target.includes("@")) { // adresse de site web
           if (t.toLowerCase() === target) return "Des majuscules";
@@ -296,6 +306,146 @@
         return `<div class="lh-reveal-visual"><div class="lh-big-stat"><b>${solid} / ${list.length}</b> phrases solides 🛡️</div>
             <p class="lh-make-tip">Les phrases du groupe restent secrètes : on regarde seulement leur solidité.</p></div>
           <div class="lh-reveal-side">${bars(AN.pw.LABELS, buckets, [3, 4])}<div class="lh-why">${r.why || ""}</div></div>`;
+      }
+    },
+
+    /* ---------- 7. Le réveil des bulles (viser et cliquer, contre la montre) ---------- */
+    bubbles: {
+      limit: r => r.limit || 30,
+      goal: r => r.goal || 10,
+      positions(r, seed) { // mêmes bulles pour un même joueur (rechargement)
+        let x = 7; for (const c of String(seed)) x = (x * 31 + c.charCodeAt(0)) >>> 0;
+        const rnd = () => { x = (x * 1103515245 + 12345) >>> 0; return (x % 10000) / 10000; };
+        return Array.from({ length: r.count || 24 }, (_, i) => ({ x: 10 + rnd() * 80, y: 14 + rnd() * 72, s: Math.max(40, 120 - i * 4), c: i % 5 }));
+      },
+      play(ctx) {
+        const r = ctx.round, pos = K.bubbles.positions(r, ctx.seed), lim = K.bubbles.limit(r) * 1000;
+        let pop = ctx.saved?.payload?.pop || 0, miss = ctx.saved?.payload?.miss || 0, last = 0, done = false;
+        ctx.el.innerHTML = `<div class="lp-prompt">${r.prompt}</div>
+          <div class="lp-bub-count">🫧 <b>${pop}</b> bulle(s) réveillée(s) · <span>${miss}</span> clic(s) à côté</div>
+          <div class="lp-bub-area" role="application" aria-label="Zone des bulles"></div>`;
+        const area = ctx.el.querySelector(".lp-bub-area");
+        const count = () => { ctx.el.querySelector(".lp-bub-count b").textContent = pop; ctx.el.querySelector(".lp-bub-count span").textContent = miss; };
+        const send = final => { if (done) return; if (final) done = true; last = Date.now(); ctx.submit({ pop, miss }, final); };
+        const show = () => {
+          if (pop >= pos.length) return send(true);
+          const p = pos[pop];
+          area.innerHTML = `<button type="button" class="lp-bubble b${p.c}" style="left:${p.x}%;top:${p.y}%;width:${p.s}px;height:${p.s}px" aria-label="Bulle ${pop + 1}"><span>😴</span></button>`;
+          const b = area.firstChild;
+          b.addEventListener("pointerenter", () => { b.firstChild.textContent = "😊"; });
+          b.addEventListener("pointerleave", () => { b.firstChild.textContent = "😴"; });
+        };
+        area.addEventListener("click", e => {
+          if (done) return;
+          if (e.target.closest(".lp-bubble")) { pop++; count(); const fx = document.createElement("span"); fx.className = "lp-pop"; fx.style.left = e.target.closest(".lp-bubble").style.left; fx.style.top = e.target.closest(".lp-bubble").style.top; show(); area.appendChild(fx); setTimeout(() => fx.remove(), 500); if (Date.now() - last > 2000) send(false); }
+          else { miss++; count(); }
+        });
+        area.addEventListener("contextmenu", e => e.preventDefault());
+        show();
+        // on enregistre juste avant la fin du temps (sans attendre l'horloge commune)
+        const t = setInterval(() => { if (ctx.elapsed() >= lim - 500) { clearInterval(t); send(true); } else if (Date.now() - last > 2000 && !done) send(false); }, 250);
+        ctx.onStop(() => { clearInterval(t); if (!done && (pop || miss)) send(true); }); // révélé avant la fin : on garde le score
+      },
+      score(r, p) {
+        const pop = p?.pop || 0, miss = p?.miss || 0;
+        return { points: pop * 50 + (pop ? Math.max(0, 300 - miss * 30) : 0), good: pop >= K.bubbles.goal(r) ? 1 : 0, max: 1 };
+      },
+      myReveal: (r, a) => `<div class="lp-answer">Vous avez réveillé <b>${a?.payload?.pop || 0} bulle(s)</b>${a?.payload ? `, avec <b>${a.payload.miss || 0}</b> clic(s) à côté` : ""}.</div><div class="lp-why">${r.why || ""}</div>`,
+      hostPrompt: r => `<div class="lh-prompt">${r.prompt}</div><div class="lh-bub-demo"><span class="lp-bubble b0 still"><span>😴</span></span><span class="lp-bubble b2 still small"><span>😴</span></span><span class="lp-bubble b4 still tiny"><span>😴</span></span></div>`,
+      hostLive(r, list) {
+        if (!list.length) return "";
+        const pops = list.map(a => a.payload?.pop || 0);
+        return `🫧 En moyenne <b>${(pops.reduce((a, b) => a + b, 0) / pops.length).toFixed(1)}</b> bulles · record : <b>${Math.max(...pops)}</b>`;
+      },
+      hostReveal(r, list) {
+        const pops = list.map(a => a.payload?.pop || 0), miss = list.reduce((s, a) => s + (a.payload?.miss || 0), 0), tot = pops.reduce((a, b) => a + b, 0);
+        const B = ["0 à 4 bulles", "5 à 9 bulles", "10 à 14 bulles", "15 bulles et plus"], counts = [0, 0, 0, 0];
+        pops.forEach(n => counts[Math.min(3, Math.floor(n / 5))]++);
+        return `<div class="lh-reveal-visual"><div class="lh-big-stat"><b>${tot}</b> bulles réveillées par le groupe 🫧</div>
+            <div class="lh-big-stat"><b>${pct(tot, tot + miss)} %</b> des clics ont touché leur bulle 🎯</div></div>
+          <div class="lh-reveal-side">${bars(B, counts, [2, 3])}<div class="lh-why">${r.why || ""}</div></div>`;
+      }
+    },
+
+    /* ---------- 8. Le bon geste de la souris (clic, double-clic, clic droit, glisser) ---------- */
+    gesture: {
+      limit: r => r.limit || 20,
+      NAMES: { click: "👆 Un clic", dbl: "✌️ Un double-clic", right: "👉 Un clic droit", drag: "✊ Glisser-déposer" },
+      play(ctx) {
+        const r = ctx.round;
+        ctx.el.innerHTML = `<div class="lp-prompt">${r.prompt}</div>
+          <div class="lp-gest ${r.target ? "has-target" : ""}"><div class="lp-gest-obj" tabindex="0">${r.object}</div>${r.target ? `<div class="lp-gest-arrow" aria-hidden="true">➡️</div><div class="lp-gest-target">${r.target}</div>` : ""}</div>
+          <p class="lp-hint">🖱️ ${r.hint || "Faites le geste directement sur l'objet, avec la souris."}</p><div class="lp-gest-fb" aria-live="polite"></div>`;
+        const o = ctx.el.querySelector(".lp-gest-obj"), tg = ctx.el.querySelector(".lp-gest-target"), fb = ctx.el.querySelector(".lp-gest-fb");
+        let t = null, d = null, sent = false, justDragged = false;
+        const send = g => { if (sent) return; sent = true; clearTimeout(t); o.classList.add("done"); ctx.submit({ g }, true); };
+        o.addEventListener("contextmenu", e => { e.preventDefault(); send("right"); });
+        o.addEventListener("dblclick", () => send("dbl"));
+        o.addEventListener("click", () => { if (justDragged) { justDragged = false; return; } clearTimeout(t); t = setTimeout(() => send("click"), 450); });
+        const over = e => { if (!tg) return false; const b = tg.getBoundingClientRect(); return e.clientX > b.left && e.clientX < b.right && e.clientY > b.top && e.clientY < b.bottom; };
+        o.addEventListener("pointerdown", e => { if (e.button !== 0) return; d = { x: e.clientX, y: e.clientY, moved: false, id: e.pointerId }; });
+        o.addEventListener("pointermove", e => {
+          if (!d) return;
+          const dx = e.clientX - d.x, dy = e.clientY - d.y;
+          if (!d.moved && Math.hypot(dx, dy) > 12) { d.moved = true; clearTimeout(t); try { o.setPointerCapture(d.id); } catch (err) {} o.classList.add("dragging"); }
+          if (d.moved) { o.style.transform = `translate(${dx}px,${dy}px)`; tg?.classList.toggle("over", over(e)); }
+        });
+        const up = e => {
+          if (!d) return; const was = d; d = null;
+          if (!was.moved) return;
+          justDragged = true; setTimeout(() => { justDragged = false; }, 80);
+          o.classList.remove("dragging"); tg?.classList.remove("over");
+          if (over(e)) { o.style.transform = ""; tg.classList.add("ok"); send("drag"); }
+          else { o.style.transform = ""; fb.innerHTML = tg ? "La souris a lâché trop tôt : gardez le bouton enfoncé jusqu'au-dessus de l'arrivée." : ""; }
+        };
+        o.addEventListener("pointerup", up); o.addEventListener("pointercancel", up);
+        ctx.onStop(() => clearTimeout(t));
+      },
+      score: (r, p, ms) => { const good = p?.g === r.ok; return { points: good ? 500 + Math.round(500 * speed(ms, K.gesture.limit(r))) : 0, good: good ? 1 : 0, max: 1 }; },
+      myReveal: (r, a) => `<div class="lp-answer">Le bon geste : <b>${K.gesture.NAMES[r.ok]}</b></div>${a?.payload?.g ? `<div class="lp-yours">Vous avez fait : ${K.gesture.NAMES[a.payload.g]}</div>` : ""}<div class="lp-why">${r.why || ""}</div>`,
+      hostPrompt: r => `<div class="lh-prompt">${r.prompt}</div><div class="lp-gest host ${r.target ? "has-target" : ""}"><div class="lp-gest-obj">${r.object}</div>${r.target ? `<div class="lp-gest-arrow">➡️</div><div class="lp-gest-target">${r.target}</div>` : ""}</div>`,
+      hostLive: () => "",
+      hostReveal(r, list) {
+        const ids = Object.keys(K.gesture.NAMES), counts = ids.map(g => list.filter(a => a.payload?.g === g).length);
+        return `<div class="lh-reveal-visual"><div class="lh-prompt small">${r.prompt}</div><div class="lp-gest host ${r.target ? "has-target" : ""}"><div class="lp-gest-obj">${r.object}</div>${r.target ? `<div class="lp-gest-arrow">➡️</div><div class="lp-gest-target">${r.target}</div>` : ""}</div></div>
+          <div class="lh-reveal-side">${bars(ids.map(g => K.gesture.NAMES[g]), counts, ids.indexOf(r.ok))}<div class="lh-why">${r.why || ""}</div></div>`;
+      }
+    },
+
+    /* ---------- 9. Une touche (lire avant d'agir) ---------- */
+    key: {
+      limit: r => r.limit || 15,
+      label: k => k === "Enter" ? "↵ Entrée" : k === " " ? "␣ Espace" : k,
+      oks: r => [].concat(r.ok),
+      play(ctx) {
+        const r = ctx.round, len = r.len || 1;
+        ctx.el.innerHTML = `<div class="lp-prompt">${r.prompt}</div>${r.scene ? `<div class="lp-key-scene">${r.scene}</div>` : ""}
+          <input class="lp-keybox ${len > 1 ? "multi" : ""}" autocomplete="off" spellcheck="false" autocapitalize="off" aria-label="Votre touche">
+          <p class="lp-hint">⌨️ ${len > 1 ? `Tapez <b>${len} touches</b>, puis Entrée.` : "Appuyez sur <b>une seule touche</b> du clavier."}</p>`;
+        const inp = ctx.el.querySelector(".lp-keybox"); inp.focus();
+        ctx.el.addEventListener("click", () => inp.focus());
+        let sent = false;
+        const send = k => { if (sent || !k) return; sent = true; inp.disabled = true; ctx.submit({ k }, true); };
+        inp.addEventListener("keydown", e => {
+          if (e.key === "Enter") { e.preventDefault(); send(len > 1 ? inp.value : "Enter"); }
+          else if (e.key === " " && len === 1) { e.preventDefault(); send(" "); }
+        });
+        const check = () => { const v = inp.value; if (len === 1 && v) send(v.slice(-1)); else if (len > 1 && v.length >= len) send(v.slice(0, len)); };
+        inp.addEventListener("input", e => { if (!e.isComposing) check(); });
+        inp.addEventListener("compositionend", check);
+      },
+      score: (r, p, ms) => { const good = K.key.oks(r).includes(p?.k); return { points: good ? 500 + Math.round(500 * speed(ms, K.key.limit(r))) : 0, good: good ? 1 : 0, max: 1 }; },
+      myReveal: (r, a) => `<div class="lp-answer">La bonne touche : <b class="mono">${esc(K.key.label(K.key.oks(r)[0]))}</b></div>${a?.payload?.k ? `<div class="lp-yours">Vous avez tapé : <span class="mono">${esc(K.key.label(a.payload.k))}</span></div>` : ""}<div class="lp-why">${r.why || ""}</div>`,
+      hostPrompt: r => `<div class="lh-prompt">${r.prompt}</div>${r.scene ? `<div class="lp-key-scene">${r.scene}</div>` : ""}`,
+      hostLive: () => "",
+      hostReveal(r, list) {
+        const cnt = {}; list.forEach(a => { const k = a.payload?.k; if (k) cnt[k] = (cnt[k] || 0) + 1; });
+        const ok = K.key.oks(r)[0];
+        const keys = [ok, ...Object.keys(cnt).filter(k => k !== ok).sort((a, b) => cnt[b] - cnt[a]).slice(0, 3)];
+        const other = Object.keys(cnt).filter(k => !keys.includes(k)).reduce((s, k) => s + cnt[k], 0);
+        const labels = keys.map(k => `<span class="mono">${esc(K.key.label(k))}</span>`).concat(other ? ["Autre touche"] : []);
+        return `<div class="lh-reveal-visual"><div class="lh-prompt small">${r.prompt}</div>${r.scene ? `<div class="lp-key-scene">${r.scene}</div>` : ""}</div>
+          <div class="lh-reveal-side">${bars(labels, keys.map(k => cnt[k] || 0).concat(other ? [other] : []), 0)}<div class="lh-why">${r.why || ""}</div></div>`;
       }
     }
   };
@@ -466,6 +616,7 @@
       const a = P.answer.rounds[game.idx];
       const verdict = !a ? `<div class="lg-verdict none">⏱️ Pas de réponse cette fois-ci</div>`
         : r.kind === "spot" ? `<div class="lg-verdict ${a.good >= a.max ? "ok" : "mid"}">🔍 ${a.good} / ${a.max} indices · +${a.points} pts</div>`
+        : r.kind === "bubbles" ? `<div class="lg-verdict ${a.good ? "ok" : "mid"}">🫧 ${a.payload?.pop || 0} bulle(s) réveillée(s) · +${a.points} pts</div>`
         : `<div class="lg-verdict ${a.good ? "ok" : "ko"}">${a.good ? `✅ Bonne réponse ! +${a.points} pts` : "❌ Pas cette fois… regardez l'explication 👇"}</div>`;
       el.innerHTML = `${head}<div class="lg-body lg-reveal">${verdict}${k.myReveal(r, a)}<p class="lg-look">👀 Le formateur explique à l'écran.</p></div>`;
     } else if (game.phase === "podium" || game.phase === "summary") {

@@ -1,7 +1,9 @@
 /* =========================================================
-   Chapitre « Périphériques » : 8 niveaux progressifs.
-   Souris, clavier, copier-coller, impression, pannes d'imprimante,
-   clé USB, écran et confort, mission réelle. Note /20 à la fin.
+   Chapitre « Périphériques » : 6 niveaux progressifs.
+   Copier-coller, impression, pannes d'imprimante, clé USB, écran et
+   confort, mission réelle. Note /20 à la fin.
+   (per_souris et per_clavier restent disponibles en « révision » :
+   la souris et le clavier ont désormais leur propre chapitre.)
    ========================================================= */
 (function (AN) {
   "use strict";
@@ -46,7 +48,7 @@
     render(ctx) {
       const L = ctx.local, G = grader(L);
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
-      const f = frame(ctx, { level: 1, title: "La souris : les 5 gestes", step: 0, noClient: true,
+      const f = frame(ctx, { chapter: "Souris et clavier", level: "révision", title: "La souris : les 5 gestes", step: 0, noClient: true,
         consigne: "Cinq gestes suffisent pour presque tout faire. Entraînez-vous ici, sans risque : rien ne peut se casser.",
         help: "Tenez la souris sans serrer, le poignet posé. L'index sur le bouton de <b>gauche</b>, le majeur sur celui de <b>droite</b>." });
       f.panel.innerHTML = `<div class="wk-tasks"></div><div class="pm" style="position:relative;margin-top:10px"><div class="pm-zone"></div></div>`;
@@ -132,7 +134,7 @@
     render(ctx) {
       const L = ctx.local, G = grader(L);
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
-      const f = frame(ctx, { level: 2, title: "Le clavier : majuscules, chiffres, @, accents", step: 0, noClient: true,
+      const f = frame(ctx, { chapter: "Souris et clavier", level: "révision", title: "Le clavier : majuscules, chiffres, @, accents", step: 0, noClient: true,
         consigne: "Tapez chaque texte demandé dans la case, puis appuyez sur <b>Entrée</b>. Le clavier dessiné s'allume quand vous appuyez sur les touches : regardez-le !",
         help: "Les touches clignotantes en bleu vous montrent par où commencer." });
       const euro = ctx.isBeginner() ? "Café à 3 euros" : "Café à 3 €";
@@ -191,7 +193,7 @@
       const L = ctx.local, G = grader(L);
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const NUM = "CAF-2026-048731", MAIL = "etat-civil@mairie-valbourg.fr";
-      const f = frame(ctx, { level: 3, title: "Copier, coller… et annuler", step: 0, noClient: true,
+      const f = frame(ctx, { level: 1, title: "Copier, coller… et annuler", step: 0, noClient: true,
         consigne: "Recopier un long numéro à la main, c'est le risque d'une erreur. Le <b>copier-coller</b> le fait sans faute !",
         help: "<b>Ctrl + C</b> = copier · <b>Ctrl + V</b> = coller · <b>Ctrl + Z</b> = annuler. On garde Ctrl enfoncée, et on appuie sur la lettre. (Le clic droit propose aussi Copier et Coller.)" });
       f.panel.innerHTML = `<div class="wk-tasks"></div>
@@ -256,7 +258,7 @@
       const step = ctx.m.step || 0, L = ctx.local, G = grader(L);
       const HP = "HP LaserJet - Accueil médiathèque";
       if (step === 0) {
-        const f = frame(ctx, { level: 4, title: "Imprimer seulement ce qu'il faut", step: 0, noClient: true,
+        const f = frame(ctx, { level: 2, title: "Imprimer seulement ce qu'il faut", step: 0, noClient: true,
           consigne: "Marie doit imprimer son attestation pour un rendez-vous. Le document fait 3 pages, mais seule la <b>page 1</b> est utile. Imprimez-la en <b>noir et blanc</b>, en <b>1 exemplaire</b>, sur l'imprimante de la médiathèque.",
           help: "Ouvrir la fenêtre d'impression : le bouton 🖨️, ou les touches <b>Ctrl + P</b>. Pour une seule page : Pages › <b>Personnalisées</b> › tapez <b>1</b>." });
         f.panel.innerHTML = `<div class="wk-tasks"></div><div class="fk-site" style="margin-top:10px"><div class="fk-site-head" style="background:#3d4451">📕 attestation_caf.pdf <button type="button" data-print style="margin-left:auto;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer" title="Imprimer (Ctrl + P)">🖨️ Imprimer</button></div>
@@ -291,7 +293,7 @@
         return;
       }
       if (step === 1) {
-        const f = frame(ctx, { level: 4, title: "« Imprimer »… en PDF", step: 1, noClient: true,
+        const f = frame(ctx, { level: 2, title: "« Imprimer »… en PDF", step: 1, noClient: true,
           consigne: "Marie vient de prendre rendez-vous en ligne. Elle veut <b>garder la confirmation</b> sur son ordinateur, sans l'imprimer sur papier. Astuce : la fenêtre d'impression sait créer un fichier PDF !",
           help: "Ctrl + P, puis Destination › <b>Enregistrer au format PDF</b>, puis <b>Enregistrer</b>." });
         f.panel.innerHTML = `<div class="wk-tasks"></div><div class="fk-site" style="margin-top:10px"><div class="fk-site-head" style="background:#0b5d8a">🏥 Cabinet du Dr Martin · Rendez-vous confirmé <button type="button" data-print style="margin-left:auto;border:0;border-radius:8px;padding:6px 12px;font-weight:700;cursor:pointer">🖨️ Imprimer</button></div><div class="fk-site-body"><h3 style="margin:0">✅ Votre rendez-vous est confirmé</h3><p>Mardi 14 octobre, 10 h 30, avec le Dr Martin.</p><p>Référence : RDV-58214</p></div></div>`;
@@ -337,7 +339,7 @@
       const list = PANNES;
       const step = ctx.m.step || 0, Pn = list[step];
       if (!Pn) return ctx.finalScreen({ theme: null });
-      const f = frame(ctx, { level: 5, title: `L'imprimante n'imprime pas : ${Pn.title} (${step + 1} / ${list.length})`, step: Math.min(step, 3), noClient: true,
+      const f = frame(ctx, { level: 3, title: `L'imprimante n'imprime pas : ${Pn.title} (${step + 1} / ${list.length})`, step: Math.min(step, 3), noClient: true,
         consigne: "Marie a cliqué sur « Imprimer »… et rien ne sort. Regardez l'<b>écran de l'imprimante</b> et la <b>file d'attente</b> de Windows, puis réparez.",
         help: "Ne cliquez pas dix fois sur « Imprimer » ! Chaque clic ajoute un document dans la file d'attente." });
       f.panel.innerHTML = `<div class="wk-tasks"></div><div style="display:flex;gap:10px;align-items:center;margin:10px 0"><span>📕 attestation.pdf</span><button type="button" class="secondary" data-again>🖨️ Imprimer à nouveau</button></div><div class="pq-slot"></div>`;
@@ -380,7 +382,7 @@
     render(ctx) {
       const L = ctx.local, G = grader(L);
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
-      const f = frame(ctx, { level: 6, title: "La clé USB : brancher, copier, éjecter", step: 0,
+      const f = frame(ctx, { level: 4, title: "La clé USB : brancher, copier, éjecter", step: 0,
         consigne: "Marie veut emporter son CV à la médiathèque pour l'imprimer. Elle le <b>copie</b> sur une clé USB… sans oublier de l'<b>éjecter</b> avant de la retirer.",
         help: "Pour copier : clic sur le fichier, <b>📄 Copier</b>, ouvrez la clé USB, <b>📋 Coller</b>. (Ou glissez le fichier sur la clé, dans la colonne de gauche.)" });
       const { pc, file, folder } = AN.files;
@@ -445,7 +447,7 @@
     render(ctx) {
       const step = ctx.m.step || 0, L = ctx.local, G = grader(L);
       if (step === 0) {
-        const f = frame(ctx, { level: 7, title: "Le zoom : agrandir une page", step: 0, noClient: true,
+        const f = frame(ctx, { level: 5, title: "Le zoom : agrandir une page", step: 0, noClient: true,
           consigne: "Le texte d'un site est trop petit ? Pas besoin de lunettes : on <b>zoome</b> ! Cliquez d'abord dans la page, puis utilisez le clavier.",
           help: "<b>Ctrl</b> + <b>+</b> agrandit · <b>Ctrl</b> + <b>-</b> réduit · <b>Ctrl</b> + <b>0</b> (zéro) remet à 100 %. On peut aussi garder Ctrl et tourner la molette." });
         f.panel.innerHTML = `<div class="wk-tasks"></div><div class="pz" style="margin-top:10px"><div class="pz-bar">🌐 <span class="pz-url">www.service-public.fr</span><button type="button" data-z="-1" title="Réduire">－</button><span class="pz-z">100 %</span><button type="button" data-z="1" title="Agrandir">＋</button></div>
@@ -481,7 +483,7 @@
         return;
       }
       if (step === 1) {
-        const f = frame(ctx, { level: 7, title: "Le confort de l'écran", step: 1, noClient: true,
+        const f = frame(ctx, { level: 5, title: "Le confort de l'écran", step: 1, noClient: true,
           consigne: "Dans les <b>Paramètres de Windows</b>, on peut tout agrandir pour de bon, et régler la luminosité. Réglez l'écran de Marie, qui a du mal à lire.",
           help: "Sur le vrai ordinateur : ⊞ Démarrer › ⚙️ Paramètres › Système › Affichage." });
         f.panel.innerHTML = `<div class="wk-tasks"></div><div class="pd-slot" style="margin-top:10px"></div>`;
@@ -517,20 +519,20 @@
     render(ctx) {
       const step = ctx.m.step || 0, L = ctx.local, G = grader(L);
       if (step === 0) {
-        const f = frame(ctx, { level: 8, title: "Mission réelle : l'ordinateur de la médiathèque", step: 0, noClient: true,
+        const f = frame(ctx, { level: 6, title: "Mission réelle : l'ordinateur de la médiathèque", step: 0, noClient: true,
           consigne: "Sur le <b>vrai</b> ordinateur, en vrai : on observe et on essaie… <b>sans rien imprimer</b> et sans rien supprimer." });
         f.panel.innerHTML = `<ol class="nv-steps">
             <li>Regardez l'ordinateur : combien de <b>prises USB</b> voyez-vous (devant, sur le côté, derrière l'écran) ?</li>
             <li>Sur une page Internet (cet onglet, par exemple), appuyez sur <b>Ctrl + P</b>. Regardez la liste <b>Destination</b> : quel est le nom de l'imprimante ? Puis cliquez sur <b>Annuler</b>.</li>
             <li>Sur une page Internet, essayez <b>Ctrl + +</b>, puis <b>Ctrl + 0</b>.</li>
-            <li>Dans un champ de texte (la barre de recherche, par exemple), tapez <b>@</b> avec <b>Alt Gr + à</b>.</li></ol>
+            <li>Sélectionnez un mot de cette page (cliquez-glissez dessus), copiez-le avec <b>Ctrl + C</b>, puis collez-le dans la barre de recherche avec <b>Ctrl + V</b>.</li></ol>
           <div class="alert">🖨️ On clique sur <b>Annuler</b> dans la fenêtre d'impression : on n'imprime rien. Une question ? On lève la main ✋.</div>
           <div class="final-actions"><button type="button" class="primary" data-go>J'ai fait la mission : je réponds →</button></div>`;
         f.panel.querySelector("[data-go]").addEventListener("click", () => ctx.go(1));
         return;
       }
       if (step === 1) {
-        const f = frame(ctx, { level: 8, title: "Mes observations", step: 1, noClient: true, consigne: "Répondez à partir de ce que vous avez vu sur le vrai ordinateur." });
+        const f = frame(ctx, { level: 6, title: "Mes observations", step: 1, noClient: true, consigne: "Répondez à partir de ce que vous avez vu sur le vrai ordinateur." });
         const chk = (name, vals) => vals.map(v => `<label><input type="radio" name="${name}" value="${v}"> ${v}</label>`).join("");
         f.panel.innerHTML = `<div class="nv-real">
           <fieldset class="nv-check"><legend><b>🔌 Prises USB trouvées</b></legend>${chk("usb", ["Aucune", "1 ou 2", "3 ou 4", "5 ou plus"])}</fieldset>
@@ -538,7 +540,7 @@
           <fieldset class="nv-check"><legend><b>✅ J'ai réussi à…</b> (cochez seulement ce qui est vrai)</legend>
             <label><input type="checkbox" data-c="ctrlp"> ouvrir la fenêtre d'impression avec Ctrl + P… et cliquer sur Annuler</label>
             <label><input type="checkbox" data-c="zoom"> zoomer avec Ctrl + +, puis revenir avec Ctrl + 0</label>
-            <label><input type="checkbox" data-c="at"> taper @ avec Alt Gr + à</label>
+            <label><input type="checkbox" data-c="at"> copier-coller un mot avec Ctrl + C, Ctrl + V</label>
             <label><input type="checkbox" data-c="noprint"> ne rien imprimer</label></fieldset>
           <label>💬 Une question, une difficulté ? (facultatif)<input type="text" data-f="note" maxlength="300" autocomplete="off"></label>
           <div class="mk-fb"></div>
@@ -554,9 +556,9 @@
           (printer ? G.ok : G.ko)("printer", "Trouver le nom de l'imprimante", "Ctrl + P, puis la liste « Destination » (ou « Imprimante »).");
           (c("ctrlp") ? G.ok : G.ko)("ctrlp", "Ouvrir l'impression avec Ctrl + P", "Ctrl + P marche dans le navigateur, dans un PDF, dans Word…");
           (c("zoom") ? G.ok : G.ko)("zoom", "Zoomer et revenir à 100 %", "Ctrl + + pour agrandir, Ctrl + 0 pour revenir.");
-          (c("at") ? G.ok : G.ko)("at", "Taper l'arobase @", "Alt Gr (à droite de la barre d'espace) + la touche à 0.");
+          (c("at") ? G.ok : G.ko)("at", "Copier-coller avec Ctrl + C / Ctrl + V", "On sélectionne, Ctrl + C, on clique où coller, Ctrl + V.");
           (c("noprint") ? G.ok : G.ko)("noprint", "Ne rien imprimer pendant l'observation", "Pour cette mission, on clique sur Annuler.");
-          const text = `🖨️ Mission réelle Périphériques\n🔌 Prises USB : ${usb}\n🖨️ Imprimante : ${printer || "(non trouvée)"}\n${c("ctrlp") ? "✅" : "⬜"} Ctrl + P · ${c("zoom") ? "✅" : "⬜"} zoom · ${c("at") ? "✅" : "⬜"} @ · ${c("noprint") ? "✅" : "⬜"} rien imprimé${note ? `\n💬 ${note}` : ""}`;
+          const text = `🖨️ Mission réelle Périphériques\n🔌 Prises USB : ${usb}\n🖨️ Imprimante : ${printer || "(non trouvée)"}\n${c("ctrlp") ? "✅" : "⬜"} Ctrl + P · ${c("zoom") ? "✅" : "⬜"} zoom · ${c("at") ? "✅" : "⬜"} copier-coller · ${c("noprint") ? "✅" : "⬜"} rien imprimé${note ? `\n💬 ${note}` : ""}`;
           try { await ctx.api.sendToTeacher?.("🖨️ Mission réelle : périphériques", text.slice(0, 1900)); }
           catch (e) { $f(".mk-fb").innerHTML = `<div class="alert bad">La réponse n'a pas pu partir : ${esc(e.message)}. Réessayez.</div>`; $f("[data-send]").disabled = false; return; }
           finish(ctx, G, { key: "per_real", label: "J'ai utilisé les périphériques du vrai ordinateur", intro: `${ctx.demo ? "En projection, la réponse n'est pas envoyée." : "📤 Vos observations sont parties chez le formateur : il vous répondra dans votre <b>messagerie</b>."}<br>Prises USB : <b>${esc(usb)}</b> · Imprimante : <b>${esc(printer || "non trouvée")}</b>` });

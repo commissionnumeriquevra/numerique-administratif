@@ -10,6 +10,12 @@ Les **participants** entrent avec deux codes et un prénom ou pseudo : aucun e-m
 
 Chaque séance dure 30 minutes au plus : un cours court projeté, des jeux en direct sur les PC (façon Kahoot), puis les exercices de chacun.
 
+- **🖱️ Souris et clavier** (premier chapitre, esprit « Clic Master » / « Clavinator ») : 3 séances, 8 jeux, 8 niveaux notés sur 20.
+  - Séance 1 : on a le droit de se tromper ; la grande souris qui s'allume quand on clique ; bien tenir la souris ; agir (clic gauche) ou explorer (clic droit).
+  - Séance 2 : le double-clic « toc-toc » (et un seul clic sur Internet) ; le glisser-déposer ; la molette.
+  - Séance 3 : les touches magiques ; lire avant d'agir ; les accents, le circonflexe en deux temps, l'arobase ; le curseur et les corrections.
+  - Niveaux : 1 le réveil des bulles · 2 le menu secret · 3 le double-clic · 4 le grand ménage et la potion magique · 5 lettres, majuscules, lire avant d'agir · 6 accents, ^ et @ · 7 le curseur, Effacer, Entrée, Ctrl + Z · 8 mission réelle (clic droit, Corbeille, Bloc-notes) et dictée finale.
+  - Nouveaux jeux en direct : **les bulles** (30 secondes pour viser et cliquer), **le bon geste** (clic, double-clic, clic droit ou glisser-déposer, fait pour de vrai sur l'objet) et **une touche** (les pièges de « lire avant d'agir »).
 - **📧 E-mail** : 5 séances, 13 jeux, 7 niveaux notés sur 20.
 - **🧭 Navigateurs et recherche** : 3 séances, 10 jeux, 7 niveaux notés sur 20.
   - Séance 1 : navigateur, moteur ou site ; les boutons ; taper une adresse ; onglets et favoris.
@@ -36,12 +42,12 @@ Chaque séance dure 30 minutes au plus : un cours court projeté, des jeux en di
   - Séance 3 : les arnaques box et forfait (33700) ; le partage de connexion ; les bons réflexes.
   - Trois simulateurs : un **ordinateur Windows 11** (menu Wi-Fi, clé de sécurité, mode avion, page de connexion des Wi-Fi publics), un **smartphone** (Réglages, Wi-Fi, données mobiles, partage de connexion, consommation) et une **box** (étiquette, voyants, redémarrage).
   - Le **niveau 8 est une mission réelle** sur son propre téléphone : icônes, mode avion, consommation, Wi-Fi de la médiathèque, **sans rien changer**. Les observations arrivent dans la messagerie du formateur.
-- **🖨️ Périphériques** : 3 séances, 9 jeux, 8 niveaux notés sur 20.
-  - Séance 1 : les périphériques ; les 5 gestes de la souris ; les touches à connaître (le clavier AZERTY s'allume à l'écran quand on tape) ; copier, coller, annuler.
-  - Séance 2 : la fenêtre d'impression (pages, couleur, copies) ; enregistrer en PDF ; les pannes d'imprimante.
-  - Séance 3 : la clé USB (copier, éjecter, prudence) ; le zoom et le confort de l'écran ; l'aide-mémoire des raccourcis.
-  - Simulateurs : terrain d'entraînement de la souris, clavier AZERTY illustré, fenêtre « Imprimer », imprimante avec sa file d'attente, Paramètres › Affichage, clé USB dans l'Explorateur.
-  - Le **niveau 8 est une mission réelle** sur l'ordinateur de la médiathèque : prises USB, Ctrl + P (puis Annuler), zoom, @. Les observations arrivent dans la messagerie du formateur.
+- **🖨️ Périphériques** : 2 séances, 7 jeux, 6 niveaux notés sur 20.
+  - Séance 1 : les périphériques ; copier, coller, annuler ; la fenêtre d'impression (pages, couleur, copies) ; enregistrer en PDF ; les pannes d'imprimante.
+  - Séance 2 : la clé USB (copier, éjecter, prudence) ; le zoom et le confort de l'écran ; l'aide-mémoire des raccourcis.
+  - Simulateurs : fenêtre « Imprimer », imprimante avec sa file d'attente, Paramètres › Affichage, clé USB dans l'Explorateur.
+  - Le **niveau 6 est une mission réelle** sur l'ordinateur de la médiathèque : prises USB, Ctrl + P (puis Annuler), zoom, copier-coller. Les observations arrivent dans la messagerie du formateur.
+  - Les anciens exercices « souris » et « clavier » restent disponibles en mission individuelle (famille « Bases », « Révision »).
 - **🇫🇷 FranceConnect** (chapitre final) : 3 séances, 9 jeux, 8 niveaux notés sur 20.
   - Séance 1 : une seule clé pour l'État ; reconnaître le bouton ; vérifier franceconnect.gouv.fr ; quel compte choisir (impots.gouv.fr, ameli, MSA, L'Identité Numérique La Poste, France Identité, TrustMe).
   - Séance 2 : se connecter en 5 étapes ; les informations transmises ; se déconnecter (deux portes) ; mot de passe oublié, état civil inexact, FranceConnect+ exigé.
