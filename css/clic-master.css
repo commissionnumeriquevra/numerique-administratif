@@ -1,0 +1,166 @@
+/* =========================================================
+   Missions « Clic Master » (séances 3 à 6)
+   Préfixe .cm- pour ne rien toucher ailleurs.
+   ========================================================= */
+
+.cm-tasks:empty { display: none; }
+.cm-stage {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e2ddd2;
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 12px;
+  min-height: 220px;
+  overflow: hidden;
+}
+.cm-num { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #6a56e6; margin-bottom: 4px; }
+.cm-prompt, .cm-model { font-size: 1.25rem; font-weight: 600; color: #1a1730; margin: 4px 0 14px; line-height: 1.4; }
+.cm-model { font-family: 'Fraunces', Georgia, serif; font-size: 1.6rem; background: #f8f7ff; border-radius: 12px; padding: 14px 18px; }
+.cm-msg { text-align: center; font-size: 1.15rem; font-weight: 600; padding: 18px; color: #166534; }
+.cm-hint { color: #6f6a7e; font-size: .95rem; margin-bottom: 12px; }
+.cm-empty { color: #6f6a7e; font-style: italic; padding: 14px; }
+
+/* Séance 4 : objets à cliquer */
+.cm-objs { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+.cm-obj {
+  width: 132px; height: 132px; border-radius: 18px; border: 2px solid #e2ddd2;
+  background: #fafaf8; display: grid; place-items: center; cursor: pointer; user-select: none;
+}
+.cm-obj:hover { border-color: #6a56e6; }
+.cm-obj.ok { border-color: #10b981; background: #f0fdf4; }
+.cm-sh { display: block; width: 84px; height: 84px; }
+.cm-tri { display: block; width: 0; height: 0; border-left: 46px solid transparent; border-right: 46px solid transparent; border-bottom: 80px solid #8b5cf6; }
+.cm-emo { font-style: normal; font-size: 4rem; line-height: 1; }
+
+/* Cartes à choisir (pièges, fichiers, boutons) */
+.cm-cards { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+.cm-card {
+  width: 150px; min-height: 120px; border-radius: 14px; border: 2px solid #e2ddd2; background: #fff;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px;
+  cursor: pointer; font: inherit; color: #1a1730; transition: transform .15s, border-color .15s;
+}
+.cm-card:hover:not(:disabled) { border-color: #6a56e6; transform: translateY(-2px); }
+.cm-card.ok { border-color: #10b981; background: #f0fdf4; }
+.cm-card.bad { border-color: #ef4444; background: #fef2f2; animation: cmShake .35s; }
+.cm-card.sel { border-color: #6a56e6; background: #ece8ff; }
+.cm-card:disabled { cursor: default; opacity: .75; }
+.cm-ico { font-size: 2.2rem; line-height: 1; }
+.cm-cap { font-size: .95rem; font-weight: 600; text-align: center; word-break: break-word; }
+.cm-btn { display: inline-block; padding: 10px 22px; border-radius: 10px; background: #e2ddd2; font-weight: 700; }
+.cm-btn.primary { background: #6a56e6; color: #fff; }
+@keyframes cmShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+/* Séance 6 : extensions */
+.cm-fiche { text-align: left; }
+.cm-fiche h3 { font-family: 'Fraunces', Georgia, serif; font-size: 1.4rem; margin-bottom: 8px; }
+.cm-fiche p { margin-bottom: 10px; line-height: 1.5; }
+.cm-nomfich {
+  font-size: 1.5rem; text-align: center; background: #f8f7ff; border: 2px dashed #8b7cff; border-radius: 12px;
+  padding: 16px; margin: 14px 0 18px;
+}
+.cm-dot { color: #ef476f; }
+.cm-extx { color: #6a4ee0; font-weight: 800; }
+.cm-fiches { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.cm-ext-card { background: #faf9f6; border: 1px solid #e2ddd2; border-radius: 14px; padding: 14px; text-align: left; }
+.cm-ext-card h4 { font-size: 1.02rem; margin: 6px 0; }
+.cm-ext-card p { font-size: .9rem; line-height: 1.45; margin-bottom: 6px; }
+.cm-badge { display: inline-block; font-weight: 800; color: #6a4ee0; background: #ece8ff; border-radius: 8px; padding: 2px 10px; }
+.cm-tip { color: #6a4ee0; font-weight: 600; }
+.cm-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 14px; }
+.cm-label {
+  padding: 12px 18px; border-radius: 12px; border: 2px solid #c9c4b8; background: #fff; font: inherit;
+  font-weight: 700; cursor: pointer; color: #1a1730;
+}
+.cm-label:hover:not(:disabled) { border-color: #6a56e6; }
+.cm-label.ok { border-color: #10b981; background: #f0fdf4; }
+.cm-label.bad { border-color: #ef4444; background: #fef2f2; animation: cmShake .35s; }
+.cm-label:disabled { cursor: default; }
+.cm-quiz { min-height: 120px; }
+
+/* Séance 6 : arborescence */
+.cm-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+.cm-nav {
+  padding: 7px 12px; border-radius: 8px; border: 1px solid #c9c4b8; background: #fff; font: inherit;
+  font-size: .9rem; font-weight: 600; cursor: pointer;
+}
+.cm-nav:disabled { opacity: .4; cursor: default; }
+.cm-crumb { font-size: .88rem; color: #6f6a7e; margin-left: 6px; }
+.cm-explorer { display: grid; grid-template-columns: minmax(180px, 1fr) minmax(200px, 1.4fr); gap: 0; border: 1px solid #e2ddd2; border-radius: 12px; min-height: 260px; }
+.cm-tree { border-right: 1px solid #e2ddd2; padding: 8px; background: #faf9f6; overflow-x: auto; }
+.cm-trow { display: flex; align-items: center; gap: 2px; min-height: 30px; }
+.cm-tog, .cm-tog-x { width: 24px; height: 24px; flex-shrink: 0; }
+.cm-tog { border: 1px solid #c9c4b8; border-radius: 6px; background: #fff; font: inherit; font-weight: 700; cursor: pointer; line-height: 1; }
+.cm-tn {
+  border: none; background: none; font: inherit; padding: 4px 8px; border-radius: 6px; cursor: pointer; text-align: left;
+  white-space: nowrap; color: #1a1730;
+}
+.cm-tn:hover { background: #ece8ff; }
+.cm-tn.on { background: #6a56e6; color: #fff; }
+.cm-content { padding: 10px; display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; }
+.cm-item {
+  width: 110px; min-height: 96px; border: 2px solid transparent; border-radius: 12px; background: #fff; font: inherit;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; cursor: pointer;
+  font-size: 1.8rem; padding: 6px;
+}
+.cm-item span { font-size: .85rem; font-weight: 600; text-align: center; word-break: break-word; color: #1a1730; }
+.cm-item:hover { border-color: #c9c4b8; }
+.cm-item.sel { border-color: #6a56e6; background: #ece8ff; }
+
+/* Séances 5 et 6 : bureau, fenêtres, corbeille */
+.cm-desk { position: relative; min-height: 300px; background: linear-gradient(160deg, #e9e6ff, #f4f1ea); border-radius: 12px; padding: 12px; }
+.cm-desk-icons { display: flex; }
+.cm-tr-icon {
+  width: 96px; display: flex; flex-direction: column; align-items: center; gap: 2px; background: none; border: 2px solid transparent;
+  border-radius: 12px; padding: 8px; font: inherit; cursor: pointer; color: #1a1730;
+}
+.cm-tr-icon span:first-child { font-size: 2.2rem; }
+.cm-tr-icon span:last-child { font-size: .85rem; font-weight: 600; }
+.cm-tr-icon:hover { border-color: #6a56e6; background: rgba(255,255,255,.6); }
+.cm-win {
+  background: #fff; border: 1px solid #c9c4b8; border-radius: 12px; margin: 10px 0 0 0; max-width: 420px;
+  box-shadow: 0 8px 22px rgba(26,23,48,.12); overflow: hidden;
+}
+.cm-win-trash { margin-left: auto; }
+.cm-win-h { background: #f4f1ea; padding: 8px 12px; font-weight: 700; font-size: .9rem; border-bottom: 1px solid #e2ddd2; }
+.cm-win-b { padding: 10px; display: flex; flex-direction: column; gap: 6px; min-height: 60px; }
+.cm-win-f { display: flex; gap: 8px; justify-content: flex-end; padding: 10px; border-top: 1px solid #e2ddd2; }
+.cm-win-f button, .cm-dialog button {
+  padding: 8px 14px; border-radius: 8px; border: 1px solid #c9c4b8; background: #fff; font: inherit; font-weight: 600; cursor: pointer;
+}
+.cm-win-f button.primary, .cm-dialog button.primary { background: #6a56e6; color: #fff; border-color: #6a56e6; }
+.cm-win-f button:disabled { opacity: .4; cursor: default; }
+.cm-file {
+  text-align: left; border: 1px solid transparent; background: #fafaf8; border-radius: 8px; padding: 8px 10px; font: inherit;
+  font-weight: 600; cursor: pointer; color: #1a1730;
+}
+.cm-file:hover { border-color: #c9c4b8; }
+.cm-file.sel { background: #ece8ff; border-color: #6a56e6; }
+.cm-dialog {
+  position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); width: min(92%, 380px);
+  background: #fff; border: 1px solid #c9c4b8; border-radius: 14px; padding: 18px; box-shadow: 0 16px 40px rgba(26,23,48,.2); z-index: 5;
+}
+.cm-dialog p { margin-bottom: 8px; line-height: 1.5; }
+.cm-dialog .cm-win-f { border: none; padding: 8px 0 0; }
+
+/* Séance 3 et 6 : dictée */
+.cm-lab { display: block; font-weight: 600; margin-bottom: 10px; color: #1a1730; }
+.cm-in {
+  display: block; width: 100%; margin-top: 6px; padding: 12px 14px; font-size: 1.2rem; border-radius: 10px;
+  border: 2px solid #c9c4b8; font-family: inherit; color: #1a1730;
+}
+.cm-in:focus { outline: none; border-color: #6a56e6; }
+.cm-acts { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+.cm-acts button {
+  padding: 10px 18px; border-radius: 10px; border: 1px solid #c9c4b8; background: #fff; font: inherit; font-weight: 700; cursor: pointer;
+}
+.cm-acts button.primary { background: #6a56e6; color: #fff; border-color: #6a56e6; }
+
+@media (max-width: 640px) {
+  .cm-explorer { grid-template-columns: 1fr; }
+  .cm-tree { border-right: none; border-bottom: 1px solid #e2ddd2; max-height: 200px; }
+  .cm-obj { width: 104px; height: 104px; }
+  .cm-sh { width: 66px; height: 66px; }
+  .cm-card { width: 128px; }
+  .cm-win { max-width: 100%; }
+}

@@ -43,6 +43,7 @@ Chaque séance dure 30 minutes au plus : un cours court projeté, des jeux en di
   - Trois simulateurs : un **ordinateur Windows 11** (menu Wi-Fi, clé de sécurité, mode avion, page de connexion des Wi-Fi publics), un **smartphone** (Réglages, Wi-Fi, données mobiles, partage de connexion, consommation) et une **box** (étiquette, voyants, redémarrage).
   - Le **niveau 8 est une mission réelle** sur son propre téléphone : icônes, mode avion, consommation, Wi-Fi de la médiathèque, **sans rien changer**. Les observations arrivent dans la messagerie du formateur.
 - **🖨️ Périphériques** : 2 séances, 7 jeux, 6 niveaux notés sur 20.
+- **🖱️ Clic Master, exercices complémentaires** (missions, famille « Clic Master ») : 6 niveaux notés sur 20 issus des séances 3 à 6 du parcours Clic Master : trois clics, pièges de lecture (« lire avant d'agir »), extensions de fichiers, arborescence (Précédent, Parent), corbeille (supprimer, restaurer, vider), recopie de phrases avec accents.
   - Séance 1 : les périphériques ; copier, coller, annuler ; la fenêtre d'impression (pages, couleur, copies) ; enregistrer en PDF ; les pannes d'imprimante.
   - Séance 2 : la clé USB (copier, éjecter, prudence) ; le zoom et le confort de l'écran ; l'aide-mémoire des raccourcis.
   - Simulateurs : fenêtre « Imprimer », imprimante avec sa file d'attente, Paramètres › Affichage, clé USB dans l'Explorateur.

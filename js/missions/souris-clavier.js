@@ -771,4 +771,7 @@
       ctx.finalScreen({ theme: null });
     }
   });
+
+  /* Helpers partagés avec les missions « Clic Master » (js/missions/clic-master.js) */
+  AN.scKit = { tasker, ctxMenu, dragify, kindly, good, shuffle };
 })(window.AN);
