@@ -278,3 +278,11 @@
 .chapter-actions{display:flex;flex-wrap:wrap;gap:8px}
 .chapter-card.soon .chip{display:inline-block;border:1px solid #3a4a4f;border-radius:999px;padding:2px 10px;color:#7fa3a8}
 @media(max-width:760px){.chapter-card{grid-template-columns:1fr}.chapter-icon{width:56px;height:56px;font-size:2rem}}
+
+/* Fiches récap (espace formateur) */
+.fr-group{margin:18px 0 8px;color:#29eaff;font-size:1.05rem}
+.fr-list{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.fr-card{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 14px;border:1px solid #29464c;border-radius:10px;background:#0f171b}
+.fr-card strong{display:block;color:#dffbff}
+.fr-card small{display:block;color:#a7c0c4}
+.fr-todo{margin-top:16px;color:#a7c0c4}
