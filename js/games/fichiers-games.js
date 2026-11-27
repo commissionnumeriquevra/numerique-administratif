@@ -25,15 +25,15 @@
     intro: "L'ordinateur a 4 grands « tiroirs » : <b>Bureau</b>, <b>Téléchargements</b>, <b>Documents</b>, <b>Images</b>. Où va chaque chose ?",
     rounds: [
       ["Je viens de <b>télécharger</b> mon avis d'impôt sur impots.gouv.fr. Où arrive-t-il ?", 1, "Tout ce qui vient d'Internet arrive d'abord dans <b>Téléchargements</b>. C'est le premier endroit où chercher !"],
-      ["Je veux <b>ranger</b> mon ordonnance pour la garder longtemps.", 2, "Les papiers qu'on garde vont dans <b>Documents</b>, dans un dossier « Santé » par exemple."],
-      ["Je range les <b>photos</b> de l'anniversaire de mon petit-fils.", 3, "Les photos vont dans <b>Images</b>."],
-      ["Ce que je vois tout de suite en allumant l'ordinateur, derrière les fenêtres.", 0, "C'est le <b>Bureau</b> : pratique, mais on évite d'y entasser tous ses fichiers."],
-      ["J'ai enregistré la <b>pièce jointe</b> d'un e-mail. Elle est allée…", 1, "Une pièce jointe enregistrée, c'est un téléchargement : elle arrive dans <b>Téléchargements</b>."]
+      ["Je veux <b>ranger</b> mon ordonnance pour la garder longtemps. Où la mettre ?", 2, "Les papiers qu'on garde vont dans <b>Documents</b>, dans un dossier « Santé » par exemple."],
+      ["Je range les <b>photos</b> de l'anniversaire de mon petit-fils. Où vont-elles ?", 3, "Les photos vont dans <b>Images</b>."],
+      ["L'écran que je vois en allumant l'ordinateur, derrière les fenêtres. Comment s'appelle-t-il ?", 0, "C'est le <b>Bureau</b> : pratique, mais on évite d'y entasser tous ses fichiers."],
+      ["J'ai enregistré la <b>pièce jointe</b> d'un e-mail. Où arrive-t-elle ?", 1, "Une pièce jointe enregistrée, c'est un téléchargement : elle arrive dans <b>Téléchargements</b>."]
     ].map(([p, ok, why]) => ({ kind: "choice", layout: "files", prompt: `<div class="lp-scene">${p}</div>`, choices: TIR, ok, why, short: p.replace(/<[^>]+>/g, "").slice(0, 50), limit: 18 })) });
 
   const FAM = ["📕 Un document à lire (PDF)", "🖼️ Une photo", "📘 Un document Word", "⚙️ Un programme"];
   G({ id: "fic_famille", title: "Quelle famille ?", icon: "🏷️",
-    intro: "Un nom de fichier s'affiche. Regardez bien la <b>fin du nom</b> (l'extension) : de quelle famille est-il ?",
+    intro: "Un nom de fichier s'affiche. Regardez bien la <b>fin du nom</b> (l'extension) : de quelle famille est ce fichier ?",
     rounds: [
       ["attestation_caf.pdf", 0, "« .pdf » : un document à lire ou à imprimer. Les administrations l'utilisent beaucoup."],
       ["plage_2025.jpg", 1, "« .jpg » : une photo."],
@@ -59,7 +59,7 @@
   G({ id: "fic_ranger", title: "Ranger, pas à pas", icon: "🗂️",
     intro: "Les étapes pour ranger l'ordonnance dans un <b>nouveau dossier « Santé »</b> sont mélangées : remettez-les dans l'ordre !",
     rounds: [{ kind: "order", limit: 70, prompt: "Ranger l'ordonnance dans un nouveau dossier « Santé » :", answer: ["Ouvrir l'Explorateur, puis « Documents »", "Cliquer sur ＋ Nouveau › Dossier", "Taper « Santé », puis Entrée", "Glisser l'ordonnance sur le dossier Santé"],
-      why: "Et sans glisser ? Clic sur l'ordonnance › ✂️ Couper, on ouvre le dossier Santé › 📋 Coller." }] });
+      why: "Et sans glisser ? On clique sur l'ordonnance, puis ✂️ Couper. On ouvre le dossier Santé, puis 📋 Coller." }] });
 
   const VF = ["✅ Vrai", "❌ Faux"];
   G({ id: "fic_corbeille", title: "La Corbeille : vrai ou faux ?", icon: "🗑️",
@@ -78,7 +78,7 @@
   G({ id: "fic_piege", title: "Les pièges du dossier Téléchargements", icon: "🔎",
     intro: "Voici le dossier <b>Téléchargements</b> de Josiane, extensions affichées. Repérez les fichiers qui posent problème : un <b>danger</b>, un <b>doublon</b> ou un <b>nom qui ne veut rien dire</b>.",
     rounds: [{ kind: "spot", limit: 120, prompt: "Les extensions sont affichées. Cliquez sur les <b>4 fichiers</b> qui posent problème : danger, doublon ou nom qui ne veut rien dire.",
-      why: "Un programme (.exe) déguisé ou inconnu : on ne l'ouvre pas. Un doublon (2) : on le supprime. Un nom vague : on le renomme.",
+      why: "Un programme (.exe) déguisé ou inconnu : on ne l'ouvre pas. Un doublon « (2) » : on le supprime. Un nom vague : on le renomme.",
       zones: { exe: "« facture_colis.pdf.exe » : un programme déguisé en facture !", gratuit: "« Lecteur_PDF_GRATUIT.exe » : un programme d'origine inconnue", doublon: "« attestation_caf (2).pdf » : un doublon, à supprimer", vague: "« document (3).pdf » : un nom qui ne dit rien, à renommer" },
       content: `<div class="fi-spot"><div class="fi-sh">📁 Ce PC › <b>Téléchargements</b></div>
         <div class="fi-sr head"><span>Nom</span><span>Modifié le</span><span>Type</span><span>Taille</span></div>
@@ -105,10 +105,10 @@
   G({ id: "fic_que_faire", title: "Que faites-vous ?", icon: "🆘", noRank: true,
     intro: "Des situations de tous les jours avec les fichiers… et les bons gestes, <b>calmement</b>. Pas de classement : on en parle ensemble.",
     rounds: [
-      QF("Je viens de télécharger un document, et je ne le trouve plus.", ["Je le retélécharge dix fois", "Téléchargements, trié par date : il est en haut", "J'appelle la mairie"], 1, "Tout téléchargement arrive dans <b>Téléchargements</b>. Trié par date, le plus récent est en haut.", "Téléchargement perdu"),
+      QF("Je viens de télécharger un document, et je ne le trouve plus.", ["Je le retélécharge dix fois", "J'ouvre Téléchargements et je trie par date", "J'appelle la mairie"], 1, "Tout téléchargement arrive dans <b>Téléchargements</b>. Trié par date, le plus récent est en haut.", "Téléchargement perdu"),
       QF("J'ai supprimé par erreur la photo de mon petit-fils.", ["Elle est perdue", "Je vais dans la Corbeille et je la restaure", "Je vide la Corbeille"], 1, "La Corbeille garde les fichiers supprimés : <b>Restaurer</b>, et elle revient.", "Photo supprimée"),
       QF("J'ai renommé un fichier, et maintenant il ne s'ouvre plus.", ["L'extension a sans doute été effacée : je la remets (.pdf, .jpg…)", "Je le supprime", "L'ordinateur est en panne"], 0, "Sans l'extension, Windows ne sait plus l'ouvrir. On renomme en remettant la bonne fin.", "Fichier qui ne s'ouvre plus"),
-      QF("Je ne me souviens plus du tout où j'ai rangé mon scan de permis de conduire.", ["J'ouvre tous les dossiers un par un", "Dans Ce PC, je tape « permis » dans la loupe 🔍", "Je refais un scan"], 1, "La recherche trouve en quelques secondes, même un fichier rangé très loin.", "Fichier introuvable"),
+      QF("Je ne sais plus du tout où j'ai rangé le scan de mon permis de conduire.", ["J'ouvre tous les dossiers un par un", "Dans « Ce PC », je tape « permis » dans la case 🔍", "Je refais un scan"], 1, "La recherche trouve en quelques secondes, même un fichier rangé très loin.", "Fichier introuvable"),
       QF("Un fichier « facture.pdf.exe » est arrivé dans mes Téléchargements.", ["Je l'ouvre pour voir la facture", "C'est un programme déguisé : je ne l'ouvre pas, je le supprime", "Je l'envoie à mes amis"], 1, "« .exe » à la fin : c'est un programme, pas une facture. On ne l'ouvre pas.", "facture.pdf.exe")
     ] });
 })(window.AN);

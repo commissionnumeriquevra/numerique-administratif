@@ -49,7 +49,7 @@
     if (/(0123|1234|2345|3456|4567|5678|6789|abcd|azer|qwer)/i.test(p)) { bits -= 15; reasons.push("Une suite de touches (1234, azer…) : trop facile à deviner."); }
     if (/(19|20)\d\d/.test(p)) reasons.push("Une année (souvent une date de naissance) : les pirates l'essaient systématiquement.");
     if (/^[a-zà-ÿ]+[^a-zà-ÿ\s]{0,6}$/i.test(p)) { bits = Math.min(bits, 30); reasons.push("Un seul mot, avec quelques chiffres ou un signe au bout : c'est le schéma le plus deviné."); }
-    if (p.length < 12) reasons.push(`Trop court : ${p.length} caractère${p.length > 1 ? "s" : ""}. Visez au moins 12… ou mieux, une phrase.`);
+    if (p.length < 12) reasons.push(`Trop court : ${p.length} caractère${p.length > 1 ? "s" : ""}. Visez au moins 12 caractères, ou mieux : une phrase.`);
     const words = p.trim().split(/\s+/).filter(w => w.length > 1).length;
     if (words >= 4 && p.length >= 20 && !weak) reasons.unshift("Une phrase de plusieurs mots : longue, et facile à retenir. 👍");
     if (weak) bits = Math.min(bits, 12);

@@ -23,8 +23,8 @@
       <div class="l-grid2 l-mid">
         <div class="l-center" data-reveal="1">${fcButton(false)}<p style="margin-top:12px">${fcButton(true)}</p></div>
         <ol class="mm-notes">
-          <li data-reveal="2"><i class="pin">1</i><div><b>Où ?</b><small>Sur la page de connexion des sites publics : mairie, CAF, ANTS, retraite…</small></div></li>
-          <li data-reveal="3"><i class="pin">2</i><div><b>Après le clic</b><small>L'adresse devient <b>franceconnect.gouv.fr</b> : je vérifie ce nom !</small></div></li>
+          <li data-reveal="2"><i class="pin">1</i><div><b>Où ?</b><small>Sur la page de connexion de nombreux sites publics : mairie, CAF, ANTS, retraite…</small></div></li>
+          <li data-reveal="3"><i class="pin">2</i><div><b>Après le clic</b><small>L'adresse contient alors <b>franceconnect.gouv.fr</b> : je vérifie ce nom !</small></div></li>
           <li data-reveal="4" class="ok"><i class="pin ok">3</i><div><b>FranceConnect+</b><small>La version renforcée, pour les démarches sensibles.</small></div></li>
         </ol></div>` },
 
@@ -34,7 +34,7 @@
         <div class="l-safe" data-reveal="2"><h3>✅ Celui que j'ai déjà</h3><p>Je déclare mes impôts en ligne ? <b>impots.gouv.fr</b>. J'ai un compte ameli ? <b>ameli</b>.</p></div>
         <div class="l-card" data-reveal="3"><h3>🆕 Aucun compte ?</h3><p>J'en crée un d'abord (ameli, impots…). Il doit être à mon nom, avec mon <b>état civil exact</b>.</p></div>
       </div>
-      <p class="l-note" data-reveal="4">ℹ️ Le service « YRIS » n'existe plus depuis juillet 2026 : ceux qui l'utilisaient choisissent un autre compte.</p>` }
+      <p class="l-note" data-reveal="4">ℹ️ La liste des comptes proposés peut changer : je choisis celui que j'ai déjà.</p>` }
   ];
 
   /* =================== SÉANCE 2 =================== */
@@ -59,7 +59,7 @@
     { title: "Ça bloque ? 🛠️", html: `
       <div class="l-flips">
         ${flip("🔑 J'ai oublié mon mot de passe", "Je le récupère sur la page du <b>compte choisi</b> (impots, ameli…) : « Mot de passe oublié ? »", true)}
-        ${flip("⚠️ « Identité non reconnue »", "Mon compte n'a pas mon <b>état civil exact</b> : j'en choisis un autre, et je fais corriger.", true)}
+        ${flip("⚠️ « Identité non reconnue »", "Mon compte n'a pas mon <b>état civil exact</b> : je choisis un autre compte, et je fais corriger le premier.", true)}
         ${flip("🔒 « FranceConnect+ » demandé", "Il faut <b>L'Identité Numérique La Poste</b> ou <b>France Identité</b>.", true)}
       </div>
       <p class="l-note" data-reveal>FranceConnect ne connaît pas mes mots de passe : chaque compte garde le sien.</p>` }
@@ -72,7 +72,7 @@
         <div class="l-card big" data-reveal="1"><h3>📮 L'Identité Numérique La Poste</h3><p>Une application sur le téléphone. Mon identité est vérifiée une fois (au bureau de poste, par exemple).</p><p>Pour me connecter : je <b>valide sur le téléphone</b>, avec mon code secret.</p></div>
         <div class="l-card big" data-reveal="2"><h3>🪪 France Identité</h3><p>L'application de l'État, avec la <b>carte d'identité au format carte bancaire</b> : le téléphone lit sa puce.</p></div>
       </div>
-      <div class="l-callout" data-reveal="3">🎓 FranceConnect+ est demandé pour les démarches sensibles : Mon Compte Formation, MaPrimeRénov', la création d'entreprise…</div>` },
+      <div class="l-callout" data-reveal="3">🎓 FranceConnect+ est demandé pour certaines démarches sensibles : tous les comptes ne sont pas acceptés.</div>` },
 
     { title: "Valider sur le téléphone : seulement si c'est moi 📱", html: `
       <div class="l-grid2 l-mid">

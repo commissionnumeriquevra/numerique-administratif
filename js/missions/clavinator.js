@@ -61,7 +61,7 @@
           (ok ? G.ok : G.ko)(r.key, r.label, ok ? "" : r.help);
         }
         if (ok) return done(good("✅ Bravo, c'est exact !"));
-        if (tries >= 3) return done(kindly(`${r.help} La réponse attendue était : <b>${esc(r.show)}</b>. On passe à la suite, on y reviendra.`));
+        if (tries >= 3) return done(kindly(`${r.help} La réponse attendue était : <b>${esc(r.show)}</b>. On passe à la suite.`));
         fb.innerHTML = kindly(`${r.help} Essayez encore (${3 - tries} essai${3 - tries > 1 ? "s" : ""}).`);
       };
       dic.querySelector("[data-check]").addEventListener("click", check);
@@ -85,7 +85,7 @@
     { prompt: "<b>Si le rond est ROUGE</b>, tapez <b>a</b>.<br><b>SINON</b>, tapez <b>o</b>.", expected: "o", visual: "#166534" },
     { prompt: "<em>Ne tapez pas la lettre e.</em><br>Tapez plutôt la lettre <b>u</b>.", expected: "u" },
     { prompt: "Tapez <b>trois fois</b> la lettre <b>k</b>.", expected: "kkk" },
-    { prompt: "Tapez la <b>2ème lettre</b> du mot <b>jardin</b>.", expected: "a" },
+    { prompt: "Tapez la <b>deuxième lettre</b> du mot <b>jardin</b>.", expected: "a" },
     { prompt: "Tapez la <b>lettre du milieu</b> du mot <b>voiture</b>.", expected: "t" }
   ];
 
@@ -99,7 +99,7 @@
         rounds: LECTURE.map((r, k) => ({
           prompt: r.prompt, visual: r.visual, show: r.expected, key: `cv_lec_${k}`,
           label: `Consigne : « ${r.prompt.replace(/<br>/g, " ").replace(/<[^>]+>/g, "")} »`,
-          help: "Ce n'est pas ça. Relisez la consigne en entier : un piège se cache peut-être dans un mot.",
+          help: "Pas tout à fait. Relisez la consigne en entier : un piège se cache peut-être dans un mot.",
           ok: v => nfc(v) === r.expected
         })),
         finish: { key: "cv_lire", label: "Je lis chaque consigne en entier avant d'agir", intro: "Lire en entier, repérer les pièges (PAS, SINON, couleur, ordre), puis agir : c'est la règle n°1." }
@@ -111,7 +111,7 @@
      SÉANCES 3 ET 5 — « Accents : le circonflexe et les mots accentués »
      ========================================================= */
   const ACCENTS = [
-    { t: "Tapez la lettre <b>â</b>", target: "â", help: "Appuyez sur <kbd>^</kbd>, puis sur <kbd>a</kbd>. La touche ^ ne s'affiche pas toute seule." },
+    { t: "Tapez la lettre <b>â</b>", target: "â", help: "Appuyez sur <kbd>^</kbd> et lâchez (rien ne s'affiche, c'est normal), puis sur <kbd>a</kbd>." },
     { t: "Tapez la lettre <b>ê</b>", target: "ê", help: "Appuyez sur <kbd>^</kbd>, puis sur <kbd>e</kbd>." },
     { t: "Tapez la lettre <b>î</b>", target: "î", help: "Appuyez sur <kbd>^</kbd>, puis sur <kbd>i</kbd>." },
     { t: "Tapez la lettre <b>ô</b>", target: "ô", help: "Appuyez sur <kbd>^</kbd>, puis sur <kbd>o</kbd>." },
@@ -145,11 +145,11 @@
      dans l'exercice d'origine. On corrige, on ne retape pas tout.
      ========================================================= */
   const CORR = [
-    { initial: "loupz", target: "loup", at: "end", help: "Le curseur est à la fin. Appuyez sur ← (Backspace) pour effacer la dernière lettre." },
+    { initial: "loupz", target: "loup", at: "end", help: "Le curseur est à la fin. Appuyez sur ⌫ Effacer (Backspace) pour effacer la dernière lettre." },
     { initial: "xarbre", target: "arbre", at: "start", help: "Le curseur est au début. Appuyez sur Suppr pour effacer la lettre à droite du curseur." },
-    { initial: "chevalxx", target: "cheval", at: "end", help: "Le curseur est à la fin. Appuyez deux fois sur ← (Backspace)." },
-    { initial: "maixson", target: "maison", at: "end", help: "Placez le curseur juste après le x avec ← ou →, puis appuyez sur Backspace." },
-    { initial: "ztortue", target: "tortue", at: "end", help: "Cliquez entre le z et le t pour placer le curseur, puis appuyez sur ← (Backspace) pour effacer le z." }
+    { initial: "chevalxx", target: "cheval", at: "end", help: "Le curseur est à la fin. Appuyez deux fois sur ⌫ Effacer (Backspace)." },
+    { initial: "maixson", target: "maison", at: "end", help: "Placez le curseur juste après le x (flèches ← → ou un clic), puis appuyez sur ⌫ Effacer." },
+    { initial: "ztortue", target: "tortue", at: "end", help: "Cliquez entre le z et le t pour placer le curseur, puis appuyez sur ⌫ Effacer (Backspace) pour effacer le z." }
   ];
 
   R("cv_corrections", {
@@ -157,10 +157,10 @@
     render(ctx) {
       runRounds(ctx, {
         chapter: "Clavinator · séances 4 et 5", title: "Corriger sans tout retaper",
-        consigne: "Le mot contient une faute de frappe. <b>Corrigez-le</b> sans le retaper entièrement : <b>← Backspace</b> efface à gauche du curseur, <b>Suppr</b> efface à droite, les flèches déplacent le curseur.",
-        help: "Backspace et Suppr ne font pas la même chose. Observez où est le curseur avant d'appuyer.",
+        consigne: "Le mot contient une faute de frappe. <b>Corrigez-le</b> sans le retaper entièrement : <b>⌫ Effacer</b> (Backspace) efface à gauche du curseur, <b>Suppr</b> efface à droite, les flèches ← → déplacent le curseur.",
+        help: "⌫ Effacer et Suppr ne font pas la même chose. Regardez où est le curseur avant d'appuyer.",
         rounds: CORR.map((c, k) => ({
-          prompt: `Corrigez le mot : <b>${esc(c.initial)}</b> doit devenir <b>${esc(c.target)}</b>`,
+          prompt: `Corrigez <b>${esc(c.initial)}</b> pour obtenir <b>${esc(c.target)}</b>`,
           show: c.target, key: `cv_cor_${k}`, label: `Corriger « ${c.initial} » en « ${c.target} »`,
           help: c.help, max: 20,
           init: input => {
@@ -170,7 +170,7 @@
           },
           ok: v => nfc(v) === c.target
         })),
-        finish: { key: "cv_corrections", label: "Je corrige mes erreurs avec Backspace, Suppr et les flèches", intro: "Repérer la faute, placer le curseur, effacer la bonne touche : corriger ne demande pas de tout retaper." }
+        finish: { key: "cv_corrections", label: "Je corrige mes erreurs avec ⌫ Effacer, Suppr et les flèches", intro: "Repérer la faute, placer le curseur, effacer avec la bonne touche : corriger ne demande pas de tout retaper." }
       });
     }
   });
@@ -192,14 +192,14 @@
     render(ctx) {
       runRounds(ctx, {
         chapter: "Clavinator · séance 5", title: "La dictée",
-        consigne: "Lisez la phrase <b>en entier</b>, puis tapez-la avec ses <b>majuscules</b>, ses <b>accents</b> et sa <b>ponctuation</b>.",
-        help: "Majuscules au début de la phrase, accents comme dans le modèle, espaces entre les mots.",
+        consigne: "Lisez la phrase <b>en entier</b>, puis tapez-la <b>exactement</b> comme le modèle : majuscule, accents, espaces. Pas de point à la fin.",
+        help: "Une majuscule au début de la phrase, les accents comme dans le modèle, un espace entre les mots.",
         rounds: DICTEE.map((d, k) => ({
           prompt: `« ${esc(d.t)} »`, show: d.t, key: `cv_dic_${k}`, label: `Dictée « ${d.t} »`,
           help: d.help, max: 120,
           ok: v => nfc(v) === d.t
         })),
-        finish: { key: "cv_dictees", label: "Je tape une phrase dictée avec majuscules et accents", intro: "Écouter ou lire en entier, taper avec les accents et la ponctuation, relire : la dictée est réussie." }
+        finish: { key: "cv_dictees", label: "Je tape une phrase dictée avec majuscules et accents", intro: "Lire en entier, taper avec les majuscules et les accents, relire : la dictée est réussie." }
       });
     }
   });

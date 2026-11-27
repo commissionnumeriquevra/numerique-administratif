@@ -98,12 +98,12 @@
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const f = frame(ctx, { level: 1, title: "Le réveil des bulles : viser et cliquer", step: 0, noClient: true,
         consigne: "Les bulles dorment 😴. Approchez la flèche de la souris pour les réveiller, puis cliquez dessus. Prenez votre temps : ici, rien ne peut se casser.",
-        help: "Posez la main sur la souris <b>sans serrer</b>, le poignet sur la table. L'<b>index</b> sur le bouton de gauche, le <b>majeur</b> sur celui de droite. Au bord du tapis ? On soulève la souris, et on la repose plus loin." });
+        help: "Posez la main sur la souris <b>sans serrer</b>, le poignet sur la table. L'<b>index</b> sur le bouton de gauche, le <b>majeur</b> sur celui de droite. Au bord du tapis ? On soulève la souris et on la repose plus loin." });
       f.panel.innerHTML = `<div class="wk-tasks"></div><div class="sc-stage"></div>`;
       const T = tasker(f.panel.querySelector(".wk-tasks"), [
         { k: "wake", label: "<b>Viser</b> : passez la flèche sur chacune des 5 bulles, <b>sans cliquer</b>, pour les réveiller." },
-        { k: "pop", label: "<b>Cliquer</b> : une bulle apparaît à la fois. Cliquez dessus avec le bouton de <b>gauche</b>. Elles rapetissent !" },
-        { k: "read", label: "<b>Lire avant de cliquer</b> : cliquez seulement sur le bouton demandé." }
+        { k: "pop", label: "<b>Cliquer</b> : les bulles apparaissent une par une. Cliquez sur chacune avec le bouton de <b>gauche</b>. Attention, elles rapetissent !" },
+        { k: "read", label: "<b>Lire avant de cliquer</b> : lisez le mot demandé, puis cliquez sur le bouton qui porte ce mot." }
       ]);
       const S = f.panel.querySelector(".sc-stage");
       const next = () => { const k = T.next?.k; if (!k) return end(); stages[k](); };
@@ -124,7 +124,7 @@
           let k = 0, miss = 0;
           const show = () => {
             if (k >= n) {
-              S.innerHTML = `<div class="sc-stage-msg">🎉 ${n} bulles réveillées${miss ? ` (${miss} clic${miss > 1 ? "s" : ""} à côté)` : ", sans un clic à côté"} !</div>`;
+              S.innerHTML = `<div class="sc-stage-msg">🎉 ${n} bulles éclatées${miss ? ` (${miss} clic${miss > 1 ? "s" : ""} à côté)` : ", sans un clic à côté"} !</div>`;
               if (T.done("pop")) (miss <= Math.ceil(n / 3) ? G.ok : G.ko)("pop", "Cliquer sur une cible", "Je vise d'abord, je clique ensuite, sans bouger la souris pendant le clic.");
               return later(ctx, next, 1300);
             }
@@ -158,8 +158,8 @@
       function end() {
         if (L.ended) return; L.ended = true;
         quiz(T.slot(), { G, key: "q1", questions: [
-          { q: "Pour bien tenir la souris :", choices: ["La main posée dessus, sans serrer, l'index sur le bouton de gauche", "Du bout des doigts, en serrant fort"], ok: 0, why: "La main repose sur la souris, détendue. L'index clique à gauche, le majeur à droite." },
-          { q: "La souris arrive au bord du tapis. Que faire ?", choices: ["Je la soulève et je la repose plus loin", "Je tire très fort", "J'abandonne"], ok: 0, why: "En l'air, la souris ne bouge pas la flèche : on la repose plus loin, et on continue." },
+          { q: "Comment bien tenir la souris ?", choices: ["La main posée dessus, sans serrer, l'index sur le bouton de gauche", "Du bout des doigts, en serrant fort"], ok: 0, why: "La main repose sur la souris, détendue. L'index clique à gauche, le majeur à droite." },
+          { q: "La souris arrive au bord du tapis. Que faire ?", choices: ["Je la soulève et je la repose plus loin", "Je tire très fort", "J'abandonne"], ok: 0, why: "En l'air, la flèche ne bouge pas : on repose la souris plus loin, et on continue." },
           { q: "Pendant que je clique, la souris doit…", choices: ["Rester immobile", "Bouger un peu"], ok: 0, why: "Si la souris bouge pendant le clic, on peut rater la cible… ou déplacer un objet sans le vouloir." }
         ], onDone: () => finish(ctx, G, { key: "sc_bulles", label: "Je sais viser et cliquer", intro: "Viser, cliquer, lire le bouton avant de cliquer : les bases de la souris sont là." }) });
       }
@@ -177,7 +177,7 @@
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const f = frame(ctx, { level: 2, title: "Le menu secret : le clic droit", step: 0, noClient: true,
         consigne: "Le <b>clic gauche agit</b> (il ouvre, il valide). Le <b>clic droit explore</b> : il montre un menu avec toutes les actions possibles. Avant chaque clic, une seconde : est-ce que je veux <b>agir</b>, ou <b>voir les options</b> ?",
-        help: "Le <b>clic droit</b> est sous votre <b>majeur</b>, à droite de la molette. Il ne fait rien de grave : il ouvre seulement un menu. Pour le refermer sans rien choisir : la touche <b>Échap</b>, ou un clic à côté." });
+        help: "Le <b>bouton de droite</b> est sous votre <b>majeur</b>, à droite de la molette. Il ne fait rien de grave : il ouvre seulement un menu. Pour le refermer sans rien choisir : la touche <b>Échap</b>, ou un clic à côté." });
       f.panel.innerHTML = `<div class="wk-tasks"></div><div class="sc-stage sc-objs">
           <div class="sc-obj" data-o="door"><span class="sc-ico">🚪</span><b>La porte</b></div>
           <div class="sc-obj" data-o="box"><span class="sc-ico">📦</span><b>Le colis</b></div>
@@ -185,9 +185,9 @@
           <div class="sc-said" aria-live="polite"></div></div>`;
       const T = tasker(f.panel.querySelector(".wk-tasks"), [
         { k: "door", label: "<b>Agir</b> : ouvrez la porte 🚪. Un simple clic, bouton de <b>gauche</b>." },
-        { k: "shake", label: "<b>Explorer</b> : secouez le colis 📦 pour deviner ce qu'il contient. « Secouer » est caché dans le <b>menu secret</b> : clic <b>droit</b> sur le colis." },
-        { k: "rotate", label: "La photo de mamie est à l'envers ! Clic <b>droit</b> sur la photo › <b>Faire pivoter à droite</b>… autant de fois qu'il faut." },
-        { k: "esc", label: "Ouvrez le menu secret de la porte, puis refermez-le <b>sans rien choisir</b> : touche <b>Échap</b> (en haut à gauche du clavier), ou un clic à côté." },
+        { k: "shake", label: "<b>Explorer</b> : secouez le colis 📦 pour deviner ce qu'il contient. Faites un clic <b>droit</b> sur le colis, puis choisissez « Secouer »." },
+        { k: "rotate", label: "<b>Redresser</b> : la photo de mamie est à l'envers ! Faites un clic <b>droit</b> sur la photo, puis <b>Faire pivoter à droite</b>. Recommencez jusqu'à ce qu'elle soit à l'endroit." },
+        { k: "esc", label: "<b>Refermer</b> : faites un clic droit sur la porte. Puis refermez le menu <b>sans rien choisir</b>, avec la touche <b>Échap</b> (en haut à gauche du clavier) ou un clic à côté." },
         { k: "open", label: "<b>Agir</b> : ouvrez enfin le colis 📦 (clic gauche) !" }
       ]);
       const S = f.panel.querySelector(".sc-stage"), said = S.querySelector(".sc-said");
@@ -206,7 +206,7 @@
         if (o === "door" && what === "open") { st.door = true; O("door").querySelector(".sc-ico").textContent = "🚪✨"; say("🚪 La porte s'ouvre… il y a un joli jardin 🌷"); if (cur === "door") done("door", "Agir avec le clic gauche", "Le clic gauche agit : il ouvre, il valide."); return; }
         if (o === "box" && what === "shake") { O("box").classList.remove("shake"); void O("box").offsetWidth; O("box").classList.add("shake"); say("🫨 Gling-gling… On dirait quelque chose de fragile !"); if (cur === "shake") done("shake", "Trouver une action dans le menu du clic droit", "« Secouer » n'existe que dans le menu du clic droit : il montre toutes les options."); return; }
         if (o === "box" && what === "open") {
-          if (cur !== "open") { err(cur); say("📦 Pas encore ! Le colis s'ouvrira à la fin. Suivez la consigne en bleu 👉"); return; }
+          if (cur !== "open") { err(cur); say("📦 Pas encore ! Le colis s'ouvrira à la fin. Suivez la consigne marquée d'un 👉"); return; }
           st.box = true; O("box").querySelector(".sc-ico").textContent = "🎁"; say("🎁 Surprise : un livre de la médiathèque, et un mot : « Bravo ! »"); done("open", "Agir avec le clic gauche", "Le clic gauche agit : il ouvre, il valide."); return;
         }
         if (o === "photo" && (what === "right" || what === "left")) {
@@ -281,8 +281,8 @@
         help: "Le double-clic n'est pas une question de force : c'est une question de <b>rythme</b>. « Toc-toc », comme quand on frappe à une porte. La souris reste immobile." });
       f.panel.innerHTML = `<div class="wk-tasks"></div><div class="sc-stage"></div>`;
       const T = tasker(f.panel.querySelector(".wk-tasks"), [
-        { k: "rhythm", label: "<b>Le rythme</b> : double-cliquez 3 fois sur l'étoile ⭐. Toc-toc !" },
-        { k: "folders", label: "<b>Les dossiers</b> : ouvrez <b>Mes documents</b>, puis <b>Photos</b>, puis la photo <b>anniversaire.jpg</b>, en double-cliquant." },
+        { k: "rhythm", label: "<b>Le rythme</b> : faites 3 double-clics sur l'étoile ⭐. Toc-toc !" },
+        { k: "folders", label: "<b>Les dossiers</b> : avec un double-clic, ouvrez <b>Mes documents</b>, puis <b>Photos</b>, puis la photo <b>anniversaire.jpg</b>." },
         { k: "web", label: "<b>Sur Internet, c'est différent</b> : ouvrez la page « Horaires » du site de la médiathèque." }
       ]);
       const S = f.panel.querySelector(".sc-stage");
@@ -352,8 +352,8 @@
       function end() {
         if (L.ended) return; L.ended = true;
         quiz(T.slot(), { G, key: "q3", questions: [
-          { q: "Sur le bureau de l'ordinateur, pour <b>ouvrir</b> un dossier :", choices: ["Un double-clic", "Un clic", "Un clic droit"], ok: 0, why: "Un clic sélectionne, un double-clic ouvre." },
-          { q: "Sur un site Internet, pour suivre un lien :", choices: ["Un seul clic", "Un double-clic"], ok: 0, why: "Sur Internet, un seul clic suffit. Le double-clic peut valider deux fois !" },
+          { q: "Sur l'ordinateur, comment <b>ouvrir</b> un dossier ?", choices: ["Un double-clic", "Un clic", "Un clic droit"], ok: 0, why: "Un clic sélectionne, un double-clic ouvre." },
+          { q: "Sur un site Internet, comment ouvrir un lien ?", choices: ["Un seul clic", "Un double-clic"], ok: 0, why: "Sur Internet, un seul clic suffit. Le double-clic peut valider deux fois !" },
           { q: "Mon double-clic ne marche pas. Pourquoi ?", choices: ["Les deux clics sont trop espacés, ou la souris a bougé", "Je n'ai pas appuyé assez fort"], ok: 0, why: "Ce n'est pas une question de force : c'est le rythme. Toc-toc, sans bouger la souris." }
         ], onDone: () => finish(ctx, G, { key: "sc_double", label: "Je maîtrise le double-clic", intro: "Le rythme du double-clic, l'ouverture des dossiers… et le simple clic sur Internet." }) });
       }
@@ -370,12 +370,12 @@
       const L = ctx.local, G = grader(L);
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const f = frame(ctx, { level: 4, title: "Le grand ménage : glisser-déposer", step: 0, noClient: true,
-        consigne: "<b>Glisser-déposer</b>, c'est attraper un objet et le poser ailleurs : j'appuie sur le bouton de gauche, je <b>garde le doigt appuyé</b>, je déplace la souris, et je lâche au bon endroit.",
+        consigne: "<b>Glisser-déposer</b>, c'est attraper un objet et le poser ailleurs : j'appuie sur le bouton de gauche, je <b>garde le bouton enfoncé</b>, je déplace la souris, et je lâche au bon endroit.",
         help: "Gardez le bouton gauche <b>bien enfoncé</b> pendant tout le trajet, et ne relâchez qu'au-dessus de l'arrivée (elle devient bleue). La <b>molette</b>, la petite roue entre les deux boutons, fait défiler un texte." });
       f.panel.innerHTML = `<div class="wk-tasks"></div><div class="sc-stage auto"></div>`;
       const T = tasker(f.panel.querySelector(".wk-tasks"), [
         { k: "sort", label: "<b>Le grand ménage</b> : rangez chaque fichier à sa place. Les photos dans <b>Photos</b>, les papiers dans <b>Papiers</b>, ce qui ne sert plus à la <b>Corbeille</b>." },
-        { k: "wheel", label: "<b>La molette</b> : faites défiler la recette de la potion magique avec la petite roue, jusqu'en bas." },
+        { k: "wheel", label: "<b>La molette</b> : faites défiler la recette avec la petite roue, jusqu'en bas. Puis cliquez sur « J'ai tout lu »." },
         { k: "potion", label: "<b>La potion</b> : glissez les ingrédients dans le chaudron 🫕, <b>dans l'ordre</b> de la recette." }
       ]);
       const S = f.panel.querySelector(".sc-stage");
@@ -419,7 +419,7 @@
           rec.addEventListener("wheel", () => { wheeled = true; }, { passive: true });
           S.querySelector("[data-read]").addEventListener("click", () => {
             if (T.done("wheel")) (wheeled ? G.ok : G.ko)("wheel", "Faire défiler avec la molette", "La petite roue entre les deux boutons fait défiler la page, sans viser la barre sur le côté.");
-            T.note(wheeled ? good("✅ Bien défilé ! Retenez l'ordre : 🌿, 💎, 🍯.") : kindly("Vous êtes arrivé en bas : bravo ! Essayez aussi la <b>molette</b>, la petite roue entre les deux boutons : c'est plus facile que la barre sur le côté."));
+            T.note(wheeled ? good("✅ Bien défilé ! Retenez l'ordre : 🌿, 💎, 🍯.") : kindly("Vous êtes arrivé(e) en bas : bravo ! Essayez aussi la <b>molette</b>, la petite roue entre les deux boutons : c'est plus facile que la barre sur le côté."));
             later(ctx, next, 1200);
           });
         },
@@ -433,7 +433,7 @@
             zones: () => [...S.querySelectorAll("[data-zone]")], onMiss: missed,
             onDrop(z, el) {
               const k = el.dataset.ing;
-              if (k !== want[i]) { wrong++; z.classList.add("puff"); setTimeout(() => z.classList.remove("puff"), 600); T.note(kindly(want.includes(k) ? `💨 Pas encore ! Relisez la recette : maintenant, c'est <b>${ING[want[i]]}</b>.` : `💨 Pouah ! ${ING[k]} n'est pas dans la recette. L'ingrédient est renvoyé.`)); return; }
+              if (k !== want[i]) { wrong++; z.classList.add("puff"); setTimeout(() => z.classList.remove("puff"), 600); T.note(kindly(want.includes(k) ? `💨 Pas encore ! Relisez la recette : maintenant, c'est <b>${ING[want[i]]}</b>.` : `💨 Pouah ! ${ING[k]} ne va pas dans la potion. L'ingrédient est renvoyé.`)); return; }
               i++; z.querySelector(".sc-zin").insertAdjacentHTML("beforeend", `<span>${ING[k].split(" ")[0]}</span>`); el.remove();
               if (i === want.length) {
                 z.classList.add("magic"); z.querySelector("b").textContent = "✨ La potion est prête ! ✨";
@@ -518,9 +518,9 @@
         if (it.mode === "text") return judgeText();
         if (it.want === "Enter") return right(it);
         if (it.mode === "seq" && inp.value) return judgeChar(inp.value);
-        return wrongTry(it, "Enter", "C'est la touche <b>Entrée</b>. " + (it.tip || ""));
+        return wrongTry(it, "Enter", "Ce n'est pas la touche demandée. " + (it.tip || ""));
       }
-      if (e.key === " " && it.mode === "char") { e.preventDefault(); if (it.want === " ") return right(it); return wrongTry(it, " ", "C'est la barre d'<b>Espace</b>. " + (it.tip || "")); }
+      if (e.key === " " && it.mode === "char") { e.preventDefault(); if (it.want === " ") return right(it); return wrongTry(it, " ", "Ce n'est pas la touche demandée. " + (it.tip || "")); }
       if (e.key === "Backspace" && it.mode === "char") { e.preventDefault(); if (it.want === "Backspace") return right(it); }
     });
     const onInput = () => { const it = items[i]; if (!it || busy) return; if (it.mode === "char" && inp.value) judgeChar(inp.value.slice(-1)); else if (it.mode === "seq" && inp.value.length >= it.want.length) judgeChar(inp.value); };
@@ -553,7 +553,7 @@
       const M = ctx.byLevel({ beginner: ["A", "M", "L"], intermediate: ["A", "M", "L", "R"], expert: ["A", "M", "Q", "R", "Z"] });
       const items = [
         ...L1.map(c => ({ fam: "lettres", mode: "char", want: c, p: `Tapez la lettre <b class="sc-big">${c}</b>`, hint: [letterCode(c)], tip: `Cherchez la touche <b>${c.toUpperCase()}</b> sur le clavier (les lettres y sont écrites en majuscule).` })),
-        ...M.map(c => ({ fam: "maj", mode: "char", want: c, p: `Faites une majuscule : <b class="sc-big">${c}</b>`, hint: [...H.maj, letterCode(c.toLowerCase())], tip: "On garde <b>⇧ Maj</b> enfoncée (la flèche vers le haut), et on appuie sur la lettre." })),
+        ...M.map(c => ({ fam: "maj", mode: "char", want: c, p: `Tapez la majuscule <b class="sc-big">${c}</b>`, hint: [...H.maj, letterCode(c.toLowerCase())], tip: "On garde <b>⇧ Maj</b> enfoncée (la touche avec la flèche vers le haut), et on appuie sur la lettre." })),
         { fam: "lire", mode: "char", want: "e", trap: "a", p: `Tapez la lettre <b>a</b>…<br><span class="sc-warn">⚠️ Attention : ne tapez <b>PAS</b> la lettre a. Tapez la lettre <b>e</b>.</span>`, hint: ["KeyE"], trapTip: "C'était un piège ! La suite de la consigne disait : tapez <b>e</b>. On lit <b>jusqu'au bout</b> avant d'agir." },
         { fam: "lire", mode: "char", want: "a", trap: "e", p: `<b>Si le rond est ROUGE</b>, tapez <b>e</b>.<br><b>Si le rond est BLEU</b>, tapez <b>a</b>.`, scene: `<span class="sc-dot blue" aria-label="Rond bleu"></span>`, hint: ["KeyQ"], trapTip: "Regardez bien la couleur du rond : il est <b>BLEU</b>, donc on tape <b>a</b>." },
         { fam: "lire", mode: "char", want: "p", trap: "o", p: `Tapez la <b>première lettre</b> du mot <b>pomme</b>.`, hint: ["KeyP"] },
@@ -570,8 +570,8 @@
           touches: { title: "␣ Espace et ↵ Entrée", label: "Trouver Espace et Entrée", tip: "Espace : la grande barre en bas. Entrée : la grande touche à droite.", allow: 0 }
         },
         onEnd: (G, slot) => quiz(slot, { G, key: "q5", questions: [
-          { q: "Pour faire <b>une</b> majuscule :", choices: ["Je garde ⇧ Maj enfoncée et j'appuie sur la lettre", "J'appuie deux fois sur la lettre"], ok: 0, why: "⇧ Maj + la lettre. Pour TOUT écrire en majuscules, il y a Verr. Maj… qu'on pense à éteindre ensuite !" },
-          { q: "Tout ce que je tape s'écrit EN MAJUSCULES. Pourquoi ?", choices: ["Le Verr. Maj est allumé : j'appuie une fois dessus", "Le clavier est cassé"], ok: 0, why: "La touche Verr. Maj bloque les majuscules. Un voyant s'allume souvent sur le clavier." },
+          { q: "Comment faire <b>une</b> majuscule ?", choices: ["Je garde ⇧ Maj enfoncée et j'appuie sur la lettre", "J'appuie deux fois sur la lettre"], ok: 0, why: "⇧ Maj + la lettre. Pour TOUT écrire en majuscules, il y a Verr. Maj… qu'on pense à éteindre ensuite !" },
+          { q: "Tout ce que je tape s'écrit EN MAJUSCULES. Pourquoi ?", choices: ["Le Verr. Maj est allumé : j'appuie une fois dessus", "Le clavier est cassé"], ok: 0, why: "La touche Verr. Maj fait tout écrire en majuscules. Un voyant s'allume souvent sur le clavier." },
           { q: "Avant de taper ou de cliquer, le bon réflexe :", choices: ["Lire toute la consigne, jusqu'au bout", "Aller le plus vite possible"], ok: 0, why: "Une consigne peut finir par « sauf », « attention » ou « ne… pas ». On lit tout, puis on agit." }
         ], onDone: () => finish(ctx, G, { key: "sc_lettres", label: "Je trouve les lettres, les majuscules, Espace et Entrée", intro: "Lettres, majuscules, Espace, Entrée… et le réflexe de lire avant d'agir." }) })
       });
@@ -599,7 +599,7 @@
         ...ACC.slice(0, ctx.isBeginner() ? 4 : 5).map(([c, code, where]) => ({ fam: "acc", mode: "char", want: c, p: `Tapez la lettre <b class="sc-big">${c}</b>`, hint: [code], tip: `${c} : ${where}.` })),
         ...CIRC.map(c => ({ fam: "circ", mode: "char", want: c, p: `Tapez la lettre <b class="sc-big">${c}</b> <small>(avec le chapeau)</small>`, hint: ["BracketLeft", letterCode(c.normalize("NFD")[0])], tip: `En deux temps : j'appuie sur <b>^</b> et je lâche (rien ne s'affiche, c'est normal), puis j'appuie sur <b>${c.normalize("NFD")[0]}</b>.` })),
         { fam: "at", mode: "char", want: "@", p: `Tapez l'arobase <b class="sc-big">@</b>`, hint: ["AltRight", "Digit0"], tip: "On garde <b>Alt Gr</b> enfoncée (à droite de l'Espace), et on appuie sur la touche <b>à 0</b>." },
-        { fam: "at", mode: "text", want: "marie.dupont@exemple.fr", p: `Recopiez l'adresse e-mail, puis appuyez sur Entrée :<div class="sc-model">marie.dupont@exemple.fr</div>`, hint: ["AltRight", "Digit0", ...H.maj, "Comma"], tip: "Tout en minuscules, sans espace. Le point : ⇧ Maj + la touche <b>; .</b> — l'arobase : Alt Gr + à." },
+        { fam: "at", mode: "text", want: "marie.dupont@exemple.fr", p: `Recopiez l'adresse e-mail, puis appuyez sur Entrée :<div class="sc-model">marie.dupont@exemple.fr</div>`, hint: ["AltRight", "Digit0", ...H.maj, "Comma"], tip: "Tout en minuscules, sans espace. Le point : ⇧ Maj + la touche <b>; .</b> L'arobase : Alt Gr + à." },
         ...WORDS.map(w => ({ fam: "mots", mode: "text", want: w, p: `Recopiez, puis appuyez sur Entrée :<div class="sc-model">${esc(w)}</div>`, hint: [], tip: "Comparez lettre par lettre : majuscule au début, accents, espaces, point final." }))
       ];
       keyDrill(ctx, f, { items,
@@ -610,8 +610,8 @@
           mots: { title: "✍️ Des mots entiers", label: "Recopier une phrase avec accents", tip: "On relit avant de valider : majuscule, accents, point.", allow: 1 }
         },
         onEnd: (G, slot) => quiz(slot, { G, key: "q6", questions: [
-          { q: "Pour écrire <b>ê</b> :", choices: ["^ puis e", "e puis ^", "Alt Gr + e"], ok: 0, why: "D'abord le chapeau ^ (rien ne s'affiche), puis la lettre." },
-          { q: "L'arobase @ :", choices: ["Alt Gr + à", "Maj + a", "Ctrl + @"], ok: 0, why: "Alt Gr (à droite de l'Espace) enfoncée, puis la touche « à 0 »." },
+          { q: "Comment écrire <b>ê</b> ?", choices: ["^ puis e", "e puis ^", "Alt Gr + e"], ok: 0, why: "D'abord le chapeau ^ (rien ne s'affiche), puis la lettre." },
+          { q: "Comment taper l'arobase @ ?", choices: ["Alt Gr + à", "Maj + a", "Ctrl + @"], ok: 0, why: "Alt Gr (à droite de l'Espace) enfoncée, puis la touche « à 0 »." },
           { q: "J'ai fini d'écrire une phrase. Avant de valider :", choices: ["Je relis : majuscule, accents, ponctuation", "Je valide vite"], ok: 0, why: "Relire avant de valider : c'est le bon réflexe, surtout dans un formulaire." }
         ], onDone: () => finish(ctx, G, { key: "sc_accents", label: "Je tape les accents, les circonflexes et l'arobase", intro: "é, è, à, ç, le chapeau ^ en deux temps, l'arobase avec Alt Gr… et des phrases entières." }) })
       });
@@ -678,7 +678,7 @@
         const v = ta.value;
         if (stage === "bs") {
           if (v === "Bonjour Madame,") { if (!bsUsed) { err("bs"); HL.innerHTML = "C'est juste… mais essayez avec <b>⌫ Effacer</b> : c'est la touche qu'on utilise pour corriger."; set("Bonjoru Madame,", 7); return; } T.note(good("✅ Corrigé !")); return done("bs", "Corriger avec ⌫ Effacer", "⌫ Effacer efface à gauche du curseur."); }
-          if (!/^Bonjo/.test(v) || v.length < 10) { err("bs"); HL.innerHTML = "Oups, trop effacé ? Pas de panique : <b>Ctrl + Z</b> annule. Ou recommencez : le texte est remis."; later(ctx, () => { if (stage === "bs") set("Bonjoru Madame,", 7); }, 1500); }
+          if (!/^Bonjo/.test(v) || v.length < 10) { err("bs"); HL.innerHTML = "Oups, trop effacé ? Pas de panique : le texte va revenir. Recommencez."; later(ctx, () => { if (stage === "bs") set("Bonjoru Madame,", 7); }, 1500); }
         }
         if (stage === "space") {
           if (v === "Je suis à la médiathèque.") { T.note(good("✅ L'espace est revenu !")); return done("space", "Ajouter un espace au bon endroit", "On place le curseur, puis la barre d'Espace."); }
@@ -699,7 +699,7 @@
         if (L.ended) return; L.ended = true; ta.readOnly = true; P.innerHTML = "🎉 Toutes les corrections sont faites !"; HL.textContent = "";
         quiz(T.slot(), { G, key: "q7", questions: [
           { q: "La touche <b>⌫ Effacer</b> efface…", choices: ["La lettre à gauche du curseur", "Tout le texte", "La lettre à droite"], ok: 0, why: "⌫ Effacer efface à gauche. (La touche Suppr, elle, efface à droite.)" },
-          { q: "Je veux corriger une faute au milieu d'une phrase. D'abord :", choices: ["Je clique juste après la faute pour y placer le curseur", "J'efface toute la phrase"], ok: 0, why: "On place le curseur au bon endroit d'un clic, puis on corrige seulement ce qu'il faut." },
+          { q: "Je veux corriger une faute au milieu d'une phrase. Que faire d'abord ?", choices: ["Je clique juste après la faute pour y placer le curseur", "J'efface toute la phrase"], ok: 0, why: "On place le curseur au bon endroit d'un clic, puis on corrige seulement ce qu'il faut." },
           { q: "Dans un formulaire en ligne, la touche Entrée…", choices: ["Valide souvent le formulaire : je relis avant !", "Ne fait jamais rien"], ok: 0, why: "Dans un texte, Entrée va à la ligne ; dans un formulaire, elle peut valider. On relit avant." }
         ], onDone: () => finish(ctx, G, { key: "sc_curseur", label: "Je place le curseur et je corrige un texte", intro: "Le curseur, Effacer, l'Espace, Entrée… et Ctrl + Z, le bouton magique." }) });
       }
@@ -721,7 +721,7 @@
         f.panel.innerHTML = `<ol class="nv-steps">
             <li>🖱️ <b>Le clic droit</b> : sur le bureau, dans un espace vide, faites un clic droit. Un menu apparaît. Refermez-le avec <b>Échap</b>.</li>
             <li>✌️ <b>Le double-clic</b> : double-cliquez sur la <b>Corbeille</b> pour l'ouvrir. Regardez… puis fermez la fenêtre avec la croix <b>✕</b> en haut à droite. (On ne vide rien !)</li>
-            <li>⌨️ <b>Le Bloc-notes</b> : appuyez sur la touche <b>⊞ Windows</b>, tapez <b>bloc</b>, puis <b>Entrée</b>. Écrivez 3 lignes :<br>
+            <li>⌨️ <b>Le Bloc-notes</b> : appuyez sur la touche <b>⊞ Windows</b>, tapez <b>bloc</b>, puis appuyez sur <b>Entrée</b>. Écrivez 3 lignes :<br>
               — votre prénom, avec une majuscule ;<br>— la phrase <b>« La clé est à côté du café. »</b> ;<br>— une adresse inventée : <b>prenom.nom@exemple.fr</b></li>
             <li>🪄 Effacez un mot avec <b>⌫</b>, puis faites-le revenir avec <b>Ctrl + Z</b>. Fermez le Bloc-notes : à la question « Enregistrer ? », cliquez sur <b>Ne pas enregistrer</b>.</li></ol>
           <div class="alert">✋ Une question ? On lève la main. Ensuite, revenez ici pour la <b>dictée finale</b>.</div>

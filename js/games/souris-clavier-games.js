@@ -10,7 +10,7 @@
 
   /* =================== SÉANCE 1 : la souris =================== */
   G({ id: "sc_g_bulles", title: "Le réveil des bulles", icon: "🫧",
-    intro: "Les bulles dorment 😴 ! Pendant <b>30 secondes</b>, cliquez sur chaque bulle qui apparaît. Elles rapetissent… Visez bien : chaque clic à côté compte !",
+    intro: "Les bulles dorment 😴 ! Pendant <b>30 secondes</b>, cliquez sur chaque bulle qui apparaît. Elles rapetissent… Visez bien : les clics à côté sont comptés !",
     rounds: [{ kind: "bubbles", limit: 30, goal: 10, count: 24, short: "Le réveil des bulles",
       prompt: "🫧 Cliquez sur chaque bulle, le plus vite possible… mais en visant bien !",
       why: "Le bon geste : je <b>vise</b> d'abord (la flèche sur la bulle), puis je <b>clique</b> sans bouger la souris. La vitesse viendra toute seule !" }] });
@@ -46,7 +46,7 @@
   G({ id: "sc_g_vf", title: "La souris : vrai ou faux ?", icon: "🖱️",
     intro: "Vrai ou faux ? Des idées reçues sur la souris…",
     rounds: [
-      ["Au bord du tapis, je soulève la souris et je la repose plus loin.", 0, "Vrai : en l'air, la souris ne bouge pas la flèche."],
+      ["Au bord du tapis, je soulève la souris et je la repose plus loin.", 0, "Vrai : en l'air, la flèche ne bouge pas."],
       ["Pour réussir un double-clic, il faut appuyer très fort.", 1, "Faux : c'est une question de <b>rythme</b> (toc-toc), pas de force."],
       ["Le clic droit peut effacer un fichier tout seul.", 1, "Faux : il ouvre seulement un menu. C'est l'action qu'on choisit ensuite qui compte."],
       ["La molette sert à faire défiler une page.", 0, "Vrai : la petite roue fait monter ou descendre la page."],
@@ -63,7 +63,7 @@
     [["", "Ctrl", 1.5], ["", "⊞", 1.2], ["", "Alt", 1.2], ["space", "Espace", 6.3], ["altgr", "Alt Gr", 1.4], ["", "Ctrl", 1.5], ["", "←"], ["", "→"]]
   ];
   const kbHTML = zones => `<div class="pk-kb lh-kb-spot" style="max-width:820px">${ROWS.map(r => `<div class="pk-row">${r.map(([z, l, w = 1]) => `<span class="pk-key ${l.length > 3 ? "word" : "letter"}" style="--w:${w}" ${z && zones[z] ? `data-z="${z}"` : ""}><b>${l}</b></span>`).join("")}</div>`).join("")}</div>`;
-  const KZ = { maj: "⇧ Maj : pour UNE majuscule (on la garde enfoncée)", caps: "⇩ Verr. Maj : TOUT en majuscules (on la rallume pour l'éteindre)", altgr: "Alt Gr : pour l'arobase @ (avec à 0)", at: "à 0 : la touche de l'arobase (avec Alt Gr)", enter: "↵ Entrée : valider, ou aller à la ligne", bs: "⌫ Effacer : efface la lettre à gauche du curseur", space: "Espace : entre deux mots", circ: "^ : le chapeau (^ puis e = ê)" };
+  const KZ = { maj: "⇧ Maj : pour UNE majuscule (on la garde enfoncée)", caps: "⇩ Verr. Maj : TOUT en majuscules (on rappuie dessus pour l'éteindre)", altgr: "Alt Gr : pour l'arobase @ (avec à 0)", at: "à 0 : la touche de l'arobase (avec Alt Gr)", enter: "↵ Entrée : valider, ou aller à la ligne", bs: "⌫ Effacer : efface la lettre à gauche du curseur", space: "Espace : entre deux mots", circ: "^ : le chapeau (^ puis e = ê)" };
   G({ id: "sc_g_touches", title: "Les touches magiques", icon: "⌨️", noRank: false,
     intro: "Sur le clavier dessiné, trouvez les <b>8 touches magiques</b> : Maj, Verr. Maj, Alt Gr, la touche de l'@, Entrée, Effacer, Espace et le chapeau ^. Cliquez dessus !",
     rounds: [{ kind: "spot", limit: 120, short: "Les touches magiques", prompt: "Cliquez sur les 8 touches magiques du clavier 🔍", zones: KZ, content: kbHTML(KZ),
@@ -74,18 +74,18 @@
     rounds: [
       { prompt: "Tapez la lettre <b>m</b>.", ok: "m", why: "Sur le clavier français, le M est à droite, au bout de la ligne du milieu (pas à côté du N !)." },
       { prompt: "Tapez la lettre <b>a</b>… <br><b>⚠️ Attention :</b> ne tapez <b>PAS</b> la lettre a. Tapez la lettre <b>e</b>.", ok: "e", why: "Le piège ! On lit la consigne <b>jusqu'au bout</b> avant d'appuyer." },
-      { prompt: "<b>Si le rond est ROUGE</b>, tapez <b>e</b>.<br><b>Si le rond est BLEU</b>, tapez <b>a</b>.", scene: `<span class="sc-dot blue"></span>`, ok: "a", why: "Le rond était <b>bleu</b> : donc la lettre <b>a</b>." },
+      { prompt: "<b>Si le rond est ROUGE</b>, tapez <b>e</b>.<br><b>Si le rond est BLEU</b>, tapez <b>a</b>.", scene: `<span class="sc-dot blue"></span>`, ok: "a", why: "Le rond est <b>bleu</b> : on tape donc la lettre <b>a</b>." },
       { prompt: "Tapez la <b>première lettre</b> du mot <b>pomme</b>.", ok: "p", why: "Pomme commence par <b>p</b>." },
-      { prompt: "Faites une majuscule : <b>A</b>", ok: "A", why: "⇧ Maj enfoncée + la lettre a : <b>A</b>. (Sur un clavier français, le A est en haut à gauche.)" },
+      { prompt: "Tapez la majuscule <b>A</b>.", ok: "A", why: "⇧ Maj enfoncée + la lettre a : <b>A</b>. (Sur un clavier français, le A est en haut à gauche.)" },
       { prompt: "Appuyez sur la touche qui <b>valide</b>.", ok: "Enter", why: "La touche <b>↵ Entrée</b> valide (ou va à la ligne dans un texte)." }
     ].map(r => ({ kind: "key", limit: 15, short: r.prompt.replace(/<[^>]+>/g, "").slice(0, 50), ...r })) });
 
   G({ id: "sc_g_accents", title: "La dictée des accents", icon: "✍️",
-    intro: "Recopiez <b>exactement</b>, avec les accents ! Rappel : é = 2 · è = 7 · à = 0 · ç = 9 · ê = ^ puis e · @ = Alt Gr + à",
+    intro: "Recopiez <b>exactement</b>, avec les accents ! Rappel : é = 2 · è = 7 · à = 0 · ç = 9 · ê = ^ puis e · @ = Alt Gr + à 0",
     rounds: [
       { kind: "type", target: "café", prompt: "Recopiez ce mot :", hint: "é : la touche 2, sans Maj.", why: "Le <b>é</b> a sa propre touche : le 2 (sans Maj).", limit: 40 },
-      { kind: "type", target: "La clé est à côté du café.", prompt: "Recopiez la phrase :", hint: "à : la touche 0 · ô : ^ puis o · Le point : ⇧ Maj + ; .", why: "Majuscule au début, accents, point final : on <b>relit</b> avant de valider.", limit: 70 },
+      { kind: "type", target: "La clé est à côté du café.", prompt: "Recopiez la phrase :", hint: "à : la touche 0 · ô : ^ puis o · le point : ⇧ Maj + ; .", why: "Majuscule au début, accents, point final : on <b>relit</b> avant de valider.", limit: 70 },
       { kind: "type", target: "Il a reçu un colis.", prompt: "Recopiez la phrase :", hint: "ç : la touche 9, sans Maj.", why: "Le <b>ç</b> est sur la touche 9.", limit: 60 },
-      { kind: "type", target: "marie.dupont@exemple.fr", prompt: "Et une adresse e-mail :", hint: "@ : Alt Gr + à. Tout en minuscules, sans espace.", why: "L'arobase <b>@</b> : Alt Gr enfoncée, puis la touche à 0.", limit: 60 }
+      { kind: "type", target: "marie.dupont@exemple.fr", prompt: "Recopiez l'adresse e-mail :", hint: "@ : Alt Gr + à. Tout en minuscules, sans espace.", why: "L'arobase <b>@</b> : Alt Gr enfoncée, puis la touche à 0.", limit: 60 }
     ].map(r => ({ short: r.target, ...r })) });
 })(window.AN);

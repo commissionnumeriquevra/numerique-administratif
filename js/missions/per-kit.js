@@ -88,14 +88,14 @@
       if (k === "copies") { S.copies = Math.max(1, Math.min(99, +t.value || 1)); render(); emit("change", { ...S }); }
       if (k === "color") { S.color = t.value; render(); emit("change", { ...S }); }
       if (k === "duplex") { S.duplex = t.checked; render(); emit("change", { ...S }); }
-      if (k === "range") { S.range = t.value; if (e.type === "change") { S.err = parseRange(S.range, doc.pages) ? "" : `Pages invalides : utilisez par exemple « 1 » ou « 1-2 » (le document a ${doc.pages} pages).`; render(); emit("change", { ...S }); } }
+      if (k === "range") { S.range = t.value; if (e.type === "change") { S.err = parseRange(S.range, doc.pages) ? "" : `Pages invalides : tapez par exemple « 1 » ou « 1-2 » (le document a ${doc.pages} page${doc.pages > 1 ? "s" : ""}).`; render(); emit("change", { ...S }); } }
     }
     function onClick(e) {
       const b = e.target.closest("[data-pp]"); if (!b || !el.contains(b) || b.tagName !== "BUTTON") return;
       if (b.dataset.pp === "more") { S.more = !S.more; render(); return; }
       if (b.dataset.pp === "cancel") { emit("cancel", {}); return; }
       if (b.dataset.pp === "go") {
-        if (S.pages === "custom") { const r = el.querySelector('[data-pp="range"]'); if (r) S.range = r.value; if (!parseRange(S.range, doc.pages)) { S.err = `Pages invalides : utilisez par exemple « 1 » ou « 1-2 » (le document a ${doc.pages} pages).`; render(); return; } }
+        if (S.pages === "custom") { const r = el.querySelector('[data-pp="range"]'); if (r) S.range = r.value; if (!parseRange(S.range, doc.pages)) { S.err = `Pages invalides : tapez par exemple « 1 » ou « 1-2 » (le document a ${doc.pages} page${doc.pages > 1 ? "s" : ""}).`; render(); return; } }
         emit("print", { dest: S.dest, pdf: isPdf(), pages: chosen(), copies: isPdf() ? 1 : S.copies, color: isPdf() ? "color" : S.color, duplex: !isPdf() && S.duplex, sheets: sheets() });
       }
     }
@@ -147,8 +147,8 @@
       const b = e.target.closest("[data-pq]"); if (!b || !el.contains(b)) return;
       const a = b.dataset.pq, j = S.jobs.find(x => x.id === b.dataset.id);
       if (a === "power") { S.state = S.state === "off" ? (S.wasState || "ok") : (S.wasState = S.state === "off" ? "ok" : S.state, "off"); render(); emit("power", { on: S.state !== "off" }); if (S.state === "ok") later(tryPrint, 600); return; }
-      if (a === "paper") { if (S.state === "off") { emit("hint", { msg: "L'imprimante est éteinte." }); return; } const was = S.state; if (S.state === "nopaper") S.state = "ok"; render(); emit("paper", { fixed: was === "nopaper" }); if (S.state === "ok") later(tryPrint, 400); return; }
-      if (a === "jam") { if (S.state === "off") { emit("hint", { msg: "L'imprimante est éteinte." }); return; } const was = S.state; if (S.state === "jam") S.state = "ok"; render(); emit("jam", { fixed: was === "jam" }); if (S.state === "ok") later(tryPrint, 400); return; }
+      if (a === "paper") { if (S.state === "off") { emit("hint", { msg: "L'imprimante est éteinte : allumez-la d'abord avec ⏻." }); return; } const was = S.state; if (S.state === "nopaper") S.state = "ok"; render(); emit("paper", { fixed: was === "nopaper" }); if (S.state === "ok") later(tryPrint, 400); return; }
+      if (a === "jam") { if (S.state === "off") { emit("hint", { msg: "L'imprimante est éteinte : allumez-la d'abord avec ⏻." }); return; } const was = S.state; if (S.state === "jam") S.state = "ok"; render(); emit("jam", { fixed: was === "jam" }); if (S.state === "ok") later(tryPrint, 400); return; }
       if (a === "cancel" && j) { S.jobs = S.jobs.filter(x => x !== j); render(); emit("cancelJob", { job: j }); later(tryPrint, 300); return; }
       if (a === "restart" && j) { if (j.status === "blocked") { emit("restartBlocked", { job: j }); return; } j.status = "waiting"; render(); emit("restartJob", { job: j }); later(tryPrint, 300); return; }
     }

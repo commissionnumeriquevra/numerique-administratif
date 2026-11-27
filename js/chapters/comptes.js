@@ -22,22 +22,22 @@
       <div class="l-grid2 l-mid"><div class="l-center">${SVG_HOUSE}</div>
         <div>${key([["📧", "L'identifiant", "C'est l'adresse : il dit QUELLE maison. Souvent, c'est votre adresse e-mail.", "On peut le donner"],
           ["🔑", "Le mot de passe", "C'est la clé : il prouve que la maison est bien à vous.", "Il reste secret"]])}</div></div>
-      <div class="l-callout" data-reveal="3">👉 On <b>donne</b> son identifiant comme une adresse, mais on <b>garde</b> son mot de passe comme une clé. Jamais les deux à n'importe qui !</div>` },
+      <div class="l-callout" data-reveal="3">👉 On <b>donne</b> son identifiant comme une adresse, mais on <b>garde</b> son mot de passe comme une clé. Le mot de passe, on ne le donne à personne !</div>` },
 
     { title: "Créer un compte, pas à pas", theme: "dense", html: `
       <ol class="l-gestures">
         <li data-reveal="1"><span>📝</span><div><b>Je remplis le formulaire</b><small>Nom, prénom, adresse e-mail. Les cases avec une étoile * sont obligatoires.</small></div></li>
         <li data-reveal="2"><span>🔑</span><div><b>Je choisis un mot de passe, et je le confirme</b><small>Le retaper sert à vérifier qu'il n'y a pas de faute de frappe. Le bouton 👁 affiche ce que je tape.</small></div></li>
-        <li data-reveal="3"><span>☑️</span><div><b>J'accepte les conditions d'utilisation</b><small>Et je laisse décochée la pub si je n'en veux pas.</small></div></li>
+        <li data-reveal="3"><span>☑️</span><div><b>J'accepte les conditions d'utilisation</b><small>Je laisse décochée la case « publicité » si je n'en veux pas.</small></div></li>
         <li data-reveal="4"><span>📩</span><div><b>Je clique sur le lien de l'e-mail de confirmation</b><small>Il arrive dans ma messagerie… parfois dans les Indésirables !</small></div></li>
       </ol>` },
 
     { title: "Je me connecte, je me déconnecte", html: `
       <div class="l-grid2">
         <div class="l-card big" data-reveal="1"><h3>👁 Vérifier son mot de passe</h3><p>Le petit œil affiche ce que vous tapez : pratique pour corriger.</p><p>⚠️ Attention à la touche <kbd>Verr. Maj</kbd> : « Lilas » et « LILAS », ce n'est pas pareil !</p></div>
-        <div class="l-risk" data-reveal="2"><h3>🚪 Sur un ordinateur partagé</h3><p>À la médiathèque, chez un ami, à l'hôtel : <b>toujours se déconnecter</b> en partant.</p><p>Et <b>jamais</b> cocher « Se souvenir de moi ».</p></div>
+        <div class="l-risk" data-reveal="2"><h3>🚪 Sur un ordinateur partagé</h3><p>À la médiathèque, chez un ami, à l'hôtel : <b>toujours se déconnecter</b> en partant.</p><p>Et ne <b>jamais</b> cocher « Se souvenir de moi ».</p></div>
       </div>
-      <div class="l-callout" data-reveal="3">🏠 Sur <b>votre</b> ordinateur ou <b>votre</b> téléphone (protégé par un code), vous pouvez rester connecté : c'est fait pour ça.</div>` }
+      <div class="l-callout" data-reveal="3">🏠 Sur <b>votre</b> ordinateur ou <b>votre</b> téléphone (protégé par un code), vous pouvez rester connecté(e) : c'est fait pour ça.</div>` }
   ];
 
   /* =================== SÉANCE 2 =================== */
@@ -48,7 +48,7 @@
         <div class="l-risk" data-reveal="2"><h3>2️⃣ Les plus courants</h3><p>Un logiciel essaie d'abord <b>123456, azerty, soleil, motdepasse…</b></p><small>👉 En quelques secondes.</small></div>
         <div class="l-risk" data-reveal="3"><h3>3️⃣ Vos infos</h3><p>Le pirate fouille ce que vous <b>publiez</b> : prénom d'un proche, animal, date de naissance, ville.</p><small>👉 Puis il teste les combinaisons.</small></div>
       </div>
-      <div class="l-callout" data-reveal="4">⚡ Un logiciel teste des <b>milliards</b> d'essais par seconde. « Rex1952 » tombe instantanément. Mais il cherche la proie facile : si ça résiste, <b>il passe à quelqu'un d'autre</b>.</div>` },
+      <div class="l-callout" data-reveal="4">⚡ Un logiciel fait des <b>milliards</b> d'essais par seconde. « Rex1952 » tombe instantanément. Mais le pirate cherche une proie facile : si le mot de passe résiste, <b>il passe à quelqu'un d'autre</b>.</div>` },
 
     { title: "La parade : la phrase de passe 🛡️", html: `
       <p class="l-lead">Oubliez le mot compliqué impossible à retenir. La force, c'est la <b>longueur</b> : plusieurs mots qui font une image.</p>
@@ -63,10 +63,10 @@
       <p class="l-lead">Un mot de passe différent par site… impossible à retenir ? C'est le travail du <b>coffre-fort</b> !</p>
       <div class="l-grid3">
         <div class="l-card" data-reveal="1"><h3>🔒 Il invente</h3><p>Des mots de passe très solides, au hasard.</p></div>
-        <div class="l-card" data-reveal="2"><h3>💾 Il enregistre</h3><p>Dans votre compte Google ou Apple. Retrouvés sur tous vos appareils.</p></div>
+        <div class="l-card" data-reveal="2"><h3>💾 Il enregistre</h3><p>Dans votre compte Google ou Apple. Vous les retrouvez sur tous vos appareils.</p></div>
         <div class="l-card" data-reveal="3"><h3>✍️ Il remplit</h3><p>Tout seul, à la connexion suivante. Vous ne tapez plus rien.</p></div>
       </div>
-      <div class="l-callout" data-reveal="4">🔑 Vous n'avez plus qu'<b>une seule</b> clé à retenir : celle de votre compte Google ou Apple (et le code de l'appareil). Elle, elle doit être <b>très solide</b> : une phrase de passe !</div>` }
+      <div class="l-callout" data-reveal="4">🔑 Vous n'avez plus qu'<b>une seule</b> clé à retenir : celle de votre compte Google ou Apple (et le code de l'appareil). Celle-ci doit être <b>très solide</b> : une phrase de passe !</div>` }
   ];
 
   /* =================== SÉANCE 3 =================== */
@@ -74,7 +74,7 @@
     { title: "La double sécurité : le code par SMS 📱", html: `
       <div class="l-grid2 l-mid">
         <div>${key([["1️⃣", "Le mot de passe", "La première clé : ce que je sais."], ["2️⃣", "Le code reçu par SMS", "La deuxième clé : ce que j'ai (mon téléphone)."]])}</div>
-        <div class="l-safe" data-reveal="3"><h3>🛡️ Pourquoi c'est fort</h3><p>Même si un pirate vole mon mot de passe, il n'a <b>pas mon téléphone</b> : il ne reçoit pas le code. Il est bloqué.</p><p>Quand un site le propose, je dis <b>oui</b> !</p></div>
+        <div class="l-safe" data-reveal="3"><h3>🛡️ Pourquoi c'est fort</h3><p>Même si un pirate vole mon mot de passe, il n'a <b>pas mon téléphone</b> : il ne reçoit pas le code. Il est bloqué.</p><p>Quand un site propose cette double sécurité, je dis <b>oui</b> !</p></div>
       </div>
       <div class="l-never" data-reveal="4"><h3>🚨 Le code par SMS ne se donne JAMAIS</h3><p>Je le tape <b>moi-même</b>, sur le site. Aucun conseiller, aucun technicien, aucune banque ne me le demandera jamais par téléphone.</p></div>` },
 
@@ -82,20 +82,20 @@
       <p class="l-lead">Pour les sites publics, plus besoin d'un mot de passe par site : <b>FranceConnect</b> réutilise un compte que vous avez déjà.</p>
       <div class="l-grid2">
         <div class="l-card big" data-reveal="1"><h3>Comment ça marche</h3><p>Sur impots.gouv.fr, ameli, la CAF… je clique sur <b>« S'identifier avec FranceConnect »</b>, puis je choisis un compte que j'ai déjà (ameli, les impôts…).</p></div>
-        <div class="l-card big" data-reveal="2"><h3>L'avantage</h3><p>Une <b>seule</b> clé à retenir pour tous les services publics. Et c'est l'État qui gère la sécurité.</p></div>
+        <div class="l-card big" data-reveal="2"><h3>L'avantage</h3><p>Une <b>seule</b> clé à retenir pour de nombreux services publics. Et c'est l'État qui gère la sécurité.</p></div>
       </div>
-      <div class="l-callout" data-reveal="3">👀 Le vrai bouton est bleu, avec le nom « FranceConnect ». Comme toujours : je vérifie le <b>vrai nom du site</b> avant.</div>` },
+      <div class="l-callout" data-reveal="3">👀 Le bouton porte le nom « FranceConnect ». Comme toujours, avant de cliquer, je vérifie le <b>vrai nom du site</b>.</div>` },
 
     { title: "Le faux conseiller ☎️", html: `
       <div class="l-grid2 l-mid">
         <div class="l-alert-mini" data-reveal="1"><b>📞 « Service fraude de votre banque »</b><p>« Un paiement suspect de 849 € est en cours. Lisez-moi vite le code reçu par SMS pour l'annuler ! »</p></div>
         <ul class="l-list" data-reveal="2"><li>⏰ Il crée l'<b>urgence</b> pour vous empêcher de réfléchir.</li><li>📱 Il demande le <b>code reçu par SMS</b> : en le donnant, vous validez vous-même le vol.</li><li>🧐 Il connaît votre nom, votre adresse ? Ces infos se volent : <b>ça ne prouve rien</b>.</li></ul>
       </div>
-      <div class="l-callout" data-reveal="3">✅ Le réflexe : <b>je raccroche</b>, et si j'ai un doute, <b>j'appelle le numéro au dos de ma carte</b>. La vraie banque confirmera que tout va bien.</div>` },
+      <div class="l-callout" data-reveal="3">✅ Le réflexe : <b>je raccroche</b>, et si j'ai un doute, <b>j'appelle le numéro au dos de ma carte</b>. La vraie banque me dira ce qu'il en est.</div>` },
 
     { title: "Oubli et piratage : pas de panique 🆘", html: `
       <div class="l-grid2">
-        <div class="l-card big" data-reveal="1"><h3>🔑 Mot de passe oublié</h3><p>Sous le bouton « Se connecter », le lien <b>« Mot de passe oublié ? »</b>. Un e-mail arrive avec un lien (valable peu de temps) pour en choisir un nouveau.</p><p>👉 Je ne devine pas au hasard : le compte pourrait se bloquer.</p></div>
+        <div class="l-card big" data-reveal="1"><h3>🔑 Mot de passe oublié</h3><p>Sous le bouton « Se connecter », je clique sur le lien <b>« Mot de passe oublié ? »</b>. Un e-mail arrive avec un lien (valable peu de temps) pour en choisir un nouveau.</p><p>👉 Je ne devine pas au hasard : le compte pourrait se bloquer.</p></div>
         <div class="l-card big" data-reveal="2"><h3>🚨 Compte piraté ?</h3><p>Des messages bizarres envoyés en votre nom, une connexion inconnue, un mot de passe qui ne marche plus…</p><p>👉 Je change le mot de passe (en allant <b>moi-même</b> sur le site), je préviens mes contacts, j'active le code par SMS.</p></div>
       </div>
       <div class="l-callout" data-reveal="3">🫶 Aucune honte, et de l'aide gratuite : <b>cybermalveillance.gouv.fr</b>… et votre médiateur numérique !</div>` }

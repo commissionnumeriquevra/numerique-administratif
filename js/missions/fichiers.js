@@ -117,7 +117,7 @@
           quiz(T.slot(), { G, key: "q1", questions: [
             { q: "Un <b>dossier</b>, c'est…", choices: ["Un document à lire", "Une boîte qui sert à ranger des fichiers (et d'autres dossiers)", "Un programme"], ok: 1, why: "Comme une chemise cartonnée dans un tiroir : elle contient des feuilles (les fichiers), et même d'autres chemises." },
             { q: "Le chemin <code>Ce PC › Documents › Santé</code> veut dire…", choices: ["Le dossier Santé est rangé dans Documents", "Documents est rangé dans Santé", "Ce sont trois dossiers séparés"], ok: 0, why: "On lit de gauche à droite, comme une adresse : l'ordinateur, puis le tiroir Documents, puis la chemise Santé." },
-            { q: "Je me suis perdu(e) dans les dossiers. Que faire ?", choices: ["J'éteins l'ordinateur", "La flèche ← pour revenir, ou un grand dossier dans la colonne de gauche", "J'appelle un technicien"], ok: 1, why: "On ne peut rien casser en se promenant : la flèche ← revient en arrière, la colonne de gauche ramène aux grands dossiers." }
+            { q: "Je me suis perdu(e) dans les dossiers. Que faire ?", choices: ["J'éteins l'ordinateur", "J'utilise la flèche ← ou un grand dossier dans la colonne de gauche", "J'appelle un technicien"], ok: 1, why: "On ne peut rien casser en se promenant : la flèche ← revient en arrière, la colonne de gauche ramène aux grands dossiers." }
           ], onDone: () => finish(ctx, G, { key: "fic_explore", label: "Je sais me repérer dans l'Explorateur", intro: "Vous savez ouvrir un dossier et un fichier, lire le chemin, revenir en arrière et remonter." }) });
         } else hint();
       };
@@ -152,7 +152,7 @@
       const L = ctx.local, G = grader(L);
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const f = frame(ctx, { level: 2, title: "La famille d'un fichier : l'extension", step: 0,
-        consigne: "La fin du nom d'un fichier (<b>.pdf</b>, <b>.jpg</b>, <b>.docx</b>…) s'appelle l'<b>extension</b> : elle dit quelle est sa <b>famille</b>. Windows la cache souvent… on va l'afficher !",
+        consigne: "La fin du nom d'un fichier (<b>.pdf</b>, <b>.jpg</b>, <b>.docx</b>…) s'appelle l'<b>extension</b> : elle indique la <b>famille</b> du fichier. Windows la cache souvent… on va l'afficher !",
         help: "Afficher les extensions : bouton <b>👁️ Afficher</b>, puis <b>Extensions de noms de fichiers</b>." });
       const { pc, file } = F();
       const fs = pc({ telechargements: [
@@ -168,10 +168,10 @@
         { k: "find_pdf", label: "Cliquez une fois sur le <b>document PDF</b> (la facture)." },
         { k: "find_jpg", label: "Cliquez une fois sur la <b>photo</b>." },
         { k: "find_docx", label: "Cliquez une fois sur le <b>document Word</b> (un courrier qu'on peut modifier)." },
-        { k: "trap", label: "Un fichier « facture_colis » vient d'arriver. Est-ce vraiment une facture ? <b>Regardez sa vraie extension</b>, et <b>supprimez-le</b> s'il est dangereux." }
+        { k: "trap", label: "Un fichier « facture_colis » vient d'arriver. Regardez la <b>fin de son nom</b> : est-ce vraiment une facture ? Si c'est un programme (.exe), <b>supprimez-le</b>." }
       ], { head: `<div class="fk-ext"><span>📕 .pdf</span><span>🖼️ .jpg</span><span>📘 .docx</span><span>🗜️ .zip</span><span>⚙️ .exe</span></div>` });
       const want = { find_pdf: "pdf", find_jpg: "jpg", find_docx: "docx" };
-      const WHY = { pdf: "« .pdf » = un document à lire ou imprimer, souvent envoyé par les administrations.", jpg: "« .jpg » = une photo ou une image.", docx: "« .docx » = un document Word, qu'on peut modifier.", zip: "« .zip » = un dossier compressé : plusieurs fichiers emballés dans un seul.", exe: "« .exe » = un programme : il s'installe ou agit sur l'ordinateur.", trap: "Attention : son vrai nom finit par « .exe » : c'est un programme déguisé en facture !" };
+      const WHY = { pdf: "« .pdf » = un document à lire ou à imprimer, souvent envoyé par les administrations.", jpg: "« .jpg » = une photo ou une image.", docx: "« .docx » = un document Word, qu'on peut modifier.", zip: "« .zip » = un dossier compressé : plusieurs fichiers emballés dans un seul.", exe: "« .exe » = un programme : il s'installe ou agit sur l'ordinateur.", trap: "Attention, son vrai nom finit par « .exe » : c'est un programme déguisé en facture !" };
       let wrong = {};
       const endIfDone = () => {
         if (!T.all || L.ended) return; L.ended = true;
@@ -179,7 +179,7 @@
         quiz(T.slot(), { G, key: "q2", questions: [
           { q: "Je reçois « <code>attestation.pdf.exe</code> ». C'est…", choices: ["Une attestation en PDF", "Un programme déguisé : je ne l'ouvre pas", "Une photo"], ok: 1, why: "Seule la <b>dernière</b> extension compte : « .exe », c'est un programme. Les escrocs ajoutent « .pdf » au milieu pour tromper." },
           { q: "Un site demande « un fichier PDF ». Lequel convient ?", choices: ["avis_impot.pdf", "avis_impot.jpg", "avis_impot.docx"], ok: 0, why: "L'extension doit être <b>.pdf</b>. Une photo (.jpg) n'est pas un PDF, même si elle montre le même document." },
-          { q: "Je n'arrive pas à ouvrir « vacances.zip ». C'est normal ?", choices: ["Oui : c'est un dossier compressé, il faut d'abord l'extraire", "Non, il est cassé"], ok: 0, why: "Un .zip est un « colis » : clic droit → <b>Extraire tout</b>, et les fichiers apparaissent." }
+          { q: "Je n'arrive pas à ouvrir « vacances.zip ». Est-ce normal ?", choices: ["Oui : c'est un dossier compressé, il faut d'abord l'extraire", "Non, il est cassé"], ok: 0, why: "Un .zip est un « colis » : clic droit → <b>Extraire tout</b>, et les fichiers apparaissent." }
         ], onDone: () => finish(ctx, G, { key: "fic_ext", label: "Je reconnais la famille d'un fichier", intro: "Vous savez afficher les extensions et reconnaître un PDF, une photo, un document Word, un fichier compressé… et un programme déguisé." }) });
       };
       const hint = () => { if (ctx.isBeginner() && L.x) { const k = T.next?.k; L.x.hint(null, k === "ext" ? "view" : null); } };
@@ -198,7 +198,7 @@
           T.note(`<div class="alert">🛑 Windows demande la permission de lancer un <b>programme</b>. Un fichier « facture » qui est un programme, c'est un piège : on clique sur <b>Non</b>.</div>`);
         }
         if (type === "exeRun") {
-          G.ko("noexe", "Ne jamais lancer un programme inconnu", "Une facture n'est jamais un programme (.exe). Dans le doute, on clique « Non ».");
+          G.ko("noexe", "Ne jamais lancer un programme inconnu", "Une facture n'est jamais un programme (.exe). Dans le doute, on clique sur « Non ».");
           T.note(`<div class="alert bad">😬 Dans la vraie vie, ce programme aurait pu installer un virus. Ici, rien ne se passe : c'est un exercice. Retenez : un programme inconnu, on dit <b>Non</b>.</div>`);
         }
         if (type === "exeRefused") { G.ok("noexe", "Ne jamais lancer un programme inconnu"); T.note(`<div class="alert good">👍 Bon réflexe : <b>Non</b>. Maintenant, supprimez ce faux fichier.</div>`); }
@@ -225,8 +225,8 @@
       const prev = monthBack(1);
       const showExt = !ctx.isBeginner();
       const f = frame(ctx, { level: 3, title: "Bien nommer ses fichiers", step: 0,
-        consigne: "Dans les Téléchargements, les fichiers ont des noms qui ne veulent rien dire. Ouvrez chacun pour voir ce que c'est, puis <b>renommez-le</b> avec un nom clair.",
-        help: "Renommer : cliquez <b>une fois</b> sur le fichier, puis sur <b>✏️ Renommer</b> (ou touche F2). Tapez le nom, puis <b>Entrée</b>." });
+        consigne: "Dans les Téléchargements, les fichiers ont des noms qui ne veulent rien dire. Ouvrez chaque fichier pour voir ce que c'est. Puis <b>renommez-le</b> avec un nom clair.",
+        help: "Renommer : cliquez <b>une fois</b> sur le fichier, puis sur <b>✏️ Renommer</b> (ou la touche F2). Tapez le nom, puis <b>Entrée</b>." });
       const { pc, file } = F();
       const fs = pc({ telechargements: [
         file("document (1).pdf", { tag: "caf", ago: 0, content: D.caf }),
@@ -293,8 +293,8 @@
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const expert = ctx.level === "expert";
       const f = frame(ctx, { level: 4, title: "Ranger : créer des dossiers", step: 0,
-        consigne: "Dans <b>Documents</b>, tout est en vrac ! Créez des dossiers et rangez chaque document dans le bon.",
-        help: "Nouveau dossier : <b>＋ Nouveau</b> › <b>Dossier</b>, tapez son nom, Entrée. Pour déplacer un fichier : <b>glissez-le</b> sur le dossier, ou bien <b>✂️ Couper</b>, ouvrez le dossier, <b>📋 Coller</b>." });
+        consigne: "Dans <b>Documents</b>, tout est en vrac ! Créez des dossiers. Puis rangez chaque document dans le bon dossier.",
+        help: "Nouveau dossier : <b>＋ Nouveau</b> › <b>Dossier</b>, tapez son nom, puis Entrée. Pour déplacer un fichier : <b>glissez-le</b> sur le dossier, ou bien <b>✂️ Couper</b>, ouvrez le dossier, <b>📋 Coller</b>." });
       const { pc, file, folder } = F();
       const prev = monthBack(1), prev2 = monthBack(2);
       const fs = pc({ documents: [
@@ -326,7 +326,7 @@
           T.note(`<div class="alert good">✅ Tout est rangé ! Ouvrez un dossier pour vérifier : chaque document est à sa place.</div>`);
           quiz(T.slot(), { G, key: "q4", questions: [
             { q: "Je glisse un fichier sur un dossier. Que se passe-t-il ?", choices: ["Le fichier est supprimé", "Le fichier est rangé dans ce dossier", "Le fichier est copié en deux exemplaires"], ok: 1, why: "Glisser-déposer <b>déplace</b> le fichier : il quitte son ancien dossier et va dans le nouveau." },
-            { q: "« Couper » un fichier, c'est dangereux ?", choices: ["Oui, il disparaît", "Non : il reste là tant qu'on n'a pas cliqué sur « Coller » ailleurs"], ok: 1, why: "Couper prépare le déplacement (le fichier devient pâle). Il ne bouge vraiment qu'au moment de « Coller »." },
+            { q: "Est-ce dangereux de « couper » un fichier ?", choices: ["Oui, il disparaît", "Non : il reste là tant qu'on n'a pas cliqué sur « Coller » ailleurs"], ok: 1, why: "Couper prépare le déplacement (le fichier devient pâle). Il ne bouge vraiment qu'au moment de « Coller »." },
             { q: "Combien de dossiers faut-il créer ?", choices: ["Le plus possible", "Quelques-uns, avec des noms simples (Santé, Impôts, Maison…)", "Aucun"], ok: 1, why: "Quelques grands thèmes suffisent. Trop de dossiers, et on ne sait plus où chercher." }
           ], onDone: () => finish(ctx, G, { key: "fic_folders", label: "Je sais ranger mes fichiers dans des dossiers", intro: "Vous savez créer un dossier, lui donner un nom, et y ranger des documents (glisser, ou couper-coller)." }) });
         }
@@ -354,8 +354,8 @@
       const L = ctx.local, G = grader(L);
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const f = frame(ctx, { level: 5, title: "Supprimer… et récupérer", step: 0,
-        consigne: "Marie a téléchargé trois fois la même attestation. Faites le ménage… puis rattrapez une erreur grâce à la <b>Corbeille</b>.",
-        help: "Supprimer : cliquez une fois sur le fichier, puis <b>🗑️ Supprimer</b> (ou touche Suppr). Le fichier va dans la <b>Corbeille</b>, en bas à gauche." });
+        consigne: "Josiane a téléchargé trois fois la même attestation. Faites le ménage… puis rattrapez une erreur grâce à la <b>Corbeille</b>.",
+        help: "Supprimer : cliquez une fois sur le fichier, puis <b>🗑️ Supprimer</b> (ou la touche Suppr). Le fichier va dans la <b>Corbeille</b>, en bas à gauche." });
       const { pc, file } = F();
       const att = doc("Attestation de paiement", [`Paiement du mois de ${moisLabel(monthBack(0))}.`], "Caisse des aides (simulation)");
       const wedding = file("mariage_1975.jpg", { tag: "wedding", ago: 1, size: 3100, emoji: "💒", bg: "#fff3d6", caption: "Le mariage de Josiane et Robert, 1975" });
@@ -382,7 +382,7 @@
         quiz(T.slot(), { G, key: "q5", questions: [
           { q: "J'ai supprimé un fichier par erreur. Il est perdu ?", choices: ["Oui, pour toujours", "Non : il est dans la Corbeille, je peux le restaurer"], ok: 1, why: "La Corbeille garde les fichiers supprimés. Clic sur le fichier, puis <b>Restaurer</b> : il revient à sa place." },
           { q: "« Vider la Corbeille », c'est…", choices: ["Supprimer définitivement ce qu'elle contient", "Ranger les fichiers"], ok: 0, why: "Après « Vider », on ne peut plus récupérer. On regarde d'abord ce qu'il y a dedans !" },
-          { q: "Une clé USB : je supprime un fichier dessus. Il va dans la Corbeille ?", choices: ["Oui, toujours", "Non, souvent il est supprimé tout de suite"], ok: 1, why: "Sur une clé USB, Windows supprime souvent <b>définitivement</b> : il demande d'ailleurs « Voulez-vous vraiment… ? ». Prudence !" }
+          { q: "Je supprime un fichier sur une clé USB. Va-t-il dans la Corbeille ?", choices: ["Oui, toujours", "Non, souvent il est supprimé tout de suite"], ok: 1, why: "Sur une clé USB, Windows supprime souvent <b>définitivement</b> : il demande d'ailleurs « Voulez-vous vraiment… ? ». Prudence !" }
         ], onDone: () => finish(ctx, G, { key: "fic_trash", label: "Je sais supprimer et récupérer un fichier", intro: "Vous savez supprimer un fichier en trop, et le récupérer dans la Corbeille en cas d'erreur." }) });
       };
       x = mountX(ctx, f.host, { fs, start: "telechargements", features: { newFolder: false, cut: false, rename: false, drag: false }, onEvent: (type, d) => {
@@ -400,7 +400,7 @@
         }
         if (type === "restore") {
           if (d.file.tag === "orig") { if (!G.has("orig")) G.ok("orig", "Garder l'original"); x.flash("↩️ L'original est revenu dans les Téléchargements. Ouf !", "good"); }
-          if (d.file.tag === "dup") x.flash("Ce fichier était une copie en trop : vous pouvez le resupprimer.", "info");
+          if (d.file.tag === "dup") x.flash("Ce fichier était une copie en trop : vous pouvez le supprimer à nouveau.", "info");
           if (d.file.tag === "wedding" && T.done("restore")) G.ok("restore", "Restaurer un fichier depuis la Corbeille");
         }
         if (type === "emptyTrash" && (d.file === wedding || (d.count && !x.inTrash(wedding) && !T.is("restore") && T.is("dups")))) {
@@ -426,7 +426,7 @@
       const { pc, file, folder } = F();
       if (step === 0) {
         const f = frame(ctx, { level: 6, title: "Retrouver le fichier qu'on vient de télécharger", step: 0,
-          consigne: "Marie vient de télécharger son <b>attestation de paiement</b> sur le site de la CAF… mais le fichier s'appelle n'importe comment, au milieu de plein d'autres. Retrouvez-la !",
+          consigne: "Marie vient de télécharger son <b>attestation de paiement</b> sur le site de la CAF… mais le fichier s'appelle n'importe comment, au milieu de plein d'autres. Retrouvez son attestation !",
           help: "Le fichier qu'on vient de télécharger est le <b>plus récent</b>. <b>⇅ Trier</b> › <b>Date de modification</b> › <b>Décroissant</b> : il passe en haut de la liste." });
         const noise = [["recette_gateau_yaourt.pdf", 12, D.recette], ["horaires_piscine.pdf", 45], ["photo_mairie.jpg", 9], ["document.pdf", 70, D.mairie], ["document (1).pdf", 31, D.loyer(monthBack(1))], ["IMG_4821.jpg", 5], ["formulaire_inscription.pdf", 90], ["plan_bus_valbourg.pdf", 150], ["menu_cantine.pdf", 20], ["document (2).pdf", 3, D.edf(monthBack(1))]];
         const fs = pc({ telechargements: [...noise.map(([n, a, c]) => file(n, { ago: a, content: c, emoji: "📷", size: n.endsWith("jpg") ? 1700 : 110 })), file("document (3).pdf", { tag: "goal", ago: 0, h: new Date().getHours(), min: Math.max(0, new Date().getMinutes() - 2), content: D.caf })] });
@@ -482,8 +482,8 @@
             T.note(`<div class="alert good">✅ Trouvé !</div>`);
             quiz(T.slot(), { G, key: "q6where", questions: [
               { q: "Où était rangé le permis de conduire ?", choices: ["Documents › Santé", "Documents › Divers › Vieux papiers", "Téléchargements"], ok: 1, why: "Il était caché bien loin ! La recherche l'a trouvé quand même." },
-              { q: "Je cherche « permis » mais je suis dans « Images ». Que se passe-t-il ?", choices: ["Windows cherche partout", "Windows cherche seulement dans Images (et ses sous-dossiers)"], ok: 1, why: "La recherche regarde dans le dossier ouvert. Pour chercher partout : se placer dans <b>Ce PC</b>." },
-              { q: "Je ne me souviens plus du nom exact. Que tape-t-on ?", choices: ["Le nom complet, sans faute", "Un seul mot important, par exemple « permis »"], ok: 1, why: "Un seul mot suffit : la recherche trouve tous les fichiers qui le contiennent." }
+              { q: "Je cherche « permis », mais je suis dans « Images ». Que se passe-t-il ?", choices: ["Windows cherche partout", "Windows cherche seulement dans Images (et ses sous-dossiers)"], ok: 1, why: "La recherche regarde dans le dossier ouvert. Pour chercher partout : se placer dans <b>Ce PC</b>." },
+              { q: "Je ne me souviens plus du nom exact. Que faut-il taper ?", choices: ["Le nom complet, sans faute", "Un seul mot important, par exemple « permis »"], ok: 1, why: "Un seul mot suffit : la recherche trouve tous les fichiers qui le contiennent." }
             ], onDone: () => { T.done("where"); finish(ctx, G, { key: "fic_find", label: "Je sais retrouver un fichier", intro: "Vous savez retrouver le dernier téléchargement (tri par date) et un vieux fichier (recherche 🔍)." }); } });
           }
         } });
@@ -590,10 +590,10 @@
           consigne: "Cette fois, on utilise le <b>vrai</b> Explorateur de fichiers de l'ordinateur. Lisez toute la mission, puis faites les étapes. Gardez cette fenêtre ouverte !" });
         f.panel.innerHTML = `<ol class="nv-steps">
             <li>Ouvrez l'Explorateur : touches <kbd>⊞ Windows</kbd> + <kbd>E</kbd> en même temps (ou l'icône 📁 jaune en bas de l'écran).</li>
-            <li>Ouvrez <b>Téléchargements</b>, puis <b>triez par date</b> (cliquez sur « Modifié le »). Regardez le fichier le plus récent : quel <b>type</b> est-il ?</li>
+            <li>Ouvrez <b>Téléchargements</b>, puis <b>triez par date</b> (cliquez sur « Modifié le »). Regardez le fichier le plus récent : de quel <b>type</b> est-il ?</li>
             <li>Affichez les <b>extensions</b> : menu <b>Afficher</b> › <b>Afficher</b> › <b>Extensions de noms de fichiers</b>.</li>
             <li>Ouvrez <b>Documents</b> et créez un dossier nommé <b>Atelier numérique</b> (<b>＋ Nouveau</b> › <b>Dossier</b>).</li>
-            <li>Revenez ici : cliquez sur la fenêtre du navigateur (en bas de l'écran), ou <kbd>Alt</kbd> + <kbd>Tab</kbd>.</li></ol>
+            <li>Revenez ici : cliquez sur la fenêtre du navigateur (en bas de l'écran), ou appuyez sur <kbd>Alt</kbd> + <kbd>Tab</kbd>.</li></ol>
           <div class="alert">🔒 On ne <b>supprime</b> rien et on ne recopie <b>aucun nom de fichier personnel</b> : on observe seulement.<br>🖥️ À la médiathèque, certains dossiers peuvent être bloqués ou vides : c'est normal, notez-le simplement. Sur un Mac, l'Explorateur s'appelle le <b>Finder</b>.</div>
           <div class="final-actions"><button type="button" class="primary" data-go>J'ai fait la mission : je réponds →</button></div>`;
         f.panel.querySelector("[data-go]").addEventListener("click", () => ctx.go(1));
@@ -603,7 +603,7 @@
         const f = frame(ctx, { level: 8, title: "Mes observations", step: 1, noClient: true, consigne: "Répondez à partir de ce que vous avez vu sur le vrai ordinateur." });
         f.panel.innerHTML = `<div class="nv-real">
           <fieldset class="nv-check"><legend><b>⌨️ Comment avez-vous ouvert l'Explorateur ?</b></legend>${["Avec ⊞ Windows + E", "Avec l'icône 📁 jaune", "Je n'ai pas réussi"].map(v => `<label><input type="radio" name="open" value="${v}"> ${v}</label>`).join("")}</fieldset>
-          <fieldset class="nv-check"><legend><b>⬇️ Combien de fichiers environ dans Téléchargements ?</b></legend>${["Aucun", "Moins de 10", "Entre 10 et 50", "Plus de 50"].map(v => `<label><input type="radio" name="count" value="${v}"> ${v}</label>`).join("")}</fieldset>
+          <fieldset class="nv-check"><legend><b>⬇️ Combien de fichiers y a-t-il environ dans Téléchargements ?</b></legend>${["Aucun", "Moins de 10", "Entre 10 et 50", "Plus de 50"].map(v => `<label><input type="radio" name="count" value="${v}"> ${v}</label>`).join("")}</fieldset>
           <fieldset class="nv-check"><legend><b>🆕 Le fichier le plus récent est…</b></legend>${["Un PDF", "Une image (jpg, png…)", "Un programme (.exe)", "Autre chose", "Je ne sais pas"].map(v => `<label><input type="radio" name="type" value="${v}"> ${v}</label>`).join("")}</fieldset>
           <fieldset class="nv-check"><legend><b>✅ J'ai réussi à…</b> (cochez seulement ce qui est vrai)</legend>
             <label><input type="checkbox" data-c="sort"> trier les Téléchargements par date</label>
@@ -622,7 +622,7 @@
           const c = k => $f(`[data-c="${k}"]`).checked;
           $f("[data-send]").disabled = true;
           (open !== "Je n'ai pas réussi" ? G.ok : G.ko)("open", "Ouvrir l'Explorateur", "Touches ⊞ Windows + E, ou l'icône dossier jaune. On réessaie ensemble !");
-          (c("sort") ? G.ok : G.ko)("sort", "Trier par date", "Clic sur la colonne « Modifié le ».");
+          (c("sort") ? G.ok : G.ko)("sort", "Trier par date", "Cliquez sur le titre de la colonne « Modifié le ».");
           (c("ext") ? G.ok : G.ko)("ext", "Afficher les extensions", "Menu Afficher › Afficher › Extensions de noms de fichiers.");
           (c("folder") ? G.ok : G.ko)("folder", "Créer un dossier", "＋ Nouveau › Dossier, puis taper le nom et Entrée.");
           (c("nothing") ? G.ok : G.ko)("nothing", "Ne rien supprimer pendant une observation", "Pendant cette mission, on regarde seulement.");

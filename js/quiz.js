@@ -70,7 +70,7 @@
         if (!ok) btn.classList.add("wrong");
         const last = st.i >= prepared.length - 1;
         el.querySelector(".quiz-feedback").innerHTML = `
-          <div class="alert ${ok ? "good" : "warn"}"><strong>${ok ? "Bravo !" : "Pas grave."}</strong> ${esc(q.explain || "")}</div>
+          <div class="alert ${ok ? "good" : "warn"}"><strong>${ok ? "Bravo !" : "Ce n'est pas grave."}</strong> ${esc(q.explain || "")}</div>
           <button type="button" class="primary" data-quiz-next>${last ? "Voir mon résultat →" : "Question suivante →"}</button>`;
         el.querySelector("[data-quiz-next]").focus();
         return;

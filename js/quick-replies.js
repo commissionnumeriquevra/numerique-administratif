@@ -30,7 +30,7 @@
     r("suivi", "Délai prolongé", "En raison d'un nombre important de demandes, le traitement de votre dossier prendra plus de temps que prévu. Nous vous remercions de votre patience."),
     r("suivi", "Documents ajoutés", "Les documents que vous avez envoyés ont bien été ajoutés à votre dossier. Ils seront vérifiés dans les prochains jours."),
     r("suivi", "Dossier complet", "Merci. Votre dossier est maintenant complet. Il va être examiné."),
-    r("suivi", "Transmis à un autre service", "Votre demande a été transmise au service compétent. Il reviendra vers vous directement."),
+    r("suivi", "Transmis à un autre service", "Votre demande a été transmise au service compétent. Ce service vous contactera directement."),
     r("suivi", "Changement de situation", "Votre changement de situation (adresse, famille ou ressources) a bien été pris en compte. Vos droits vont être recalculés."),
     r("suivi", "Nouveau document dans l'espace", "Un nouveau document est disponible dans votre espace personnel. Connectez-vous pour le consulter. Pour votre sécurité, il n'est pas joint à ce message."),
 
@@ -87,9 +87,9 @@
 
     /* ----- Paiements et montants ----- */
     r("paiement", "Versement effectué", "Un versement de 245,80 € a été effectué sur votre compte le {date}. Il apparaîtra sous 2 à 3 jours selon votre banque."),
-    r("paiement", "Montant modifié", "Le montant de votre aide change à partir du mois prochain, suite à la mise à jour de vos ressources. Le détail est dans votre espace."),
+    r("paiement", "Montant modifié", "Le montant de votre aide change à partir du mois prochain, à la suite de la mise à jour de vos ressources. Le détail est dans votre espace."),
     r("paiement", "Versements suspendus", "Vos versements sont suspendus car votre déclaration n'a pas été reçue. Ils reprendront dès que la déclaration sera faite."),
-    r("paiement", "Trop-perçu", "Vous avez reçu 120 € de trop. Cette somme sera retenue sur vos prochains versements. Si vous n'êtes pas d'accord, vous pouvez contester dans un délai de 2 mois."),
+    r("paiement", "Trop-perçu", "Vous avez reçu 120 € de trop. Cette somme sera retenue sur vos prochains versements. Si vous n'êtes pas d'accord, vous pouvez contester cette décision dans un délai de 2 mois."),
     r("paiement", "Avis de paiement", "Un avis de paiement de 87 € est disponible dans votre espace. À régler avant le {date+30}, en ligne ou par prélèvement."),
     r("paiement", "Paiement en plusieurs fois", "Votre demande de paiement en plusieurs fois est acceptée : 3 mensualités de 60 €, prélevées le 5 de chaque mois."),
 
@@ -112,7 +112,7 @@
     r("formateur", "C'était un piège", "Ce message était un piège ! Regardez l'adresse du lien : ce n'est pas un site officiel. Dans ce cas, on ne clique jamais."),
     r("formateur", "Piège évité", "Bien joué, vous n'êtes pas tombé(e) dans le piège ! Un organisme officiel ne vous demande jamais vos codes ni votre carte bancaire par message."),
     r("formateur", "Mission réelle réussie", "Bravo, mission réussie ! Vous avez trouvé la bonne information, sur le bon site. Vous pouvez être fier(e) de vous : vous savez maintenant chercher seul(e) sur Internet."),
-    r("formateur", "Mission : vérifier le site", "Bonne réponse ! Mais regardez le site où vous l'avez trouvée : ce n'est pas le site officiel. Relisez le vrai nom dans la barre d'adresse, juste avant le premier « / », puis répondez-moi ici avec le bon site."),
+    r("formateur", "Mission : vérifier le site", "Bonne réponse ! Mais regardez le site où vous avez trouvé cette information : ce n'est pas le site officiel. Relisez le vrai nom dans la barre d'adresse, juste avant le premier « / », puis répondez-moi ici avec le bon site."),
     r("formateur", "Mission : presque", "Presque ! L'information n'est pas tout à fait la bonne. Vérifiez la date ou le jour demandé, puis répondez-moi directement ici. Je passe vous voir si besoin."),
     r("formateur", "Pause", "On fait une petite pause de 10 minutes. Vous pourrez reprendre exactement où vous en étiez."),
     r("formateur", "Fin de séance", "La séance se termine dans 5 minutes. Terminez l'étape en cours : votre progression est enregistrée.")

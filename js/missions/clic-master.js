@@ -53,7 +53,7 @@
       const L = ctx.local, G = grader(L);
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const f = frame(ctx, { chapter: "Clic Master · séance 4", level: 1, title: "Trois clics, trois rôles", step: 0, noClient: true,
-        consigne: "Lisez la consigne, puis faites le <b>bon geste</b> sur le <b>bon objet</b>. Clic gauche pour choisir ou agir, clic droit pour demander un menu.",
+        consigne: "Lisez la consigne, puis faites le <b>bon geste</b> sur le <b>bon objet</b>. Clic gauche pour choisir ou agir, clic droit pour ouvrir un menu.",
         help: "Clic gauche : un seul appui avec l'index. Clic droit : un appui avec le majeur, sur le bouton de droite. Lisez d'abord, puis agissez." });
       f.panel.innerHTML = `<div class="cm-prompt-box"></div><div class="cm-objs" role="group"></div><div class="mk-fb"></div>`;
       const box = f.panel.querySelector(".cm-prompt-box"), objs = f.panel.querySelector(".cm-objs"), fb = f.panel.querySelector(".mk-fb");
@@ -64,7 +64,7 @@
         const pool = [...new Map(TROIS.filter(x => x.s !== r.s).map(x => [x.s, x])).values()];
         const set = shuffle([{ ...r, target: true }, ...shuffle(pool).slice(0, 3)]);
         tries = 0; lock = false; fb.innerHTML = "";
-        box.innerHTML = `<div class="cm-num">Consigne ${i + 1} / ${TROIS.length}</div><div class="cm-prompt">👉 Faites le ${r.p}</div>`;
+        box.innerHTML = `<div class="cm-num">Consigne ${i + 1} / ${TROIS.length}</div><div class="cm-prompt">👉 Faites un ${r.p}</div>`;
         objs.innerHTML = set.map((o, k) => `<button type="button" class="cm-obj" data-k="${k}" aria-label="${o.s}">${SHAPE[o.s](o.c)}</button>`).join("");
         objs.querySelectorAll(".cm-obj").forEach(b => {
           b.addEventListener("contextmenu", e => e.preventDefault());
@@ -74,19 +74,19 @@
             if (!o.target) { tries++; fb.innerHTML = kindly(`Ce n'est pas le bon objet. Relisez : « ${plain(r.p)} ».`); return; }
             if (e.button !== want) {
               tries++;
-              fb.innerHTML = kindly(r.t === "left" ? "Il fallait le bouton de <b>gauche</b> : un seul appui." : "Il fallait le bouton de <b>droite</b> : c'est lui qui ouvre le menu.");
+              fb.innerHTML = kindly(r.t === "left" ? "Ici, il faut le bouton de <b>gauche</b>, sous l'index." : "Ici, il faut le bouton de <b>droite</b>, sous le majeur : c'est lui qui ouvre le menu.");
               return;
             }
             lock = true;
             b.classList.add("ok");
-            (tries ? G.ko : G.ok)(`cm4_${i}`, `Consigne ${i + 1} : ${plain(r.p)}`, tries ? "Le bon bouton, mais il a fallu revenir : relisez la consigne avant d'agir." : "");
+            (tries ? G.ko : G.ok)(`cm4_${i}`, `Consigne ${i + 1} : ${plain(r.p)}`, tries ? "Réussi, mais après une erreur : relisez la consigne avant d'agir." : "");
             fb.innerHTML = good("✅ Bravo ! Consigne suivante…");
             later(ctx, () => { i++; if (i < TROIS.length) show(); else end(); }, 900);
           });
         });
       };
       function end() {
-        finish(ctx, G, { key: "cm_trois_clics", label: "Je fais le bon geste sur le bon objet", intro: "Clic gauche pour agir, clic droit pour demander un menu : vous savez choisir le bon bouton." });
+        finish(ctx, G, { key: "cm_trois_clics", label: "Je fais le bon geste sur le bon objet", intro: "Clic gauche pour agir, clic droit pour ouvrir un menu : vous savez choisir le bon bouton." });
       }
       show();
     }
@@ -104,8 +104,8 @@
       const L = ctx.local, G = grader(L);
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const f = frame(ctx, { chapter: "Clic Master · séance 6", level: 1, title: "Lire avant d'agir : les pièges", step: 0, noClient: true,
-        consigne: "Chaque consigne peut cacher un piège : un nom presque pareil, une extension, un bouton à côté. <b>Lisez en entier</b>, puis agissez.",
-        help: "Avant chaque clic, trois questions : quel objet ? quelle extension ? quel geste ? Si on se trompe, rien n'est grave : on recommence." });
+        consigne: "Chaque consigne peut cacher un piège : un nom presque pareil, une extension (.pdf, .jpg…), un bouton voisin. <b>Lisez en entier</b>, puis agissez.",
+        help: "Avant chaque clic, trois questions : quel objet ? quelle extension ? quel geste ? Si on se trompe, ce n'est pas grave : on recommence." });
       f.panel.innerHTML = `<div class="cm-prompt-box"></div><div class="cm-stage"></div><div class="mk-fb"></div>`;
       const box = f.panel.querySelector(".cm-prompt-box"), stage = f.panel.querySelector(".cm-stage"), fb = f.panel.querySelector(".mk-fb");
       let s = 0, errs = 0, locked = false;
@@ -134,16 +134,16 @@
       };
 
       const STEPS = [
-        { k: "cm6_p0", label: "Ouvrir le dossier <b>Images</b> (et pas Documents)",
+        { k: "cm6_p0", label: "Cliquez sur le dossier <b>Images</b> (pas sur Documents)",
           run: (ok, bad) => pickCards(["Documents", "Images", "Téléchargements", "Bureau"].map(folderCard), x => x.name === "Images",
-            x => bad(`La consigne disait « Images ». Vous avez cliqué sur « ${x.name} ».`), ok) },
-        { k: "cm6_p1", label: "Le fichier dont l'extension est <b>.pdf</b>",
+            x => bad(`La consigne dit « Images ». Vous avez cliqué sur « ${x.name} ».`), ok) },
+        { k: "cm6_p1", label: "Cliquez sur le fichier qui se termine par <b>.pdf</b>",
           run: (ok, bad) => pickCards(["Lettre.docx", "Notes.txt", "Vacances.jpg", "Musique.mp3", "Rapport.pdf", "Budget.xlsx"].map(fileCard),
             x => x.name.endsWith(".pdf"), () => bad("Lisez bien l'extension : c'est <b>.pdf</b>."), ok) },
-        { k: "cm6_p2", label: "Le fichier dont l'extension est <b>.jpg</b>",
+        { k: "cm6_p2", label: "Cliquez sur le fichier qui se termine par <b>.jpg</b>",
           run: (ok, bad) => pickCards(["Lettre.docx", "Notes.txt", "Rapport.pdf", "Musique.mp3", "Photo.jpg", "Budget.xlsx"].map(fileCard),
             x => x.name.endsWith(".jpg"), () => bad("Lisez bien l'extension : c'est <b>.jpg</b>."), ok) },
-        { k: "cm6_p3", label: "Faire un <b>clic droit</b> sur <b>Vacances_2024.jpg</b>, puis choisir <b>Ouvrir</b>",
+        { k: "cm6_p3", label: "Faites un <b>clic droit</b> sur <b>Vacances_2024.jpg</b>, puis choisissez <b>Ouvrir</b>",
           run: (ok, bad) => {
             const photos = ["Vacances_2020.jpg", "Vacances_2021.jpg", "Vacances_2022.jpg", "Vacances_2023.jpg", "Vacances_2024.jpg"].map(fileCard);
             stage.innerHTML = `<div class="cm-cards">${photos.map((x, k) => `<button type="button" class="cm-card cm-ctx" data-k="${k}">${x.html}</button>`).join("")}</div>`;
@@ -154,14 +154,14 @@
                 const x = photos[+b.dataset.k];
                 ctxMenu(ctx, stage, e, ["📂 Ouvrir", "✏️ Renommer"], idx => {
                   if (idx == null) return;
-                  if (x.name !== "Vacances_2024.jpg") return bad(`La consigne disait <b>Vacances_2024.jpg</b>. Vous avez cliqué sur « ${x.name} ».`);
-                  if (idx !== 0) return bad("La consigne disait : choisir <b>Ouvrir</b>, pas « Renommer ».");
+                  if (x.name !== "Vacances_2024.jpg") return bad(`La consigne dit <b>Vacances_2024.jpg</b>. Vous avez cliqué sur « ${x.name} ».`);
+                  if (idx !== 0) return bad("La consigne dit : choisissez <b>Ouvrir</b>, pas « Renommer ».");
                   b.classList.add("ok"); stage.querySelectorAll(".cm-card").forEach(c => { c.disabled = true; }); ok();
                 });
               });
             });
           } },
-        { k: "cm6_p4", label: "Cliquer sur <b>Valider</b>, pas sur Annuler",
+        { k: "cm6_p4", label: "Cliquez sur <b>Valider</b>, pas sur Annuler",
           run: (ok, bad) => pickCards([{ name: "Annuler", html: `<span class="cm-btn">Annuler</span>` }, { name: "Valider", html: `<span class="cm-btn primary">Valider</span>` }],
             x => x.name === "Valider", x => bad(`La consigne dit « Valider », pas « ${x.name} ».`), ok) }
       ];
@@ -181,7 +181,7 @@
     { ext: ".txt", nom: "Fichier texte brut", logiciel: "Bloc-notes", conseil: "Pas de gras ni de couleurs : juste du texte." },
     { ext: ".docx", nom: "Document Word", logiciel: "Word ou LibreOffice Writer", conseil: "Titres, gras, tableaux : c'est un document mis en forme." },
     { ext: ".pdf", nom: "Document figé", logiciel: "Adobe Reader ou le navigateur", conseil: "La mise en page reste la même partout : idéal pour envoyer." },
-    { ext: ".jpg", nom: "Image photo", logiciel: "Visionneuse de photos", conseil: "Ne renommez jamais un .jpg en .txt : la photo ne s'ouvrirait plus." },
+    { ext: ".jpg", nom: "Image (photo)", logiciel: "Visionneuse de photos", conseil: "Ne renommez jamais un .jpg en .txt : la photo ne s'ouvrirait plus." },
     { ext: ".mp3", nom: "Fichier audio", logiciel: "Lecteur multimédia", conseil: "C'est du son, pas du texte : il ne s'ouvre pas avec un traitement de texte." }
   ];
   const PAIRS = [
@@ -246,7 +246,7 @@
           } else {
             errs++;
             b.classList.add("bad"); setTimeout(() => b.classList.remove("bad"), 700);
-            fb.innerHTML = kindly(`Relisez l'extension : « ${sel} » se termine par <b>${sel.split(".").pop()}</b>.`);
+            fb.innerHTML = kindly(`Relisez l'extension : « ${sel} » se termine par <b>.${sel.split(".").pop()}</b>.`);
           }
         }));
       };
@@ -258,7 +258,7 @@
           { q: "Un fichier se termine par <b>.pdf</b>. Avec quoi s'ouvre-t-il le plus souvent ?", choices: ["Un lecteur de musique", "Adobe Reader ou le navigateur", "La visionneuse de photos"], ok: 1, why: "Le .pdf est un document figé : on l'ouvre avec Adobe Reader ou un navigateur." },
           { q: "Je veux écrire une lettre avec des titres en gras. Quelle extension choisir ?", choices: [".txt", ".docx", ".mp3"], ok: 1, why: "Le .docx garde la mise en forme. Le .txt ne garde que le texte, sans gras." },
           { q: "Je renomme « Vacances.jpg » en « Vacances.txt ». Que se passe-t-il ?", choices: ["Rien : c'est seulement un nom", "La photo ne s'ouvre plus comme une image : l'extension indique le logiciel"], ok: 1, why: "L'extension dit à l'ordinateur quel logiciel utiliser. On ne la change jamais." }
-        ], onDone: () => finish(ctx, G, { key: "cm_extensions", label: "Je reconnais les extensions et leur logiciel", intro: "Une extension dit quel logiciel ouvre le fichier : vous savez les reconnaître, et ne jamais les changer." }) });
+        ], onDone: () => finish(ctx, G, { key: "cm_extensions", label: "Je reconnais les extensions et leur logiciel", intro: "Une extension dit quel logiciel ouvre le fichier : vous savez les reconnaître, et vous ne les changez jamais." }) });
       };
 
       intro();
@@ -299,11 +299,11 @@
         consigne: "Vos dossiers forment un <b>arbre</b> : la racine en haut, les dossiers dedans, les fichiers au bout. Suivez les consignes pour vous déplacer.",
         help: "Le + déplie un dossier. Un double-clic l'ouvre dans la fenêtre de droite. ← Précédent revient à l'endroit d'avant, ↑ Parent remonte d'un niveau." });
       const LABEL = {
-        plus: "Déplier l'arbre : cliquez sur le <b>+</b> à côté de <b>Documents</b>",
-        open: "Ouvrir <b>Documents</b> : <b>double-clic</b> dessus dans la fenêtre de droite",
+        plus: "Dépliez l'arbre : cliquez sur le <b>+</b> à côté de <b>Documents</b>",
+        open: "Ouvrez <b>Documents</b> : <b>double-cliquez</b> dessus, dans la partie droite de la fenêtre",
         deep: "Descendre encore : ouvrez <b>Maison</b>, puis <b>Factures</b>",
-        back: "Revenir en arrière avec <b>←</b> (Précédent) : vous êtes de nouveau dans <b>Maison</b>",
-        up: "Remonter d'un niveau avec <b>↑</b> (Parent) : vous revenez dans <b>Documents</b>"
+        back: "Revenez en arrière : cliquez sur <b>← Précédent</b>. Vous êtes de nouveau dans <b>Maison</b>",
+        up: "Remontez d'un niveau : cliquez sur <b>↑ Parent</b>. Vous revenez dans <b>Documents</b>"
       };
       f.panel.innerHTML = `<div class="cm-tasks"></div><div class="cm-stage"></div>`;
       const T = tasker(f.panel.querySelector(".cm-tasks"), Object.keys(LABEL).map(k => ({ k, label: LABEL[k] })));
@@ -366,7 +366,7 @@
           if (!hist.length) return;
           cur = hist.pop();
           if (cur.n === "Maison") complete("back");
-          else if (T.next?.k === "back") miss("back", "Pas encore : c'est le bouton <b>←</b> qui revient à l'endroit d'avant.");
+          else if (T.next?.k === "back") miss("back", "Vous n'êtes pas dans <b>Maison</b>. Le bouton <b>←</b> revient pas à pas aux endroits d'avant.");
           return draw();
         }
         if (up) {
@@ -374,7 +374,7 @@
           if (!p) return;
           cur = p;
           if (cur.n === "Documents") complete("up");
-          else if (T.next?.k === "up") miss("up", "Le bouton <b>↑</b> remonte d'un niveau.");
+          else if (T.next?.k === "up") miss("up", "Vous n'êtes pas dans <b>Documents</b>. Le bouton <b>↑</b> remonte d'un seul niveau.");
           return draw();
         }
       });
@@ -383,7 +383,7 @@
         if (!item) return;
         const node = findNode(TREE, item.dataset.item);
         if (node.f) return;
-        if (T.next?.k === "open" && node.n !== "Documents") return miss("open", "Documents d'abord : c'est le dossier qui contient le reste.");
+        if (T.next?.k === "open" && node.n !== "Documents") return miss("open", "Ce n'est pas le bon dossier : double-cliquez sur <b>Documents</b>.");
         if (T.next?.k === "deep" && node.n !== "Maison" && node.n !== "Factures") return miss("deep", "Cherchez <b>Maison</b>, puis <b>Factures</b>.");
         go(node);
       });
@@ -407,15 +407,15 @@
       const L = ctx.local, G = grader(L);
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const f = frame(ctx, { chapter: "Clic Master · séances 5 et 6", level: 1, title: "Supprimer, corbeille et restaurer", step: 0, noClient: true,
-        consigne: "Dans le dossier <b>Documents</b>, il y a un <b>doublon</b> : « (copie) ». Supprimez seulement le doublon, puis apprenez à le récupérer.",
+        consigne: "Dans le dossier <b>Documents</b>, il y a un <b>doublon</b> (un fichier en double) : son nom contient « (copie) ». Supprimez seulement ce doublon, puis récupérez-le.",
         help: "Supprimer n'efface pas tout de suite : le fichier part dans la <b>Corbeille</b>. Il y reste jusqu'à ce qu'on la vide. Clic droit = menu ; double-clic = ouvrir." });
       f.panel.innerHTML = `<div class="cm-tasks"></div><div class="cm-stage"></div>`;
       const stage = f.panel.querySelector(".cm-stage");
       const LABEL = {
-        del: `Clic droit sur « <b>${COPIE}</b> », puis <b>Supprimer</b> : le doublon part à la corbeille`,
-        open: "<b>Double-clic</b> sur l'icône <b>Corbeille</b> du bureau : sa fenêtre s'ouvre",
+        del: `Faites un clic droit sur « <b>${COPIE}</b> », puis choisissez <b>Supprimer</b> : le doublon part à la corbeille`,
+        open: "<b>Double-cliquez</b> sur l'icône <b>Corbeille</b> du bureau : sa fenêtre s'ouvre",
         restore: `Cliquez sur « <b>${COPIE}</b> » dans la corbeille, puis sur <b>Restaurer</b>`,
-        empty: "Clic droit sur la <b>Corbeille</b>, « Vider la corbeille ». Lisez le message, puis cliquez sur <b>Annuler</b>"
+        empty: "Faites un clic droit sur l'icône <b>Corbeille</b>, puis choisissez « Vider la corbeille ». Lisez le message, puis cliquez sur <b>Annuler</b>"
       };
       const T = tasker(f.panel.querySelector(".cm-tasks"), Object.keys(LABEL).map(k => ({ k, label: LABEL[k] })));
       const tErr = {};
@@ -437,7 +437,7 @@
       };
       const restore = () => {
         if (!sel) return miss("restore", "Cliquez d'abord sur le fichier de la corbeille, puis sur <b>Restaurer</b>.");
-        if (sel !== COPIE) return miss("restore", `Ce fichier n'est pas celui du doublon. Restaurez « ${COPIE} ».`);
+        if (sel !== COPIE) return miss("restore", `Ce n'est pas le doublon. Restaurez « ${COPIE} ».`);
         trash = trash.filter(x => x !== sel); docs.push(sel); sel = null;
         complete("restore");
       };
@@ -463,7 +463,7 @@
           ctxMenu(ctx, stage, e, ["📂 Ouvrir", "✏️ Renommer", "🗑️ Supprimer"], idx => {
             if (idx == null) return;
             if (idx === 2) return deleteFile(name);
-            if (!T.is("del")) miss("del", "Pour supprimer, l'icône corbeille est en haut du menu, la <b>troisième</b> action.");
+            if (!T.is("del")) miss("del", "Pour supprimer, choisissez la <b>troisième</b> ligne du menu : 🗑️ Supprimer.");
           });
         } else if (tr && !dialog) {
           e.preventDefault();
@@ -483,7 +483,7 @@
         if (dlg) {
           dialog = false;
           if (dlg.dataset.dlg === "cancel") { complete("empty"); return draw(); }
-          if (!T.is("empty")) return draw();
+          if (T.is("empty")) return draw();
           miss("empty", "Vider, c'est définitif : ici, on annule. Cliquez sur <b>Annuler</b>.");
           return draw();
         }
@@ -512,8 +512,8 @@
     if (t === exp) return null;
     if (noAcc(t) === noAcc(exp)) return "Il manque un ou plusieurs accents (é, è, ç…).";
     if (t.toLowerCase() === exp.toLowerCase()) return "Presque ! Il y a une majuscule à revoir.";
-    if (t.replace(/ /g, "") === exp.replace(/ /g, "")) return "Les blancs ne sont pas au bon endroit : un blanc avant le « ? », un après chaque mot.";
-    return "Une lettre est différente : relisez lettre à lettre et comparez avec le modèle.";
+    if (t.replace(/ /g, "") === exp.replace(/ /g, "")) return "Les espaces ne sont pas au bon endroit : un espace entre les mots, et un avant le « ? ».";
+    return "Quelque chose est différent : comparez lettre par lettre avec le modèle.";
   };
 
   R("cm_dictees", {
@@ -523,7 +523,7 @@
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const f = frame(ctx, { chapter: "Clic Master · séances 3 et 6", level: 1, title: "Recopier des phrases sans faute", step: 0, noClient: true,
         consigne: "Lisez la phrase en entier, puis recopiez-la <b>lettre à lettre</b>, avec les accents et la ponctuation.",
-        help: "é = touche 2 · è = 7 · à = 0 · ç = 9 · ù à droite du m. Le « ? » : Maj + la touche , avec un blanc avant. L'apostrophe : touche 4. Un blanc après chaque mot." });
+        help: "é = touche 2 · è = 7 · à = 0 · ç = 9 · ù à droite du m. Le « ? » : Maj + la touche « , ? », avec un espace avant. L'apostrophe : touche 4. Un espace entre les mots." });
       f.panel.innerHTML = `<div class="cm-prompt-box"></div><div class="cm-dic"></div><div class="mk-fb"></div>`;
       const box = f.panel.querySelector(".cm-prompt-box"), dic = f.panel.querySelector(".cm-dic"), fb = f.panel.querySelector(".mk-fb");
       let i = 0, tries = 0, first = null, active = false;
@@ -551,7 +551,7 @@
             (first ? G.ok : G.ko)(`cm_dic_${i}`, `Phrase « ${exp} »`, d || "");
           }
           if (d === null) return finishOne(good("✅ Parfait, c'est exactement le modèle !"));
-          if (tries >= 3) return finishOne(kindly(`${d} On passe à la suivante : on y reviendra.`));
+          if (tries >= 3) return finishOne(kindly(`${d} On passe à la phrase suivante.`));
           fb.innerHTML = kindly(`${d} Essayez encore (${3 - tries} essai${3 - tries > 1 ? "s" : ""}).`);
         };
         dic.querySelector("[data-check]").addEventListener("click", check);

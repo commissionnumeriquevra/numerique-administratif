@@ -151,8 +151,8 @@
       if (opts.picker) { pick(node); return; }
       const t = typeOf(node);
       if (t.family === "app") { S.dialog = { kind: "exe", node }; render(); emit("exe", { file: node }); return; }
-      if (t.family === "link") { flash("C'est un <b>raccourci</b> : une petite flèche qui mène vers un programme ou un dossier.", "info"); return; }
-      if (t.family === "zip") { S.viewer = { node, html: `<div class="fx-page"><h3>🗜️ ${esc(node.name)}</h3><p>Un dossier <b>compressé</b> : plusieurs fichiers « emballés » dans un seul, pour les envoyer plus facilement.</p>${node.content || ""}<p class="fx-tip">Pour l'utiliser : clic droit → <b>Extraire tout</b>.</p></div>` }; render(); emit("open", { file: node }); return; }
+      if (t.family === "link") { flash("C'est un <b>raccourci</b> : une icône avec une petite flèche, qui mène vers un programme ou un dossier.", "info"); return; }
+      if (t.family === "zip") { S.viewer = { node, html: `<div class="fx-page"><h3>🗜️ ${esc(node.name)}</h3><p>Un dossier <b>compressé</b> : plusieurs fichiers « emballés » dans un seul, pour les envoyer plus facilement.</p>${node.content || ""}<p class="fx-tip">Pour l'utiliser : clic droit, puis <b>Extraire tout</b>.</p></div>` }; render(); emit("open", { file: node }); return; }
       if (t.family === "unknown") { S.dialog = { kind: "how", node }; render(); emit("open", { file: node, unknown: true }); return; }
       S.viewer = { node, html: preview(node) }; render(); emit("open", { file: node });
     }

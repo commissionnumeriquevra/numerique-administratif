@@ -204,7 +204,7 @@
         <ul class="l-list">
           <li data-reveal>🎣 L'escroc lance un <b>appât</b> (un faux message)… <b>à des milliers de personnes</b>, au hasard.</li>
           <li data-reveal>🐟 Il espère qu'<b>une seule</b> morde à l'hameçon.</li>
-          <li data-reveal>🎯 Vous n'êtes <b>pas visé personnellement</b> : votre adresse est dans une liste, comme celle de tout le monde.</li>
+          <li data-reveal>🎯 Vous n'êtes <b>pas visé(e) personnellement</b> : votre adresse est dans une liste, comme celle de tout le monde.</li>
           <li data-reveal>🧲 Son but : vous faire <b>cliquer</b>, <b>payer</b> ou <b>donner un code</b>.</li>
         </ul></div>
       <p class="l-note" data-reveal>En anglais, on dit « phishing » (de « fishing », la pêche).</p>` },
@@ -230,7 +230,7 @@
         <li data-reveal><span>🤔</span><b>Est-ce que je l'attendais ?</b><small>Un colis, un remboursement… que je n'ai pas demandé ?</small></li>
         <li data-reveal><span>⏰</span><b>Me met-on la pression ?</b><small>Urgence, menace, cadeau trop beau.</small></li>
         <li data-reveal><span>🔑</span><b>Que me demande-t-on ?</b><small>Un code, une carte, un mot de passe, un paiement ?</small></li>
-        <li data-reveal><span>🔗</span><b>Où mène le lien ?</b><small>Je survole sans cliquer, je lis le vrai nom du site.</small></li>
+        <li data-reveal><span>🔗</span><b>Où mène le lien ?</b><small>Je pose la souris dessus, sans cliquer, et je lis le vrai nom du site.</small></li>
       </ol>
       <div class="l-callout" data-reveal>🚩 Si <b>une seule</b> réponse vous inquiète : ne cliquez pas, vérifiez par vous-même.</div>` },
 
@@ -243,7 +243,7 @@
             <div class="lp-pop" data-reveal="2"><b>Assurance Maladie</b><br>remboursement@<mark>ameli-securite.info</mark></div><div class="lp-lines"><i></i><i></i><i></i></div></div>
           <p class="l-cap">Sur le téléphone : je touche le nom.</p></div>
       </div>
-      ${notes([[1, "Le nom affiché est un costume", "N'importe qui peut écrire « Assurance Maladie »."], [2, "L'adresse est la carte d'identité", "Elle apparaît quand on clique, ou qu'on touche le nom."], [3, "Je lis la fin, après le @", "ameli-securite.info n'est pas ameli.fr : c'est un faux."]])}` },
+      ${notes([[1, "Le nom affiché est un costume", "N'importe qui peut écrire « Assurance Maladie »."], [2, "L'adresse est la carte d'identité", "Elle apparaît quand on clique sur le nom, ou quand on le touche."], [3, "Je lis la fin, après le @", "ameli-securite.info n'est pas ameli.fr : c'est un faux."]])}` },
 
     { title: "Une vraie adresse… ou un costume ?", theme: "dense", html: `
       <p class="l-lead">Cliquez sur chaque adresse pour révéler la réponse.</p>
@@ -370,7 +370,7 @@
       <ol class="l-gestures">
         <li data-reveal><span>✋</span><div><b>Je ne clique pas.</b><small>Ni sur le lien, ni sur la pièce jointe, ni sur « répondre ».</small></div></li>
         <li data-reveal><span>🔎</span><div><b>Je vérifie par moi-même.</b><small>Je tape moi-même l'adresse du site officiel, j'ouvre l'application, ou j'appelle le numéro que je connais (au dos de ma carte, sur un courrier reçu).</small></div></li>
-        <li data-reveal><span>🚫</span><div><b>Je range.</b><small>« Indésirable » : les suivants iront directement au bon endroit. Je peux aussi le signaler sur signal-spam.fr</small></div></li>
+        <li data-reveal><span>🚫</span><div><b>Je le range en « Indésirable ».</b><small>Les messages suivants de cet expéditeur iront directement au bon endroit. Je peux aussi le signaler sur signal-spam.fr.</small></div></li>
       </ol>
       <div class="l-callout" data-reveal>🤝 Et je peux toujours <b>demander</b> à un proche ou au médiateur numérique de la médiathèque.</div>` },
 
@@ -404,11 +404,11 @@
   const VOTE_MSGS = () => [
     V("Vous n'attendez aucun colis.", mock({ av: "SC", subject: `Votre colis n° FR8812645 est ${hl(4, "en attente")}`, from: `<b>Suivi Colis</b> ${pin(2)} <span class="mm-addr">&lt;notification@${hl(2, "suivi-colis-express.top")}&gt;</span>`,
       body: `<p>Bonjour,</p><p>Votre colis n'a pas pu être livré : les frais de réexpédition n'ont pas été réglés. ${hl(4, "Sans paiement sous 24 h")}, il sera retourné à l'expéditeur.</p><p>${btn(`Payer ${hl(5, "1,99 €")}`)}</p>`, status: `<span data-reveal="5">https://<mark>suivi-colis-express.top</mark>/paiement</span>` }),
-      true, [[2, "Adresse inconnue", "suivi-colis-express.top n'est le site d'aucun transporteur."], [3, "Je n'attends aucun colis", ""], [4, "Urgence : « sous 24 h »", ""], [5, "On me fait payer", "1,99 € : un petit montant, pour récupérer ma carte bancaire."]], 3),
+      true, [[2, "Adresse inconnue", "suivi-colis-express.top n'est le site d'aucun transporteur."], [3, "Je n'attends aucun colis", ""], [4, "Urgence : « sous 24 h »", ""], [5, "On me fait payer", "1,99 € : un petit montant, pour obtenir le numéro de ma carte bancaire."]], 3),
 
     V("Vous avez déclaré vos revenus au printemps.", mock({ av: "I", date: "Hier 10:02", subject: "Votre avis d'impôt est disponible", from: `<b>Impôts</b> ${pin(2, true)} <span class="mm-addr">&lt;ne-pas-repondre@${hl(2, "impots.gouv.fr", true)}&gt;</span>`,
       body: `<p>${hl(3, "Bonjour Madame Martin,", true)}</p><p>Votre avis d'impôt sur le revenu est disponible dans votre espace particulier.</p><p>${hl(5, "Pour le consulter, connectez-vous sur impots.gouv.fr", true)}, rubrique « Documents ».</p><p>Ceci est un message automatique, merci de ne pas y répondre.</p>` }),
-      false, [[2, "Adresse en .gouv.fr", "Réservée à l'État."], [3, "Il m'appelle par mon nom", ""], [4, "Aucune urgence, aucune demande", "Ni code, ni carte, ni paiement."], [5, "Pas de bouton", "On m'invite à aller moi-même sur le site : c'est le bon réflexe."]]),
+      false, [[2, "Adresse en .gouv.fr", "Réservée à l'État."], [3, "Le message m'appelle par mon nom", ""], [4, "Aucune urgence, aucune demande", "Ni code, ni carte, ni paiement."], [5, "Pas de bouton", "On m'invite à aller moi-même sur le site : c'est le bon réflexe."]]),
 
     V("", mock({ av: "AM", subject: `Votre carte Vitale ${hl(3, "arrive à expiration")}`, from: `<b>Assurance Maladie</b> ${pin(2)} <span class="mm-addr">&lt;info@${hl(2, "ameli-carte-vitale.info")}&gt;</span>`,
       body: `<p>${hl(3, "Cher assuré,")}</p><p>Votre carte Vitale arrive à expiration. ${hl(3, "Pour continuer à être remboursé")}, commandez dès maintenant votre nouvelle carte.</p><p>${hl(4, "Des frais d'envoi de 2,99 € vous seront demandés.")}</p><p>${btn("Commander ma carte")}</p>`, status: `<span data-reveal="5">http://<mark>ameli-carte-vitale.info</mark>/commande</span>` }),
@@ -435,8 +435,8 @@
       true, [[2, "Une adresse générique inconnue", "Ce n'est pas l'adresse de votre fournisseur de messagerie."], [3, "La peur de perdre ses messages", "Et un délai : 48 h."], [4, "« Reconnectez-vous »", "= taper votre mot de passe sur LEUR page. Ils pourront ensuite lire vos messages."], [5, "Un faux site de connexion", "Pour vérifier, j'ouvre ma messagerie moi-même, comme d'habitude."]]),
 
     V("Le message semble venir de… votre propre adresse !", mock({ av: "?", subject: `${hl(3, "Je sais tout sur vous")}`, from: `<b>marie.martin@exemple.fr</b> ${pin(2)} <span class="mm-addr">(${hl(2, "votre propre adresse")})</span>`,
-      body: `<p>J'ai piraté votre ordinateur et je vous ai filmé avec votre webcam.</p><p>${hl(4, "Si vous ne payez pas 500 € sous 48 h")}, j'enverrai la vidéo à tous vos contacts.</p>` }),
-      true, [[2, "Écrire « depuis » votre adresse est un faux, très facile", "Cela ne prouve pas qu'on a piraté votre ordinateur."], [3, "La peur et la honte", "Pour vous faire payer vite, sans en parler à personne."], [4, "Envoyé à des milliers de personnes", "Il n'y a aucune vidéo. Je ne paie jamais, je ne réponds pas, je supprime."], [5, "Et si cela m'inquiète ?", "J'en parle à une personne de confiance, ou je consulte cybermalveillance.gouv.fr."]])
+      body: `<p>J'ai piraté votre ordinateur et je vous ai filmée avec votre webcam.</p><p>${hl(4, "Si vous ne payez pas 500 € sous 48 h")}, j'enverrai la vidéo à tous vos contacts.</p>` }),
+      true, [[2, "Faire croire qu'un message vient de votre adresse, c'est très facile", "Cela ne prouve pas qu'on a piraté votre ordinateur."], [3, "La peur et la honte", "Pour vous faire payer vite, sans en parler à personne."], [4, "Ce message est envoyé à des milliers de personnes", "Il n'y a aucune vidéo. Je ne paie jamais, je ne réponds pas, je supprime."], [5, "Et si cela m'inquiète ?", "J'en parle à une personne de confiance, ou je consulte cybermalveillance.gouv.fr."]])
   ];
 
   /* =========================================================
@@ -509,7 +509,7 @@
     { title: "Les fichiers dangereux ⛔", html: `
       <div class="l-grid2">
         <div class="l-safe" data-reveal><h3>✅ Des documents</h3><ul><li><b>.pdf</b> : un document, une facture</li><li><b>.jpg</b> / <b>.png</b> : une photo</li><li><b>.docx</b> / <b>.odt</b> : un texte</li></ul></div>
-        <div class="l-risk" data-reveal><h3>⛔ Des programmes : prudence</h3><ul><li><b>.exe</b> : un programme qui s'installe</li><li><b>.zip</b> : un paquet de fichiers fermé</li><li>reçus d'un inconnu ou sans les attendre : <b>je n'ouvre pas</b></li></ul></div>
+        <div class="l-risk" data-reveal><h3>⛔ Des programmes : prudence</h3><ul><li><b>.exe</b> : un programme qui s'installe</li><li><b>.zip</b> : un paquet qui contient d'autres fichiers</li><li>reçu d'un inconnu, ou sans l'attendre : <b>je n'ouvre pas</b></li></ul></div>
       </div>
       <div class="l-callout" data-reveal>🎭 Le piège du double nom : <b>facture.pdf.exe</b>. Ce qui compte, c'est <b>la fin</b> : c'est un <b>.exe</b>, un programme déguisé en facture.</div>
       <p class="l-note" data-reveal>🐘 Et les fichiers trop lourds (une longue vidéo) ne passent pas : les pièces jointes sont souvent limitées à 20 ou 25 Mo.</p>` }

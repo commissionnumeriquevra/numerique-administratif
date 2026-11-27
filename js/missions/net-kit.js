@@ -174,7 +174,7 @@
         case "portalOk": {
           const n = cur(); const cgu = el.querySelector('[data-nk="cgu"]')?.checked;
           const errEl = el.querySelector("[data-portal-err]");
-          if (!cgu) { if (errEl) errEl.textContent = "Cochez d'abord « J'accepte les conditions »."; emit("portalNoCgu", {}); return; }
+          if (!cgu) { if (errEl) errEl.textContent = "Cochez d'abord « J'accepte les conditions d'utilisation »."; emit("portalNoCgu", {}); return; }
           const fields = {}; el.querySelectorAll("[data-portal-f]").forEach(i => { fields[i.dataset.portalF] = i.value; });
           S.portalOk[n.id] = true; S.captiveOpen = false; render(); emit("portalAccepted", { net: n, fields }); msg("✅ Vous êtes connecté(e) au Wi-Fi : Internet fonctionne.", "good"); return;
         }

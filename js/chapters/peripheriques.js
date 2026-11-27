@@ -32,7 +32,7 @@
         <div class="l-card big" data-reveal="2"><h3>${kbd("Ctrl")} + ${kbd("V")}</h3><p><b>Coller</b> là où clignote le curseur.</p></div>
         <div class="l-safe" data-reveal="3"><h3>${kbd("Ctrl")} + ${kbd("Z")}</h3><p><b>Annuler</b> la dernière action. Le bouton magique !</p></div>
       </div>
-      <div class="l-callout" data-reveal="4">🎯 Un numéro de dossier, une adresse e-mail, un IBAN : on le <b>copie-colle</b> au lieu de le recopier. Zéro faute ! (Le clic droit propose aussi Copier et Coller.)</div>` }
+      <div class="l-callout" data-reveal="4">🎯 Un numéro de dossier, une adresse e-mail, un IBAN : on les <b>copie-colle</b> au lieu de le recopier. Zéro faute ! (Le clic droit propose aussi Copier et Coller.)</div>` }
   ];
 
   /* =================== SÉANCE 2 =================== */
@@ -114,7 +114,7 @@
         pick(C, "La clé USB"), game("per_usb_vf", "Clé USB : vrai ou faux ?"),
         pick(C, "Mieux voir"), pick(C, "Mon aide-mémoire"), game("per_raccourci", "Quel raccourci ?"), game("per_que_faire", "Que faites-vous ?"),
         end("les <b>niveaux 4, 5 et 6</b> : la clé USB, le zoom et le confort… puis la <b>mission réelle</b> sur l'ordinateur de la médiathèque", "per_usb",
-          `<div class="l-callout">🖥️ Le niveau 6 se fait sur le <b>vrai ordinateur</b> : on cherche les prises USB, on ouvre Ctrl + P… et on clique sur <b>Annuler</b>.</div>`)] }
+          `<div class="l-callout">🖥️ Le niveau 6 se fait sur le <b>vrai ordinateur</b> : on cherche les prises USB, on appuie sur Ctrl + P… et on clique sur <b>Annuler</b>.</div>`)] }
     ];
   };
 

@@ -191,7 +191,7 @@
 
       if (step === 0) {
         const f = frame(ctx, { level: 1, title: "Taper l'adresse d'un site", step: 0,
-          consigne: `Voici un navigateur. Allez sur le site de la médiathèque en tapant son adresse : <code class="mono">${MED}</code>`,
+          consigne: `Voici un navigateur. Allez sur le site de la médiathèque en tapant son adresse : <code class="mono">${MED}</code>. C'est réussi quand la page de la médiathèque s'affiche.`,
           help: "Cliquez dans la grande barre en haut (la barre d'adresse), tapez l'adresse, puis appuyez sur la touche Entrée." });
         const tasks = [{ label: "Cliquez dans la <b>barre d'adresse</b>, tout en haut." }, { label: `Tapez <code class="mono">${MED}</code> puis appuyez sur <kbd>Entrée</kbd>.` }];
         const draw = () => { f.panel.innerHTML = tasksHTML(tasks); };
@@ -231,8 +231,8 @@
             G.ok("menu", "Utiliser le menu d'un site");
             f.panel.innerHTML = tasksHTML([{ label: "Cliquez sur <b>Horaires</b> dans le menu du site.", done: true }]) + `<div class="mk-q-slot"></div>`;
             quiz(f.panel.querySelector(".mk-q-slot"), { G, key: "hours", questions: [
-              { q: "Le <b>samedi</b>, la médiathèque est ouverte…", choices: ["de 10 h à 17 h", "de 14 h à 19 h", "elle est fermée"], ok: 0, why: "Le tableau indique : Samedi, 10 h – 17 h." },
-              { q: "Quels jours est-elle <b>fermée</b> ?", choices: ["Le mercredi et le jeudi", "Le lundi et le dimanche", "Seulement le dimanche"], ok: 1, why: "Le tableau indique « Fermé » le lundi et le dimanche." }
+              { q: "Le <b>samedi</b>, quels sont les horaires de la médiathèque ?", choices: ["De 10 h à 17 h", "De 14 h à 19 h", "Elle est fermée"], ok: 0, why: "Le tableau indique : Samedi, 10 h – 17 h." },
+              { q: "Quels jours la médiathèque est-elle <b>fermée</b> ?", choices: ["Le mercredi et le jeudi", "Le lundi et le dimanche", "Seulement le dimanche"], ok: 1, why: "Le tableau indique « Fermé » le lundi et le dimanche." }
             ], onDone: () => ctx.go(2) });
           }
         } });
@@ -273,7 +273,7 @@
 
       if (step === 0) {
         const f = frame(ctx, { level: 2, title: "Précédent, suivant, actualiser", step: 0,
-          consigne: "Les flèches en haut à gauche permettent de <b>revenir en arrière</b> ou d'<b>aller en avant</b>, comme les pages d'un livre.",
+          consigne: "Les flèches en haut à gauche permettent de <b>revenir en arrière</b> ou d'<b>aller en avant</b>, comme les pages d'un livre. Suivez les étapes une par une.",
           help: "← = page précédente · → = page suivante · ⟳ = actualiser (recharger la page)." });
         const tasks = [
           { id: "agenda", label: "Cliquez sur <b>Agenda</b> dans le menu du site." },
@@ -299,7 +299,7 @@
             if (asked) return; asked = true;
             draw(`<div class="mk-q-slot"></div>`);
             quiz(f.panel.querySelector(".mk-q-slot"), { G, key: "new", questions: [
-              { q: "Quelle nouveauté est apparue en actualisant ?", choices: ["Un club de lecture", "Un atelier « Ma tablette » vendredi à 15 h", "Rien n'a changé"], ok: 1, why: "Actualiser recharge la page : on voit la toute dernière version. Ici : l'atelier « Ma tablette » vendredi à 15 h." }
+              { q: "Après l'actualisation, quelle nouveauté apparaît dans l'agenda ?", choices: ["Un club de lecture", "Un atelier « Ma tablette » vendredi à 15 h", "Rien n'a changé"], ok: 1, why: "Actualiser recharge la page : on voit la toute dernière version. Ici : l'atelier « Ma tablette » vendredi à 15 h." }
             ], onDone: () => ctx.go(1) });
           }
         } });
@@ -322,7 +322,7 @@
         mount(ctx, f.host, { start: MED, onEvent: (type, d, c) => {
           if (type === "tabNew" && !T("new").done) { T("new").done = true; G.ok("tab_new", "Ouvrir un nouvel onglet"); draw(); }
           if (type === "navigate" && onHost(d.url, MAIRIE)) {
-            if (c.st.active === 0 && !T("new").done) { c.flash("Vous êtes allé sur la mairie <b>dans le même onglet</b> : la médiathèque a disparu. Cliquez sur <b>←</b> pour revenir, puis ouvrez un <b>nouvel onglet ＋</b>.", "warn", 8000); G.ko("tab_new", "Ouvrir un nouvel onglet", "Sans nouvel onglet, le nouveau site remplace l'ancien."); return; }
+            if (c.st.active === 0 && !T("new").done) { c.flash("Vous avez ouvert la mairie <b>dans le même onglet</b> : la médiathèque a disparu. Cliquez sur <b>←</b> pour revenir, puis ouvrez un <b>nouvel onglet ＋</b>.", "warn", 8000); G.ko("tab_new", "Ouvrir un nouvel onglet", "Sans nouvel onglet, le nouveau site remplace l'ancien."); return; }
             T("mairie").done = true; draw();
           }
           if (type === "navigate" && d.from === "address" && !d.found) c.flash(`🦖 Site introuvable. ${urlHint(MAIRIE, d.url)}`, "warn", 8000);
@@ -391,12 +391,12 @@
         quiz(f.panel, { G, key: "kw", title: `<div class="alert good">💡 La recette : <b>quoi</b> + <b>où</b> (+ <b>quand</b>). Exemple : <b>horaires piscine Valbourg</b></div>`, questions: [
           { q: "Vous cherchez les horaires de la <b>piscine de Valbourg</b>. Quelle est la meilleure recherche ?", choices: ["Bonjour, je voudrais savoir à quelle heure ouvre la piscine s'il vous plaît", "horaires piscine Valbourg", "piscine"], ok: 1, why: "Les mots importants suffisent : <b>horaires</b> (quoi), <b>piscine</b>, <b>Valbourg</b> (où). « piscine » tout seul donnerait des piscines du monde entier." },
           { q: "Vous voulez une <b>recette de soupe de potiron</b>. Quelle recherche ?", choices: ["recette soupe potiron", "soupe", "comment on fait à manger"], ok: 0, why: "<b>recette soupe potiron</b> : trois mots précis, et le moteur trouve exactement ce qu'il faut." },
-          { q: "Faut-il mettre les accents et les majuscules ?", choices: ["Oui, sinon ça ne marche pas", "Ce n'est pas obligatoire : le moteur comprend quand même", "Il faut tout écrire en MAJUSCULES"], ok: 1, why: "Le moteur de recherche est tolérant : « dechetterie » ou « Déchetterie » donnent les mêmes résultats. (Ce n'est pas le cas des <b>adresses</b> de sites, qui doivent être exactes !)" }
+          { q: "Dans une recherche, faut-il mettre les accents et les majuscules ?", choices: ["Oui, sinon ça ne marche pas", "Ce n'est pas obligatoire : le moteur comprend quand même", "Il faut tout écrire en MAJUSCULES"], ok: 1, why: "Le moteur de recherche est tolérant : « dechetterie » ou « Déchetterie » donnent les mêmes résultats. (Ce n'est pas le cas des <b>adresses</b> de sites, qui doivent être exactes !)" }
         ], onDone: () => ctx.go(1) });
         return;
       }
 
-      const searchStep = ({ title, consigne, need, target, ad, qs, next, key }) => {
+      const searchStep = ({ title, consigne, need, say = need.join(" "), target, ad, qs, next, key }) => {
         const f = frame(ctx, { level: 3, title, step, consigne,
           help: "Tapez vos mots-clés dans la case de Cherchetout, puis appuyez sur Entrée. Lisez ensuite les résultats avant de cliquer." });
         const tasks = [{ label: "Faites une <b>recherche</b> avec quelques mots-clés." }, { label: "Ouvrez le résultat qui <b>répond à la question</b>." }];
@@ -408,7 +408,7 @@
             const q = words(d.q), ok = need.every(w => q.includes(w));
             tasks[0].done = true; draw();
             if (ok) { G.ok(key + "_q", "Choisir de bons mots-clés"); if (q.split(/\s+/).length > 6) c.flash("✅ Ça marche ! Astuce : pas besoin de phrase, <b>3 ou 4 mots</b> suffisent.", "info", 5000); }
-            else { G.ko(key + "_q", "Choisir de bons mots-clés", `Il fallait les mots importants, par exemple : « ${need.join(" ")} Valbourg ».`); c.flash(`Hmm, pensez aux mots importants : <b>${need.join(" ")}</b>… et la ville !`, "warn", 6000); }
+            else { G.ko(key + "_q", "Choisir de bons mots-clés", `Il fallait les mots importants, par exemple : « ${say} Valbourg ».`); c.flash(`Hmm, pensez aux mots importants : <b>${say}</b>… et la ville !`, "warn", 6000); }
           }
           if (type === "navigate" && ad && onHost(d.url, host(ad))) {
             G.ko(key + "_res", "Ouvrir le bon résultat", "Le premier résultat était une annonce « Sponsorisé » : une publicité, pas la réponse à la question.");
@@ -429,8 +429,8 @@
              { q: "Et la nuit, quel numéro appeler ?", choices: ["Le 3237", "Le 17", "Le numéro de la mairie"], ok: 0, why: "Le <b>3237</b> donne la pharmacie de garde la plus proche." }],
         next: () => ctx.go(2) });
       if (step === 2) return searchStep({ key: "dech", title: "Les horaires de la déchetterie", consigne: "Vous voulez apporter un vieux meuble samedi. Cherchez les <b>horaires de la déchetterie</b> de Valbourg.",
-        need: ["dech"], target: MAIRIE + "/dechetterie",
-        qs: [{ q: "Le <b>samedi</b>, la déchetterie est ouverte…", choices: ["de 14 h à 18 h seulement", "de 9 h à 12 h et de 14 h à 18 h", "elle est fermée"], ok: 1, why: "Samedi : 9 h – 12 h et 14 h – 18 h." }],
+        need: ["dech"], say: "déchetterie", target: MAIRIE + "/dechetterie",
+        qs: [{ q: "Le <b>samedi</b>, quels sont les horaires de la déchetterie ?", choices: ["De 14 h à 18 h seulement", "De 9 h à 12 h et de 14 h à 18 h", "Elle est fermée"], ok: 1, why: "Samedi : 9 h – 12 h et 14 h – 18 h." }],
         next: () => finish(ctx, G, { key: "nav_search", label: "Je sais faire une recherche sur Internet", intro: "Vous savez choisir vos mots-clés, lancer une recherche et ouvrir le résultat qui répond à votre question." }) });
       ctx.finalScreen({ theme: null });
     }
@@ -448,7 +448,7 @@
       if (step === 0) {
         const f = frame(ctx, { level: 4, title: "Trouver le site officiel", step: 0,
           consigne: "Vous devez renouveler votre <b>passeport</b>. La recherche est faite : ouvrez le <b>site officiel</b> pour faire la pré-demande (elle est <b>gratuite</b>).",
-          help: "Lisez au-dessus de chaque résultat : le mot « Sponsorisé » et le nom du site. Les sites de l'État finissent par .gouv.fr" });
+          help: "Lisez au-dessus de chaque résultat : le mot « Sponsorisé » et le nom du site. Les sites de l'État finissent par .gouv.fr." });
         f.panel.innerHTML = tasksHTML([{ label: "Ouvrez le site officiel de la pré-demande de passeport." }]);
         mount(ctx, f.host, { start: `${B().RESULTS}?q=renouveler passeport`, onEvent: (type, d, c) => {
           if (type !== "navigate") return;
@@ -475,7 +475,7 @@
         const f = frame(ctx, { level: 4, title: "Annonce ou site officiel ?", step: 1, noClient: true,
           consigne: "Pour chaque résultat, dites ce que c'est. Regardez bien : le mot « Sponsorisé » et le <b>nom du site</b>." });
         const card = url => { const e = INDEX.find(x => x.url === url); return `<div class="ct-results">${B().resultHTML(e)}</div>`; };
-        const C = ["📢 Une annonce (publicité)", "🇫🇷 Le site officiel", "💬 L'avis de particuliers"];
+        const C = ["📢 Une annonce (publicité)", "🇫🇷 Le site officiel", "💬 Des avis de particuliers"];
         quiz(f.panel, { G, key: "kind", questions: [
           { q: `Ce résultat, c'est… ${card("www.mes-papiers-facile-valbourg.fr")}`, choices: C, ok: 0, why: "« Sponsorisé » : une entreprise a payé pour être là. Ici, 39,90 € pour une démarche gratuite !" },
           { q: `Et celui-ci ? ${card("passeport.ants.gouv.fr")}`, choices: C, ok: 1, why: "<b>ants.gouv.fr</b> : la fin <b>.gouv.fr</b> est réservée à l'État." },
@@ -520,7 +520,7 @@
      ========================================================= */
   const CLUES = {
     adresse: { label: "L'adresse : impots-gouv-remboursement.com", why: "Le vrai site des impôts est <b>impots.gouv.fr</b>. Ici, le vrai nom (en gras) est impots-gouv-remboursement<b>.com</b>." },
-    nonsecure: { label: "« Non sécurisé » devant l'adresse", why: "Le navigateur prévient : ce que vous tapez n'est pas protégé. Aucun site officiel n'est comme ça." },
+    nonsecure: { label: "« Non sécurisé » devant l'adresse", why: "Le navigateur prévient : ce que vous tapez n'est pas protégé. Aucun site officiel n'affiche ça." },
     logo: { label: "« République Françoise » : un faux logo", why: "Une faute dans le nom même de la République : un site officiel ne ferait jamais ça." },
     faute: { label: "Des fautes d'orthographe", why: "« Vous ête éligible a… » : les faux sites sont souvent mal écrits." },
     urgence: { label: "Un compte à rebours pour vous presser", why: "« Expire dans 14:59 » : l'urgence sert à vous empêcher de réfléchir." },
@@ -528,7 +528,7 @@
   };
   const VOTES = [
     { url: "www.ameli.fr", real: true, why: "Le vrai nom est <b>ameli.fr</b> : c'est bien le site de l'Assurance Maladie. Et il ne demande rien d'urgent." },
-    { url: "www.ameli-remboursement.info", real: false, why: "Il y a un cadenas 🔒… mais le vrai nom est <b>ameli-remboursement.info</b>, pas ameli.fr. Et on demande la carte bancaire : c'est un faux." },
+    { url: "www.ameli-remboursement.info", real: false, why: "Il y a un cadenas 🔒… mais le vrai nom est <b>ameli-remboursement.info</b>, pas ameli.fr. Et le site demande la carte bancaire : c'est un faux site." },
     { url: MED, real: true, why: "<b>mediatheque-valbourg.fr</b> : le site de la médiathèque, que vous connaissez. Rien n'est demandé." },
     { url: "www.colis-suivi-valbourg.top", real: false, why: "« Non sécurisé », une adresse en <b>.top</b>, des frais et un code SMS : c'est une arnaque au colis." }
   ];
@@ -541,7 +541,7 @@
         const ids = Object.keys(CLUES);
         L.found ||= new Set();
         const f = frame(ctx, { level: 5, title: "L'enquête : trouvez les 6 indices", step: 0,
-          consigne: "Ce site prétend être celui des impôts. Cliquez sur tout ce qui vous paraît <b>suspect</b> : dans la page, mais aussi <b>en haut, dans la barre d'adresse</b>.",
+          consigne: "Ce site prétend être celui des impôts. Cliquez sur tout ce qui vous paraît <b>suspect</b> : dans la page, mais aussi <b>en haut, dans la barre d'adresse</b>. Le compteur indique combien d'indices vous avez trouvés. À la fin, cliquez sur « J'ai fini ».",
           help: "Regardez : le nom du site (en gras dans la barre d'adresse), ce qui est écrit juste devant, le logo, l'orthographe, ce qu'on vous presse de faire, ce qu'on vous demande." });
         const draw = (last) => {
           f.panel.innerHTML = `<div class="mk-spot-count"><b>${L.found.size}</b> / ${ids.length} indices trouvés · <button type="button" class="secondary" data-done>J'ai fini ✔</button></div>
@@ -641,7 +641,7 @@
           if (type === "tabClose" && onHost(d.url, host(FAKE_ALERT))) {
             if (!T("esc").done) { T("esc").done = true; G.ko("esc", "Quitter le plein écran avec Échap", "Échap fait sortir du plein écran : la barre du navigateur et la croix de l'onglet réapparaissent."); }
             T("close").done = true; G.ok("no_click", "Ne pas cliquer dans la fausse alerte"); G.ok("close", "Fermer l'onglet de la fausse alerte"); draw();
-            c.flash("✅ Envolée ! Votre ordinateur n'a jamais rien eu.", "good", 3000);
+            c.flash("✅ La fausse alerte a disparu ! Votre ordinateur n'a jamais rien eu.", "good", 3000);
             later(ctx, () => ctx.go(1), 1600);
           }
           if (type === "allClosed") { G.ok("close", "Fermer l'onglet de la fausse alerte"); later(ctx, () => ctx.go(1), 1200); }
@@ -651,7 +651,7 @@
 
       if (step === 1) {
         const f = frame(ctx, { level: 6, title: "Cookies et fenêtres surgissantes", step: 1,
-          consigne: "Sur beaucoup de sites, des fenêtres s'ouvrent par-dessus la page. Débarrassez-vous-en calmement, puis trouvez <b>la météo de demain</b>.",
+          consigne: "Sur beaucoup de sites, des fenêtres s'ouvrent par-dessus la page. Fermez-les calmement, puis trouvez <b>la météo de demain</b>.",
           help: "La croix ✕ en haut à droite d'une fenêtre la ferme. Pour les cookies, on a le droit de « Tout refuser » : le site marche pareil." });
         const tasks = [{ id: "popup", label: "Fermez la fenêtre « Félicitations » avec sa croix <b>✕</b>." }, { id: "cookie", label: "Répondez au bandeau des <b>cookies</b>, en bas." }];
         const T = id => tasks.find(t => t.id === id);
@@ -668,7 +668,7 @@
         mount(ctx, f.host, { start: "www.meteo-valbourg.fr", onEvent: (type, d, c) => {
           if (type === "action" && d.name === "gift") {
             G.ko("popup", "Fermer une fenêtre « Vous avez gagné »", "Personne ne gagne un smartphone en visitant un site : c'est un piège pour récupérer vos coordonnées ou votre carte.");
-            c.flash("🎁 Personne ne gagne un smartphone en visitant un site ! C'est un piège à coordonnées. Fermez la fenêtre avec la <b>✕</b>.", "bad", 8000);
+            c.flash("🎁 Personne ne gagne un smartphone en visitant un site ! C'est un piège pour récupérer vos coordonnées. Fermez la fenêtre avec la <b>✕</b>.", "bad", 8000);
           }
           if (type === "popupClose") { T("popup").done = true; G.ok("popup", "Fermer une fenêtre « Vous avez gagné »"); draw(); maybeAsk(); }
           if (type === "cookie") {
@@ -686,8 +686,8 @@
           consigne: "Des situations qui font peur, et les bons réflexes. Il n'y a jamais de honte : ces pièges sont faits par des professionnels de l'arnaque." });
         quiz(f.panel, { G, key: "whatif", questions: [
           { q: "La fausse alerte bloque tout, même avec Échap. Que faire ?", choices: ["J'appelle le numéro affiché", "Je ferme le navigateur ; si besoin, j'éteins l'ordinateur en restant appuyé sur le bouton marche", "Je paie pour débloquer"], ok: 1, why: "Fermer le navigateur, ou même éteindre l'ordinateur, fait disparaître la page. Au redémarrage, il n'y a plus rien." },
-          { q: "Vous avez appelé, et la personne veut « prendre la main » sur votre ordinateur.", choices: ["Je raccroche tout de suite", "Je la laisse faire, c'est un technicien", "Je lui donne ma carte pour payer l'intervention"], ok: 0, why: "Microsoft, votre banque ou votre fournisseur ne vous demandent <b>jamais</b> de les appeler depuis une alerte. On raccroche." },
-          { q: "Vous lui avez déjà laissé prendre la main…", choices: ["Ce n'est pas grave, j'oublie", "J'éteins l'ordinateur, je préviens ma banque et je fais vérifier l'ordinateur", "Je rappelle pour demander de l'aide"], ok: 1, why: "On coupe (éteindre, ou débrancher Internet), on prévient sa banque, on fait vérifier l'ordinateur et on change ses mots de passe depuis un autre appareil. Aide : <b>cybermalveillance.gouv.fr</b>." },
+          { q: "Vous avez appelé, et la personne veut « prendre la main » sur votre ordinateur. Que faites-vous ?", choices: ["Je raccroche tout de suite", "Je la laisse faire, c'est un technicien", "Je lui donne ma carte pour payer l'intervention"], ok: 0, why: "Microsoft, votre banque ou votre fournisseur ne vous demandent <b>jamais</b> de les appeler depuis une alerte. On raccroche." },
+          { q: "La personne a déjà pris la main sur votre ordinateur. Que faites-vous ?", choices: ["Ce n'est pas grave, j'oublie", "J'éteins l'ordinateur, je préviens ma banque et je fais vérifier l'ordinateur", "Je rappelle pour demander de l'aide"], ok: 1, why: "On coupe (éteindre, ou débrancher Internet), on prévient sa banque, on fait vérifier l'ordinateur et on change ses mots de passe depuis un autre appareil. Aide : <b>cybermalveillance.gouv.fr</b>." },
           { q: "Un vrai antivirus vous prévient…", choices: ["Dans une page web, avec une sirène et un numéro à appeler", "Dans une petite fenêtre de l'ordinateur, sans jamais demander d'appeler"], ok: 1, why: "Une vraie alerte ne s'affiche pas dans le navigateur et ne donne <b>jamais</b> de numéro à appeler." }
         ], onDone: () => finish(ctx, G, { key: "nav_alert", label: "Je sais réagir à une fausse alerte", intro: "Vous savez quitter une fausse alerte (Échap, fermer l'onglet), refuser les cookies et fermer les fenêtres pièges, calmement." }) });
         return;

@@ -86,7 +86,7 @@
     P[FC + "/choix"] = { title: "FranceConnect - Choisir un compte", short: "FranceConnect", icon: "🇫🇷", html: () => {
       const s = SVC[W.svc] || SVC.mairie, plus = !!s.plus;
       return `<div class="fc-page">${fcTop(plus)}<main class="fc-main">
-        <h2>Je choisis un compte pour me connecter sur<br><b>${s.name}</b></h2>
+        <h2>Je choisis un compte pour me connecter à<br><b>${s.name}</b></h2>
         ${plus ? `<div class="fc-note">🔒 <b>FranceConnect+</b> : pour ce service, seules les identités numériques renforcées sont possibles.</div>` : ""}
         <div class="fc-idps">${IDP.map(i => { const off = plus && !i.plus; return `<button type="button" class="fc-idp ${off ? "off" : ""}" data-bk-act="idp" data-idp="${i.id}" ${off ? "aria-disabled=\"true\"" : ""}><span class="ic">${i.ic}</span>${i.label}<small>${off ? "non accepté ici" : i.sub}</small></button>`; }).join("")}</div>
         <p style="font-size:.85em;color:#555">Vous n'avez aucun de ces comptes ? Il faut en créer un d'abord, sur le site correspondant.</p>
@@ -195,8 +195,8 @@
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const W = L.W ||= { svc: "mairie" };
       const f = frame(ctx, { level: 1, title: "Reconnaître FranceConnect", step: 0,
-        consigne: "Marie veut s'inscrire sur les listes électorales sur le site de sa mairie. Le site propose <b>FranceConnect</b> : découvrons ce bouton.",
-        help: "Le bouton FranceConnect est bleu foncé, avec « S'identifier avec FranceConnect »." });
+        consigne: "Marie veut s'inscrire sur les listes électorales sur le site de sa mairie. Le site propose <b>FranceConnect</b> : découvrons ce bouton. Suivez les étapes dans l'ordre.",
+        help: "Le bouton FranceConnect porte le texte « S'identifier avec FranceConnect »." });
       const T = tasker(f.panel, [
         { k: "what", label: "Cliquez sur le petit lien <b>« Qu'est-ce que FranceConnect ? »</b> et lisez." },
         { k: "back", label: "Revenez sur le site de la mairie (‹ Revenir, ou la flèche ← du navigateur)." },
@@ -211,7 +211,7 @@
           if (st === "what" && T.done("what")) G.ok("what", "S'informer sur FranceConnect");
           if ((st === "create" || st === "classic") && !T.is("fc")) wrong++;
           if (st === "fc" && T.is("back") && T.done("fc")) {
-            (wrong ? G.ko : G.ok)("fc", "Trouver le bouton FranceConnect", "Le bouton bleu « S'identifier avec FranceConnect » : pas besoin de créer un compte.");
+            (wrong ? G.ko : G.ok)("fc", "Trouver le bouton FranceConnect", "Le bouton « S'identifier avec FranceConnect » : pas besoin de créer un compte.");
             quiz(T.slot(), { G, key: "addr", questions: [
               { q: "Regardez la barre d'adresse. Vous êtes sur…", choices: ["Le site de la mairie", "Le site de FranceConnect : franceconnect.gouv.fr", "Un site de publicité"], ok: 1, why: "En cliquant sur le bouton, on part sur <b>franceconnect.gouv.fr</b>, le site de l'État. On vérifie toujours ce nom !" },
               { q: "FranceConnect, c'est…", choices: ["Un nouveau compte avec un nouveau mot de passe", "Une façon d'entrer avec un compte que j'ai déjà (impots, ameli…)", "Un site de paiement"], ok: 1, why: "C'est comme une <b>clé passe-partout</b> : un compte que vous avez déjà ouvre de nombreux sites publics." },
@@ -229,7 +229,7 @@
   const WHO = [
     { k: "marie", name: "Marie", text: "<b>Marie</b> déclare ses impôts en ligne chaque printemps, sur impots.gouv.fr.", ok: ["impots"], why: "Elle a déjà un compte des impôts : elle l'utilise." },
     { k: "gerard", name: "Gérard", text: "<b>Gérard</b> n'a jamais déclaré ses impôts en ligne, mais il consulte ses remboursements sur son compte ameli.", ok: ["ameli"], why: "Son compte ameli suffit." },
-    { k: "josiane", name: "Josiane", text: "<b>Josiane</b>, ancienne agricultrice, a un compte sur le site de la MSA pour sa retraite.", ok: ["msa"], why: "La MSA, c'est la sécurité sociale agricole : son compte marche avec FranceConnect." },
+    { k: "josiane", name: "Lucien", text: "<b>Lucien</b>, ancien agriculteur, a un compte sur le site de la MSA pour sa retraite.", ok: ["msa"], why: "La MSA, c'est la sécurité sociale agricole : son compte fonctionne avec FranceConnect." },
     { k: "ahmed", name: "Ahmed", text: "<b>Ahmed</b> a installé l'application <b>L'Identité Numérique La Poste</b> sur son téléphone (il a fait vérifier son identité au bureau de poste).", ok: ["laposte"], why: "L'Identité Numérique La Poste fonctionne avec FranceConnect… et FranceConnect+." }
   ];
   R("fc_choisir", {
@@ -244,7 +244,7 @@
         help: "Pas de bon ou mauvais compte en général : le bon, c'est celui que la personne possède déjà." });
       const draw = () => {
         const w = WHO[L.i];
-        f.panel.innerHTML = w ? `<div class="alert" style="font-size:1.05em">🧑 Personne ${L.i + 1} / ${WHO.length} : ${w.text}<br><b>Quel compte choisit-elle ?</b></div><div class="mk-fb"></div>` : `<div class="mk-q-slot"></div>`;
+        f.panel.innerHTML = w ? `<div class="alert" style="font-size:1.05em">🧑 Personne ${L.i + 1} / ${WHO.length} : ${w.text}<br><b>Quel compte cette personne choisit-elle ?</b></div><div class="mk-fb"></div>` : `<div class="mk-q-slot"></div>`;
       };
       draw();
       const tried = {};
@@ -265,8 +265,8 @@
       function end() {
         quiz(f.panel.querySelector(".mk-q-slot"), { G, key: "q2", questions: [
           { q: "Je n'ai <b>aucun</b> de ces comptes. Que faire ?", choices: ["FranceConnect ne marche pas pour moi, tant pis", "Créer d'abord un compte : ameli ou impots.gouv.fr par exemple (ou L'Identité Numérique La Poste)", "Utiliser le compte de ma voisine"], ok: 1, why: "Il faut d'abord avoir un compte chez l'un d'eux. Le compte ameli ou impots se crée sur leur site." },
-          { q: "Un compte FranceConnect se crée…", choices: ["Sur franceconnect.gouv.fr, avec un nouveau mot de passe", "On ne crée pas de compte FranceConnect : on utilise un compte existant"], ok: 1, why: "Il n'y a pas de « compte FranceConnect » à créer : c'est une passerelle vers vos comptes existants." },
-          { q: "Le compte choisi doit être à mon nom, avec mon état civil exact. Pourquoi ?", choices: ["Pour que le site reconnaisse bien la bonne personne", "Ça n'a aucune importance"], ok: 0, why: "Le site reçoit votre nom, vos prénoms, votre date et lieu de naissance : ils doivent être exacts, comme sur l'acte de naissance." }
+          { q: "Faut-il créer un « compte FranceConnect » ?", choices: ["Oui, sur franceconnect.gouv.fr, avec un nouveau mot de passe", "Non : on utilise un compte qu'on a déjà"], ok: 1, why: "Il n'y a pas de « compte FranceConnect » à créer : c'est une passerelle vers vos comptes existants." },
+          { q: "Le compte choisi doit être à mon nom, avec mon état civil exact. Pourquoi ?", choices: ["Pour que le site reconnaisse bien la bonne personne", "Ça n'a aucune importance"], ok: 0, why: "Le site reçoit votre nom, vos prénoms, votre date et votre lieu de naissance : ils doivent être exacts, comme sur l'acte de naissance." }
         ], onDone: () => finish(ctx, G, { key: "fc_choisir", label: "Je sais quel compte choisir", intro: "Vous savez choisir, sur la page FranceConnect, un compte que l'on possède déjà." }) });
       }
       void c;
@@ -306,7 +306,7 @@
             T.note(`<div class="wk-sms" style="max-width:none"><b>📧 Nouveau message · FranceConnect</b><p>Bonjour Marie, vous vous êtes connecté(e) à <b>Mairie de Valbourg</b> via FranceConnect, avec votre compte impots.gouv.fr, aujourd'hui à ${new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}.</p></div>`);
             quiz(T.slot(), { G, key: "q3", questions: [
               { q: "Marie reçoit cet e-mail juste après sa connexion. C'est…", choices: ["Normal : FranceConnect prévient après chaque connexion", "Forcément une arnaque"], ok: 0, why: "FranceConnect envoie un e-mail après chaque connexion. Si vous en recevez un alors que vous n'avez rien fait : prudence, quelqu'un utilise peut-être vos identifiants." },
-              { q: "Le mot de passe, Marie l'a tapé sur…", choices: ["Le site de la mairie", "Le site de son compte (impots.gouv.fr), qui s'est ouvert via FranceConnect"], ok: 1, why: "On tape son mot de passe uniquement sur le site du compte choisi. La mairie ne le voit jamais." },
+              { q: "Sur quel site Marie a-t-elle tapé son mot de passe ?", choices: ["Le site de la mairie", "Le site de son compte (impots.gouv.fr), qui s'est ouvert via FranceConnect"], ok: 1, why: "On tape son mot de passe uniquement sur le site du compte choisi. La mairie ne le voit jamais." },
               { q: "Avant de taper le mot de passe, je vérifie…", choices: ["Le vrai nom du site dans la barre d'adresse", "La couleur de la page"], ok: 0, why: "impots.gouv.fr, ameli.fr, franceconnect.gouv.fr… le vrai nom, toujours." }
             ], onDone: () => finish(ctx, G, { key: "fc_connexion", label: "Je sais me connecter avec FranceConnect", intro: "Vous savez faire tout le chemin : bouton FranceConnect, choix du compte, identifiants, vérification des informations, retour sur le site." }) });
           }
@@ -329,7 +329,7 @@
         help: "Avec FranceConnect, il y a deux portes : celle du site (la Caisse des aides), et celle de FranceConnect." });
       const T = tasker(f.panel, [
         { k: "logout", label: "Cliquez sur <b>Se déconnecter</b>, en haut du site." },
-        { k: "fcout", label: "FranceConnect pose une question : répondez comme il faut sur un ordinateur <b>partagé</b>." },
+        { k: "fcout", label: "FranceConnect vous pose une question. Sur un ordinateur <b>partagé</b>, choisissez la réponse la plus prudente." },
         { k: "close", label: "Fermez l'onglet (le ✕ sur l'onglet)." }
       ]);
       mountFC(ctx, f.host, W, { start: SVC.caf.host + "/mon-espace", onEvent: (type, d, c) => {
@@ -365,7 +365,7 @@
         const f = frame(ctx, { level: 5, title: "Problème 1 / 3 : le mot de passe oublié", step: 0,
           consigne: "Marie ne se souvient plus de son mot de passe des impôts. Elle est sur la page FranceConnect. Où cliquer ?",
           help: "Le mot de passe appartient au compte choisi (impots.gouv.fr) : c'est sur SA page qu'on le récupère." });
-        const T = tasker(f.panel, [{ k: "go", label: "Allez sur la page de connexion du compte de Marie (impots.gouv.fr)." }, { k: "forgot", label: "Trouvez le lien pour <b>récupérer le mot de passe</b>, et lancez la demande (numéro fiscal du carnet)." }], { head: card("") });
+        const T = tasker(f.panel, [{ k: "go", label: "Allez sur la page de connexion du compte de Marie (impots.gouv.fr)." }, { k: "forgot", label: "Cliquez sur le lien pour <b>récupérer le mot de passe</b>. Tapez le numéro fiscal du carnet, puis cliquez sur « Continuer »." }], { head: card("") });
         let tries = 0;
         mountFC(ctx, f.host, W, { start: FC + "/choix", onEvent: (type, d, c) => {
           if (type !== "action") return;
@@ -392,7 +392,7 @@
             if (st === "idp" && x.id === "ameli") T.done("ameli");
             if (st === "idp" && x.id === "impots") W.wrongName = false;
             if (st === "refused") { continued = true; T.note(`<div class="alert bad">⚠️ Le site refuse : le nom transmis (DUPOND) ne correspond pas. Revenez à la connexion et choisissez un compte dont l'état civil est <b>exact</b> : celui des impôts.</div>`); }
-            if (st === "other" || (st === "idp" && x.id === "impots")) { if (!T.is("check")) { T.note(`<div class="alert">👀 Bien vu ? Le nom « DUPOND » est faux. Utilisez le compte des impôts, où le nom est juste.</div>`); } }
+            if (st === "other" || (st === "idp" && x.id === "impots")) { if (!T.is("check")) { T.note(`<div class="alert">👀 Avez-vous vu ? Le nom « DUPOND » est faux. Utilisez le compte des impôts, où le nom est juste.</div>`); } }
             if (st === "connected" && W.idp === "impots") {
               T.done("check"); (continued ? G.ko : G.ok)("name", "Repérer une erreur dans l'état civil transmis", "Le nom transmis (DUPOND) n'était pas exact : on choisit un autre compte, puis on fera corriger le compte ameli.");
               T.note(`<div class="alert good">✅ Avec le compte des impôts, le nom est exact : Marie est reconnue. (Elle pourra faire corriger son nom auprès de l'Assurance Maladie.)</div>`);
@@ -413,9 +413,9 @@
           if (st === "fc") T.done("fc");
           if ((st === "idpRefused" || st === "idp") && T.is("fc") && T.done("try")) {
             quiz(T.slot(), { G, key: "q5", questions: [
-              { q: "Pourquoi le compte des impôts est-il refusé ici ?", choices: ["Le site est en panne", "Ce service demande FranceConnect+ : une identité numérique renforcée", "Le mot de passe est faux"], ok: 1, why: "Pour les démarches sensibles (formation, aides à la rénovation, création d'entreprise…), il faut FranceConnect+." },
+              { q: "Pourquoi le compte des impôts est-il refusé ici ?", choices: ["Le site est en panne", "Ce service demande FranceConnect+ : une identité numérique renforcée", "Le mot de passe est faux"], ok: 1, why: "Pour certaines démarches sensibles, il faut FranceConnect+." },
               { q: "Pour FranceConnect+, Marie peut utiliser…", choices: ["L'Identité Numérique La Poste ou France Identité", "Son compte Facebook"], ok: 0, why: "Ces identités renforcées vérifient vraiment qui vous êtes (au bureau de poste, ou avec la puce de la carte d'identité)." },
-              { q: "Le mot de passe des impôts est oublié. Où le récupérer ?", choices: ["Sur la page de connexion d'impots.gouv.fr (« Mot de passe oublié ? »)", "En appelant FranceConnect"], ok: 0, why: "Chaque compte gère son propre mot de passe. FranceConnect ne connaît pas vos mots de passe." }
+              { q: "Marie a oublié son mot de passe des impôts. Où le récupère-t-elle ?", choices: ["Sur la page de connexion d'impots.gouv.fr (« Mot de passe oublié ? »)", "En appelant FranceConnect"], ok: 0, why: "Chaque compte gère son propre mot de passe. FranceConnect ne connaît pas vos mots de passe." }
             ], onDone: () => finish(ctx, G, { key: "fc_problemes", label: "Je sais réagir quand FranceConnect bloque", intro: "Mot de passe oublié, état civil inexact, FranceConnect+ exigé : vous savez où chercher la solution." }) });
           }
         });
@@ -482,8 +482,8 @@
       function end() {
         if (L.ended) return; L.ended = true;
         quiz(T.slot(), { G, key: "q6", questions: [
-          { q: "Une demande de validation arrive sur mon téléphone alors que je n'ai rien fait :", choices: ["Je valide pour voir", "Je refuse", "Je donne mon code à la personne qui m'appelle"], ok: 1, why: "On ne valide que ce qu'on vient de demander soi-même." },
-          { q: "Mon code secret de l'application, je le donne…", choices: ["À personne, jamais", "Au conseiller qui m'appelle"], ok: 0, why: "Comme le code de la carte bancaire : il ne se donne à personne." },
+          { q: "Une demande de validation arrive sur mon téléphone alors que je n'ai rien fait. Que dois-je faire ?", choices: ["Je valide pour voir", "Je refuse", "Je donne mon code à la personne qui m'appelle"], ok: 1, why: "On ne valide que ce qu'on vient de demander soi-même." },
+          { q: "À qui puis-je donner le code secret de l'application ?", choices: ["À personne, jamais", "Au conseiller qui m'appelle"], ok: 0, why: "Comme le code de la carte bancaire : il ne se donne à personne." },
           { q: "France Identité, c'est…", choices: ["L'application de l'État, avec la carte d'identité au format carte bancaire", "Un site de rencontres"], ok: 0, why: "France Identité utilise la puce de la nouvelle carte d'identité, lue par le téléphone." }
         ], onDone: () => finish(ctx, G, { key: "fc_plus", label: "Je sais valider (ou refuser) sur mon téléphone", intro: "Vous savez vous connecter avec FranceConnect+, valider sur le téléphone avec votre code… et refuser une demande surprise." }) });
       }
@@ -513,7 +513,7 @@
       }
       if (step === 1) {
         const f = frame(ctx, { level: 7, title: "Enquête sur un faux site", step: 1,
-          consigne: "Marie a cliqué sur un lien reçu par e-mail. La page ressemble à FranceConnect… Trouvez <b>les 4 indices</b> qui prouvent que c'est un faux, en cliquant dessus. Puis quittez le site.",
+          consigne: "Marie a cliqué sur un lien reçu par e-mail. La page ressemble à FranceConnect… Trouvez <b>les 4 indices</b> qui prouvent que c'est un faux, en cliquant dessus. Puis fermez l'onglet (✕), sans rien remplir.",
           help: "Commencez par la barre d'adresse : cliquez sur le petit cadenas ou sur l'adresse." });
         const T = tasker(f.panel, [{ k: "clues", label: "Trouvez les 4 indices (cliquez dessus) : <b><span class=\"fc-n\">0</span> / 4</b>" }, { k: "leave", label: "Ne remplissez rien : fermez l'onglet (✕)." }]);
         const found = new Set(), WHY = { addr: "L'adresse : franceconnect-verification.com, et non franceconnect.gouv.fr", urgence: "L'urgence : « suspendu dans 24 h »", faute: "Une faute : « vous devez confirmé »", carte: "On demande la carte bancaire : FranceConnect ne la demande jamais" };
@@ -531,8 +531,8 @@
             G.ok("leave", "Quitter le faux site");
             quiz(T.slot(), { G, key: "q7", questions: [
               { q: "La vraie adresse de FranceConnect se termine par…", choices: ["franceconnect.gouv.fr", "franceconnect-verification.com", "france-connect.info"], ok: 0, why: "« .gouv.fr » : réservé à l'État." },
-              { q: "Le cadenas 🔒 est affiché. Le site est donc vrai ?", choices: ["Oui", "Non : le cadenas protège la connexion, il ne prouve pas que le site est honnête"], ok: 1, why: "Les faux sites ont souvent un cadenas. Ce qui compte : le vrai nom du site." },
-              { q: "J'ai tapé mes informations sur un faux site. Je…", choices: ["N'en parle à personne", "Change mes mots de passe, appelle ma banque si j'ai donné ma carte, et regarde cybermalveillance.gouv.fr"], ok: 1, why: "On agit vite, sans honte : changer les mots de passe, faire opposition si besoin, signaler." }
+              { q: "Le cadenas 🔒 est affiché. Est-ce que cela prouve que le site est vrai ?", choices: ["Oui", "Non : le cadenas protège la connexion, il ne prouve pas que le site est honnête"], ok: 1, why: "Les faux sites ont souvent un cadenas. Ce qui compte : le vrai nom du site." },
+              { q: "J'ai tapé mes informations sur un faux site. Que dois-je faire ?", choices: ["Je n'en parle à personne", "Je change mes mots de passe, j'appelle ma banque si j'ai donné ma carte, et je regarde cybermalveillance.gouv.fr"], ok: 1, why: "On agit vite, sans honte : changer les mots de passe, faire opposition si besoin, signaler." }
             ], onDone: () => finish(ctx, G, { key: "fc_arnaques", label: "Je repère les faux FranceConnect", intro: "Faux e-mails, faux appels, faux sites : vous savez repérer les pièges qui utilisent le nom de FranceConnect." }) });
           }
         } });
@@ -581,7 +581,7 @@
           <fieldset class="nv-check"><legend><b>🔵 J'ai trouvé le bouton FranceConnect</b></legend>${["Oui", "Non, je ne l'ai pas trouvé"].map(x => `<label><input type="radio" name="btn" value="${x}"> ${x}</label>`).join("")}</fieldset>
           <fieldset class="nv-check"><legend><b>🌐 Après le clic, l'adresse de la page contenait…</b></legend>${["franceconnect.gouv.fr", "autre chose", "je n'ai pas regardé"].map(x => `<label><input type="radio" name="addr" value="${x}"> ${x}</label>`).join("")}</fieldset>
           <fieldset class="nv-check"><legend><b>🔑 Les comptes proposés</b> (cochez ceux que vous avez vus)</legend>${IDP.map(i => `<label><input type="checkbox" data-idp value="${i.label}"> ${i.ic} ${i.label}</label>`).join("")}</fieldset>
-          <fieldset class="nv-check"><legend><b>✅ Je vérifie</b></legend><label><input type="checkbox" data-c="nothing"> Je n'ai choisi aucun compte et tapé aucun identifiant</label><label><input type="checkbox" data-c="mine"> J'ai repéré quel compte <b>moi</b>, j'aurais pu utiliser</label></fieldset>
+          <fieldset class="nv-check"><legend><b>✅ Je vérifie</b></legend><label><input type="checkbox" data-c="nothing"> Je n'ai choisi aucun compte et je n'ai tapé aucun identifiant</label><label><input type="checkbox" data-c="mine"> J'ai repéré le compte que <b>moi</b>, j'aurais pu utiliser</label></fieldset>
           <label>💬 Une question ? (facultatif)<input type="text" data-f="note" maxlength="300" autocomplete="off"></label>
           <div class="mk-fb"></div>
           <div class="final-actions"><button type="button" class="secondary" data-back>← Revoir la mission</button><button type="button" class="primary" data-send>📤 Envoyer au formateur</button></div></div>`;

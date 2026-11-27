@@ -6,7 +6,7 @@
 
   /* ======================= E-MAIL SUSPECT ======================= */
   const CLUES = {
-    sender: "L'adresse de l'expéditeur imite le vrai nom (un i majuscule remplace le l) et finit par .info.",
+    sender: "L'adresse de l'expéditeur imite le vrai nom (un I majuscule remplace le l minuscule) et finit par .info.",
     subject: "L'objet crie à l'urgence pour vous faire agir sans réfléchir.",
     greeting: "« Cher client » : un vrai service vous appelle par votre nom.",
     urgency: "Une menace avec un délai très court est une technique de pression.",
@@ -39,11 +39,11 @@
 
       if (step === 0 && need) {
         ctx.html(`${ctx.header("Mission sécurité", "Enquête sur un e-mail", 0)}
-          <p class="consigne" data-speak>Ce message vous paraît-il fiable ? Trouvez <b>${need} indices</b> suspects en cliquant dessus.${ctx.level === "expert" ? " Pensez à <b>survoler</b> le bouton (sans cliquer) pour voir où il mène vraiment." : ""}</p>
+          <p class="consigne" data-speak>Lisez cet e-mail. Cliquez sur les passages qui vous semblent suspects. Trouvez <b>${need} indices</b> : le compteur avance à chaque indice trouvé.${ctx.level === "expert" ? " Passez aussi la souris sur le lien « Recevoir mon remboursement », <b>sans cliquer</b>, pour voir où il mène vraiment." : ""}</p>
           <div class="clue-counter"><strong>${Math.min(L.found.length, need)} / ${need}</strong> indices trouvés</div>
           ${mail}
           <div id="clueFeedback" aria-live="polite">${L.fb || ""}</div>
-          ${L.found.length >= need ? `<button type="button" class="primary" data-act="toDecision">J'ai trouvé les indices → décider</button>` : ""}`);
+          ${L.found.length >= need ? `<button type="button" class="primary" data-act="toDecision">J'ai trouvé les indices → je décide</button>` : ""}`);
         const linkEl = ctx.box.querySelector(".mail-link");
         const reveal = () => {
           if (!L.hover) { L.hover = true; ctx.box.querySelector(".status-bar").textContent = "http://ameli-rembourse.xyz/carte-bancaire"; }
@@ -57,7 +57,7 @@
           L.fb = `<div class="alert good">🔍 ${esc(CLUES[id])}</div>`;
           ctx.render();
         });
-        ctx.act("link", (el, e) => { e.preventDefault(); L.fb = `<div class="alert bad">Vous avez cliqué ! Dans la vraie vie, on ne clique pas. Il suffit de <b>survoler</b> le lien pour voir son adresse en bas de la fenêtre.</div>`; ctx.render(); });
+        ctx.act("link", (el, e) => { e.preventDefault(); L.fb = `<div class="alert bad">Vous avez cliqué ! Dans la vraie vie, on ne clique pas. Il suffit de passer la souris sur le lien, <b>sans cliquer</b>, pour voir son adresse en bas de la fenêtre.</div>`; ctx.render(); });
         ctx.act("toDecision", () => ctx.go(1));
         return;
       }
@@ -100,7 +100,7 @@
     proche: { from: "+33 6 44 87 21 09", text: "Coucou maman, j'ai cassé mon téléphone, c'est mon nouveau numéro. Écris-moi vite sur WhatsApp, j'ai besoin d'un service.", fraud: true, why: "Arnaque « au proche » : on vérifie toujours en appelant l'ancien numéro de la personne." },
     antai: { from: "ANTAI", text: "Avis de contravention impayé : 35 €. Majoration de 375 € sous 24h. Payez sur antai-paiement-amende.com", fraud: true, why: "Le site officiel est antai.gouv.fr. Le nom d'expéditeur « ANTAI » peut être usurpé." },
     banque: { from: "Ma Banque", text: "Code 482913 pour valider votre paiement de 59,90 € chez LIBRAIRIE DU PARC. Ne communiquez jamais ce code.", fraud: false, why: "Vous venez justement d'acheter ce livre : le montant et le commerçant correspondent. Le code ne se donne à personne." },
-    impots: { from: "DGFIP", text: "La déclaration de revenus en ligne est ouverte. Rendez-vous dans votre espace sur le site impots.gouv.fr.", fraud: false, why: "Pas de lien cliquable, pas d'urgence, il vous invite à aller vous-même sur le site officiel." }
+    impots: { from: "DGFIP", text: "La déclaration de revenus en ligne est ouverte. Rendez-vous dans votre espace sur le site impots.gouv.fr.", fraud: false, why: "Pas de lien cliquable, pas d'urgence, le message vous invite à aller vous-même sur le site officiel." }
   };
   R("sms_scam", {
     steps: 3, theme: "sms",
@@ -111,7 +111,7 @@
       L.ans ||= {};
       if (step === 0) {
         ctx.html(`${ctx.header("Mission sécurité", "Repérer un SMS frauduleux", 0)}
-          <div class="mission-step"><p data-speak>Votre téléphone a reçu plusieurs SMS. Pour chacun, dites s'il est <b>fiable</b> ou <b>suspect</b>.</p>
+          <div class="mission-step"><p data-speak>Votre téléphone a reçu plusieurs SMS. Lisez-les un par un. Sous chaque SMS, cliquez sur <b>✅ Fiable</b> ou sur <b>⚠️ Suspect</b>.</p>
           ${ctx.level === "expert" ? `<div class="mouse-hint">Contexte : vous venez d'acheter un livre de 59,90 € à la Librairie du Parc.</div>` : ""}
           ${ctx.help("Méfiez-vous des liens, de l'urgence et des demandes d'argent.")}
           <button class="primary" type="button" data-act="start">Ouvrir mes SMS</button></div>`);
@@ -173,12 +173,12 @@
         }
         const pages = shuffle([["good", goodUrl, true], ["bad", badUrl, false]]);
         ctx.html(`${ctx.header("Mission paiement", "Payer en ligne en sécurité", 0)}
-          <p class="consigne" data-speak>Vous voulez payer votre inscription à l'atelier cuisine de la Maison de quartier (${product.amount}). Deux pages de paiement s'ouvrent. <b>Laquelle est la bonne ?</b></p>
+          <p class="consigne" data-speak>Vous voulez payer votre inscription à l'atelier cuisine de la Maison de quartier (${product.amount}). Deux pages de paiement s'ouvrent. <b>Laquelle est la bonne ?</b> Regardez l'adresse en haut de chaque page, puis cliquez sur « Je paie sur cette page » sous la bonne.</p>
           <div class="two-cols">${pages.map(([id, url, sec]) => `<div>${browser(url, `<div class="training-watermark">⚠ SIMULATION</div><h3>Paiement</h3><p>${esc(product.label)}</p><p><b>${product.amount}</b></p>`, sec ? 'class="lock"' : "")}<button type="button" class="secondary full" data-act="pick" data-p="${id}">Je paie sur cette page</button></div>`).join("")}</div>
           <div id="payFb" aria-live="polite"></div>`);
         ctx.act("pick", el => {
           if (el.dataset.p === "bad") { ctx.box.querySelector("#payFb").innerHTML = `<div class="alert bad">Non ! Cette adresse commence par <b>http://</b> (sans s), et le vrai nom du site est suivi de « .paiement-securise.info » : c'est un autre site.</div>`; return; }
-          ctx.box.querySelector("#payFb").innerHTML = `<div class="alert good">Exact : <b>https://</b>, cadenas, et le nom de domaine se termine bien par « maisondequartier-exemple.fr ».</div><button type="button" class="primary" data-act="next">Continuer →</button>`;
+          ctx.box.querySelector("#payFb").innerHTML = `<div class="alert good">Exact : l'adresse commence par <b>https://</b>, il y a un cadenas, et le nom du site se termine bien par « maisondequartier-exemple.fr ».</div><button type="button" class="primary" data-act="next">Continuer →</button>`;
         });
         ctx.act("next", () => ctx.go(1));
         return;
@@ -220,7 +220,7 @@
         const notif = mismatch ? { amount: "489,00 €", merchant: "TOP-ELECTRO SHOP" } : { amount: product.amount, merchant: product.merchant };
         L.code ||= String(100000 + Math.floor(Math.random() * 899999));
         ctx.html(`${ctx.header("Mission paiement", "Confirmer le paiement", 2)}
-          <p class="consigne" data-speak>Votre banque vous envoie un code par SMS pour confirmer le paiement. ${ctx.level === "beginner" ? "Recopiez-le." : "Lisez bien le SMS avant de recopier le code."}</p>
+          <p class="consigne" data-speak>Votre banque vous envoie un code par SMS pour confirmer le paiement. ${ctx.level === "beginner" ? "Recopiez-le dans la case « Code reçu par SMS », puis cliquez sur « Valider »." : "Lisez bien le SMS avant de recopier le code."}</p>
           <div class="pay-layout">
             <div class="phone small"><div class="phone-notch"></div><div class="phone-head">Messages</div><div class="sms"><div class="sms-from">Ma Banque</div><div class="sms-bubble">Code ${L.code} pour valider votre paiement de ${notif.amount} chez ${notif.merchant}. Ne communiquez jamais ce code.</div></div></div>
             <div class="bank-3ds"><div class="training-watermark">⚠ SIMULATION</div><h3>🏦 Ma Banque — Vérification</h3>

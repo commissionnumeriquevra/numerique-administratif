@@ -50,9 +50,9 @@
       });
       const target = ctx.byLevel({ beginner: "attestation_droits", intermediate: "attestation_paiement", expert: "attestation_paiement_" + monthKey(cur) });
       const consigne = ctx.byLevel({
-        beginner: "Téléchargez votre <b>attestation de droits</b>.",
-        intermediate: "Téléchargez votre <b>attestation de paiement</b>.",
-        expert: "Téléchargez l'<b>attestation de paiement la plus récente</b>."
+        beginner: "Cliquez sur « ⬇ Télécharger » à côté de votre <b>attestation de droits</b>.",
+        intermediate: "Cliquez sur « ⬇ Télécharger » à côté de votre <b>attestation de paiement</b>.",
+        expert: "Cliquez sur « ⬇ Télécharger » à côté de l'<b>attestation de paiement la plus récente</b>."
       });
 
       if (step === 0) {
@@ -87,7 +87,7 @@
           <div class="fake-file"><span class="file-icon">PDF</span><div><strong>${esc(L.file || "attestation.pdf")}</strong><br><small>Téléchargement terminé</small></div></div>
           <p data-speak>Le fichier a été enregistré dans le dossier <b>Téléchargements</b> de l'ordinateur.</p>
           ${ctx.byLevel({
-            beginner: `<div class="alert good">💡 En haut à droite du navigateur, cliquez sur la petite flèche ⬇ : votre fichier apparaît. Cliquez dessus pour l'ouvrir.</div>`,
+            beginner: `<div class="alert good">💡 En haut à droite du navigateur, cliquez sur la petite flèche ⬇ : votre fichier apparaît. Cliquez dessus pour l'ouvrir. Revenez ensuite ici et cliquez sur « J'ai ouvert mon fichier ✓ ».</div>`,
             intermediate: `<div class="mouse-hint">Ouvrez le fichier depuis la liste des téléchargements du navigateur, puis revenez ici.</div>`,
             expert: `<div class="mouse-hint">Ouvrez l'Explorateur de fichiers (touches <span class="keycap">⊞ Windows</span> + <span class="keycap">E</span>), allez dans Téléchargements et ouvrez le fichier.</div>`
           })}
@@ -127,7 +127,7 @@
         Object.assign(L, { cur: "bureau", sel: null, opened: false, renamed: isB, moved: false, sorted: false, viewer: null, renaming: false, moving: false, msg: "" });
       }
       const goals = ctx.byLevel({
-        beginner: [["opened", "Ouvrir le dossier Téléchargements puis ouvrir l'avis d'impôt"]],
+        beginner: [["opened", "Ouvrir le dossier Téléchargements, puis ouvrir l'avis d'impôt"]],
         intermediate: [["opened", "Retrouver le dernier fichier téléchargé et l'ouvrir pour vérifier que c'est l'avis d'impôt"], ["renamed", `Le renommer en ${goalName}`]],
         expert: [["opened", "Retrouver et ouvrir le dernier fichier téléchargé (l'avis d'impôt)"], ["renamed", `Le renommer en ${goalName}`], ["moved", "Le ranger dans Documents › Mes démarches"]]
       });
@@ -219,7 +219,7 @@
         if (L.fs[L.cur].some(x => x !== f && x.name.toLowerCase() === v.toLowerCase())) { L.renaming = false; return say("Un fichier porte déjà ce nom dans ce dossier."); }
         f.name = v; L.sel = v; L.renaming = false;
         if (f.target && v.toLowerCase() === goalName) { L.renamed = true; L.msg = `<div class="alert good">Fichier renommé. Il sera bien plus facile à retrouver !</div>`; }
-        else if (f.target) L.msg = `<div class="alert warn">Renommé, mais le nom attendu est <b>${esc(goalName)}</b>.</div>`;
+        else if (f.target) L.msg = `<div class="alert warn">Le fichier est renommé, mais le nom attendu est <b>${esc(goalName)}</b>.</div>`;
         else L.msg = `<div class="alert warn">Vous avez renommé un autre fichier que l'avis d'impôt.</div>`;
         ctx.render();
       });
@@ -230,7 +230,7 @@
         L.fs[to].push(f);
         L.moving = false; L.sel = null;
         if (f.target && to === "demarches") { L.moved = true; L.msg = `<div class="alert good">Rangé dans « Mes démarches ». Il ne se perdra plus parmi les téléchargements.</div>`; }
-        else L.msg = `<div class="alert warn">Fichier déplacé vers ${to === "demarches" ? "Mes démarches" : to}. ${f.target ? "Ce n'est pas le dossier demandé." : ""}</div>`;
+        else L.msg = `<div class="alert warn">Fichier déplacé vers ${{ bureau: "Bureau", documents: "Documents", demarches: "Mes démarches", images: "Images" }[to] || to}. ${f.target ? "Ce n'est pas le dossier demandé." : ""}</div>`;
         ctx.render();
       });
       ctx.act("finish", () => ctx.complete({ key: "find_file", label: "J'ai retrouvé un fichier dans l'Explorateur", text: "Vous savez retrouver un fichier téléchargé" + (ctx.level !== "beginner" ? ", le renommer" : "") + (ctx.level === "expert" ? " et le ranger" : "") + "." }));
@@ -260,7 +260,7 @@
         L.got ||= {};
         ctx.html(`${ctx.header("Mission", "Compléter un dossier", 0)}
           <div class="mission-step"><h2>1. Préparez vos documents d'exercice</h2>
-            <p data-speak>Téléchargez ces documents fictifs : ils iront dans le dossier Téléchargements de l'ordinateur. Vous en aurez besoin juste après.</p>
+            <p data-speak>Cliquez sur « ⬇ Télécharger » pour chaque document fictif. Les fichiers vont dans le dossier Téléchargements de l'ordinateur. Vous en aurez besoin juste après.</p>
             <div class="doc-grid">${files.map(([id, lab]) => `<div class="doc-row"><span class="file-icon">PDF</span><div><strong>${esc(lab)}</strong>${L.got[id] ? `<br><small class="ok">✓ téléchargé</small>` : ""}</div><button type="button" class="secondary" data-act="dl" data-id="${id}" data-label="${esc(lab)}">⬇ Télécharger</button></div>`).join("")}</div>
             <h2>2. Envoyez votre dossier</h2>
             ${ctx.help("Une fois les documents téléchargés, cliquez sur « Envoyer mon dossier ». Un message va arriver.")}
@@ -303,7 +303,7 @@
             return;
           }
           L.fileName = f.name;
-          msg.innerHTML = `<div class="alert good">Bonne pièce : <b>${esc(f.name)}</b>. Cliquez pour l'envoyer.</div><button class="primary" type="button" data-act="sendPiece">Envoyer la pièce</button>`;
+          msg.innerHTML = `<div class="alert good">Bonne pièce : <b>${esc(f.name)}</b>. Cliquez sur « Envoyer la pièce ».</div><button class="primary" type="button" data-act="sendPiece">Envoyer la pièce</button>`;
           msg.querySelector("button").focus();
         });
         ctx.act("back0", () => ctx.go(0));

@@ -126,7 +126,7 @@
       if (step === 0) {
         const unread = L.mails.filter(m => m.unread).length;
         const f = frame(ctx, { level: 1, title: "Lire ses e-mails", step: 0,
-          consigne: "Voici une boîte de réception. Les messages <b>en gras</b>, avec un point bleu, sont <b>non lus</b>.",
+          consigne: "Voici votre boîte de réception. Les messages <b>en gras</b>, avec un point bleu, ne sont <b>pas encore lus</b>. Comptez-les, puis répondez à la question.",
           help: "Regardez la liste au milieu : le gras signifie « pas encore ouvert »." });
         let quizDone = false;
         const c = mount(f.host, { onEvent: (type, d) => {
@@ -153,15 +153,15 @@
         inlineQuiz(f.panel, { G, key: "read", questions: [
           { q: "Qui vous a envoyé ce message ?", choices: ["La médiathèque de Valbourg", "La mairie de Valbourg", "Claire Dupont"], ok: 0, why: "L'expéditeur est écrit en haut du message, à côté de « De » : Médiathèque de Valbourg." },
           { q: "Quand a lieu l'atelier ?", choices: ["Lundi à 10 h", "Jeudi à 14 h", "Samedi à 14 h"], ok: 1, why: "Le message dit : « jeudi à 14 h, salle Jules Verne »." },
-          { q: "Que faut-il apporter ?", choices: ["Une photo d'identité", "Son carnet et ses identifiants de messagerie", "Rien du tout"], ok: 1, why: "La dernière phrase demande d'apporter « votre carnet et vos identifiants de messagerie »." }
+          { q: "Que faut-il apporter ?", choices: ["Une photo d'identité", "Son carnet et ses identifiants de messagerie", "Rien du tout"], ok: 1, why: "Le message demande d'apporter « votre carnet et vos identifiants de messagerie »." }
         ], onDone: () => ctx.go(2) });
         return;
       }
 
       if (step === 2) {
         const f = frame(ctx, { level: 1, title: "Ouvrir une pièce jointe", step: 2,
-          consigne: "Le trombone 📎 signale une <b>pièce jointe</b> : un document attaché au message.",
-          help: "Ouvrez le message de la mairie, puis cliquez sur le document en bas du message." });
+          consigne: "Le trombone 📎 signale une <b>pièce jointe</b> : un document attaché au message. Faites les 2 étapes ci-dessous.",
+          help: "La pièce jointe se trouve en bas du message, sous le texte." });
         const tasks = [{ id: "open", label: "Ouvrez le message de la <b>Mairie de Valbourg</b> (il a un trombone 📎)." }, { id: "att", label: "Cliquez sur la pièce jointe <b>programme_animations.pdf</b>." }];
         f.panel.innerHTML = tasksHTML(tasks);
         mount(f.host, { onEvent: (type, d) => {
@@ -227,7 +227,7 @@
         L.p ||= 0;
         const part = PARTS[L.p];
         const f = frame(ctx, { level: 2, title: "Comprendre une adresse e-mail", step: 0, noClient: true,
-          consigne: "Une adresse e-mail est comme une adresse postale : chaque partie a un rôle." });
+          consigne: "Chaque partie d'une adresse e-mail a un rôle. Lisez la question, puis cliquez sur la bonne partie de l'adresse." });
         f.panel.innerHTML = `<div class="addr-anatomy" role="group" aria-label="Adresse marie.dupont@laposte.net">${PARTS.map(x => `<button type="button" class="addr-part ${L.done?.includes(x.id) ? "found" : ""}" data-p="${x.id}">${esc(x.text)}</button>`).join("")}</div>
           <h3 data-speak>${part.q}</h3><div class="mk-fb"></div>`;
         f.panel.querySelectorAll("[data-p]").forEach(b => b.addEventListener("click", () => {
@@ -272,7 +272,7 @@
         L.d ||= 0;
         const target = targets[L.d];
         const f = frame(ctx, { level: 2, title: "Écrire une adresse sans erreur", step: 2, noClient: true,
-          consigne: `Recopiez cette adresse exactement (${L.d + 1} / ${targets.length}) :`,
+          consigne: `Recopiez exactement cette adresse dans la case, puis cliquez sur « Vérifier » (${L.d + 1} / ${targets.length}).`,
           help: "L'arobase @ : maintenez la touche AltGr et appuyez sur la touche à (0)." });
         f.panel.innerHTML = `<div class="addr-model">${esc(target)}</div>
           <div class="keys-hint"><span><kbd>AltGr</kbd> + <kbd>à 0</kbd> = @</span><span><kbd>Maj</kbd> + <kbd>; .</kbd> = .</span><span><kbd>6</kbd> = -</span><span><kbd>8</kbd> = _</span></div>
@@ -317,8 +317,8 @@
         const B = ["↩️ Répondre", "↩️↩️ Répondre à tous", "↪️ Transférer"];
         const qs = [
           { q: "La médiathèque vous demande si vous serez présent(e) jeudi.", choices: B, ok: 0, why: "Seule la médiathèque a besoin de votre réponse : « Répondre »." },
-          { q: "Vous avez reçu la facture du plombier. Vous voulez l'envoyer à votre fille, qui s'occupe de vos papiers.", choices: B, ok: 2, why: "Votre fille n'a pas reçu ce message : on le lui « Transfère », avec la pièce jointe." },
-          { q: "Votre fils propose un repas de famille dimanche, toute la famille est en copie. Vous voulez dire à tout le monde que vous apportez le dessert.", choices: B, ok: 1, why: "Toute la famille doit lire votre réponse : « Répondre à tous »." },
+          { q: "Vous avez reçu la facture du plombier. Vous voulez l'envoyer à votre fille, qui s'occupe de vos papiers.", choices: B, ok: 2, why: "Votre fille n'a pas reçu ce message : on le lui transfère (bouton « Transférer »), avec la pièce jointe." },
+          { q: "Votre fils propose un repas de famille dimanche. Toute la famille est en copie. Vous voulez dire à tout le monde que vous apportez le dessert.", choices: B, ok: 1, why: "Toute la famille doit lire votre réponse : « Répondre à tous »." },
           ...ctx.byLevel({ beginner: [], intermediate: [], expert: [
             { q: "Un message envoyé à 30 parents d'élèves annonce la fête de l'école. Vous voulez seulement demander à l'organisatrice si vous pouvez aider.", choices: B, ok: 0, why: "Inutile d'écrire aux 30 personnes : « Répondre » à l'organisatrice suffit." }
           ] })
@@ -331,7 +331,7 @@
         const f = frame(ctx, { level: 3, title: "Répondre à un message", step: 1,
           consigne: "La médiathèque vous pose une question. <b>Répondez-lui</b> pour confirmer votre présence.",
           help: "Ouvrez le message, cliquez sur « ↩️ Répondre », écrivez quelques mots (Bonjour… Cordialement), puis « Envoyer »." });
-        const tasks = [{ label: "Ouvrez le message de la médiathèque." }, { label: "Cliquez sur <b>↩️ Répondre</b>." }, { label: "Écrivez votre réponse : une formule de politesse au début et à la fin." }, { label: "Cliquez sur <b>📤 Envoyer</b>." }];
+        const tasks = [{ label: "Ouvrez le message de la médiathèque." }, { label: "Cliquez sur <b>↩️ Répondre</b>." }, { label: "Écrivez votre réponse, avec « Bonjour » au début et « Cordialement » à la fin." }, { label: "Cliquez sur <b>📤 Envoyer</b>." }];
         const upd = () => { f.panel.innerHTML = tasksHTML(tasks) + `<div class="mk-fb"></div>`; };
         upd();
         L.client?.destroy();
@@ -365,7 +365,7 @@
         const f = frame(ctx, { level: 3, title: "Transférer un message", step: 2,
           consigne: `Transférez la facture du plombier à votre fille Claire : <b class="mono">${P.claire.email}</b>`,
           help: "Ouvrez le message, cliquez sur « ↪️ Transférer », écrivez l'adresse de Claire dans « À », puis « Envoyer »." });
-        const tasks = [{ label: "Ouvrez le message de <b>Plomberie Martin</b>." }, { label: "Cliquez sur <b>↪️ Transférer</b>." }, { label: `Dans « À », écrivez l'adresse de Claire.` }, { label: "Envoyez le message (la pièce jointe part avec lui)." }];
+        const tasks = [{ label: "Ouvrez le message de <b>Plomberie Martin</b>." }, { label: "Cliquez sur <b>↪️ Transférer</b>." }, { label: `Dans « À », écrivez l'adresse de Claire.` }, { label: "Cliquez sur <b>📤 Envoyer</b>. La facture part avec le message." }];
         const upd = () => { f.panel.innerHTML = tasksHTML(tasks) + `<div class="mk-fb"></div>`; };
         upd();
         L.client?.destroy();
@@ -420,7 +420,7 @@
         const f = frame(ctx, { level: 4, title: "Écrire un e-mail complet", step: 1,
           consigne: `Écrivez à la médiathèque (<b class="mono">${P.media.email}</b>) pour vous <b>inscrire à l'atelier de jeudi</b>. Mettez votre fille Claire (<b class="mono">${P.claire.email}</b>) <b>en copie</b>.${expert ? ` Ajoutez votre voisin Paul (<b class="mono">${P.paul.email}</b>) en <b>copie cachée</b>.` : ""}`,
           help: "Cliquez sur « ✏️ Nouveau message ». Pour la copie, cliquez sur « + Cc / Cci »." });
-        const tasks = [{ label: "Cliquez sur <b>✏️ Nouveau message</b>." }, { label: "Remplissez « À » et « Cc »." + (expert ? " Et « Cci »." : "") }, { label: "Écrivez un objet clair." }, { label: "Écrivez le message, avec politesse." }, { label: "Envoyez." }];
+        const tasks = [{ label: "Cliquez sur <b>✏️ Nouveau message</b>." }, { label: "Remplissez « À » (la médiathèque) et « Cc » (Claire)." + (expert ? " Mettez Paul dans « Cci »." : "") }, { label: "Écrivez un objet clair." }, { label: "Écrivez votre demande, avec « Bonjour » et « Cordialement »." }, { label: "Cliquez sur <b>📤 Envoyer</b>." }];
         const upd = () => { f.panel.innerHTML = tasksHTML(tasks) + `<div class="mk-fb"></div>`; };
         upd();
         L.client?.destroy();
@@ -524,12 +524,12 @@
           onEvent: (type, d, c) => {
             if (type === "reply") { tasks[0].done = true; upd(); }
             if (type === "attach") { tasks[0].done = tasks[1].done = true; upd();
-              if (d.name.endsWith(".exe")) c.flash("⚠️ Un fichier « .exe » est un programme, pas un document. On n'envoie jamais ça comme justificatif.", "warn", 6000); }
+              if (d.name.endsWith(".exe")) c.flash("⚠️ Un fichier « .exe » est un programme, pas un document. Ce n'est jamais un justificatif : retirez-le avec la croix ✕.", "warn", 6000); }
             if (type === "send") {
               const names = d.attachments.map(a => a.name);
               if (!names.length) {
                 G.ko("att", "Joindre le justificatif", "Le message est parti sans pièce jointe ! C'est l'oubli le plus fréquent : on vérifie toujours la présence du 📎 avant d'envoyer.");
-                f.panel.querySelector(".mk-fb").innerHTML = `<div class="alert bad">❌ Oups, vous avez oublié la pièce jointe ! C'est l'erreur la plus fréquente. Renvoyez le message, cette fois avec le justificatif.</div>`;
+                f.panel.querySelector(".mk-fb").innerHTML = `<div class="alert bad">❌ Oups, vous avez oublié la pièce jointe ! C'est l'erreur la plus fréquente. Cliquez à nouveau sur « ↩️ Répondre », puis joignez le justificatif.</div>`;
                 return false;
               }
               if (names.includes(FX.good)) G.ok("att", "Joindre le bon justificatif");
@@ -593,7 +593,7 @@
         { id: "promo", label: "<b>Supprimez</b> la publicité « SOLDES -70 % »." },
         { id: "claire", label: "<b>Répondez à Claire</b> : dites-lui que vous venez dimanche." },
         { id: "fw", label: `<b>Transférez</b> la convocation de la mairie à Claire (<span class="mono">${P.claire.email}</span>).` },
-        { id: "doc", label: "Avec la <b>🔍 recherche</b>, retrouvez le message du <b>Dr Martin</b> : à quelle heure est votre rendez-vous ?" }
+        { id: "doc", label: "Avec la <b>🔍 recherche</b>, retrouvez le message du <b>Dr Martin</b>. Quand est votre rendez-vous ?" }
       ];
 
       if (step === 0) {
@@ -607,7 +607,7 @@
       if (step === 1) {
         L.done ||= {};
         const f = frame(ctx, { level: 7, title: "Le défi de la boîte mail", step: 1,
-          consigne: "Accomplissez toutes les tâches de la liste.",
+          consigne: "Faites toutes les tâches de la liste. Chaque tâche réussie se coche toute seule ✅.",
           help: "Pour un message frauduleux : ouvrez-le puis cliquez sur « 🚫 Indésirable ». Attention : ne cliquez sur aucun lien !" });
         const upd = () => {
           const all = T.every(t => L.done[t.id]);
@@ -631,11 +631,11 @@
               G.ko("link_" + (m?.id || ""), "Ne jamais cliquer sur un lien suspect", `Le lien menait vers ${d.url} : un faux site. On ne clique pas, on met le message dans les indésirables.`);
               c.flash(`⛔ Vous avez cliqué sur un lien frauduleux ! Il menait vers <b>${esc(d.url)}</b>. Dans la vraie vie, on ne clique pas : on signale le message comme indésirable.`, "bad", 7000);
             }
-            if (type === "hover" && m?.scam) c.flash(`🔍 Bien vu : en survolant le lien, on voit en bas qu'il mène vers <b>${esc(d.url)}</b>, pas vers un site officiel.`, "info", 4000);
+            if (type === "hover" && m?.scam) c.flash(`🔍 Bien vu : en posant la souris sur le lien, on voit en bas qu'il mène vers <b>${esc(d.url)}</b>, pas vers un site officiel.`, "info", 4000);
             if (type === "spam") {
               if (m.scam && m.live) { G.ok("live_" + m.id, "Repérer le piège envoyé par le formateur"); c.flash("🎯 Bien joué, vous avez aussi repéré le piège envoyé par votre formateur !", "good", 4000); }
               else if (m.scam) { c.flash("✅ Message frauduleux mis à l'écart.", "good", 2500); checkScam(); }
-              else G.ko("spam_" + m.id, "Ne pas classer un vrai message en indésirable", `Le message de ${m.from.name} était un vrai message. Restaurez-le avec « ✅ Ce n'est pas un indésirable ».`);
+              else G.ko("spam_" + m.id, "Ne pas classer un vrai message en indésirable", `Le message de ${m.from.name} était un vrai message. Ouvrez le dossier 🚫 Indésirables, puis cliquez sur « ✅ Ce n'est pas un indésirable ».`);
             }
             if (type === "notspam") checkScam();
             if (type === "delete") {
@@ -659,7 +659,7 @@
               const used = !!c.st.query;
               const slot = f.panel.querySelector(".mk-q-slot");
               inlineQuiz(slot, { G, key: "doc", questions: [
-                { q: "À quelle heure est votre rendez-vous chez le Dr Martin ?", choices: ["Mardi à 9 h 30", "Jeudi à 10 h 20", "Samedi à 9 h"], ok: 1, why: "Le message du cabinet indique « jeudi à 10 h 20 ». (Mardi 9 h 30, c'est la mairie !)" }
+                { q: "Quand est votre rendez-vous chez le Dr Martin ?", choices: ["Mardi à 9 h 30", "Jeudi à 10 h 20", "Samedi à 9 h"], ok: 1, why: "Le message du cabinet indique « jeudi à 10 h 20 ». (Mardi 9 h 30, c'est la mairie !)" }
               ], onDone: () => { L.done.doc = true; if (used) G.ok("search", "Utiliser la recherche"); else G.ko("search", "Utiliser la recherche", "Avec beaucoup de messages, la barre 🔍 Rechercher fait gagner du temps : tapez « Martin »."); upd(); } });
             }
           } });
@@ -690,7 +690,7 @@
   const SENDERS = [
     { name: "Impôts", email: "ne-pas-repondre@impots.gouv.fr", ok: true, why: "Après le @ : impots.gouv.fr. La fin « .gouv.fr » est réservée aux services de l'État." },
     { name: "Assurance Maladie", email: "remboursement@ameli-securite.info", ok: false, why: "Après le @ : ameli-securite.info. Le vrai site de l'Assurance Maladie est ameli.fr : ici, on a ajouté « -securite » et la fin est .info." },
-    { name: "Médiathèque de Valbourg", email: "mediatheque@valbourg.fr", ok: true, why: "C'est l'adresse habituelle de votre médiathèque, celle qui vous écrit d'habitude." },
+    { name: "Médiathèque de Valbourg", email: "mediatheque@valbourg.fr", ok: true, why: "Après le @ : valbourg.fr. C'est l'adresse habituelle de votre médiathèque." },
     { name: "Impots.gouv", email: "impots.service.client@gmail.com", ok: false, why: "Une administration n'écrit jamais depuis une adresse Gmail, Hotmail, Orange ou Free. Le nom « Impots.gouv » n'est qu'un costume." },
     { name: "La Poste", email: "suivi@laposte-colis-livraison.top", ok: false, why: "Après le @ : laposte-colis-livraison.top. Le mot « laposte » est noyé dans un autre nom, qui finit par .top : ce n'est pas La Poste." },
     { name: "Banque du Valbourg", email: "service@banque-valbourg.fr.securite-client.com", ok: false, why: "Piège : ce qui compte, c'est la FIN de l'adresse : securite-client.com. Le début « banque-valbourg.fr » n'est qu'un déguisement." }
@@ -714,7 +714,7 @@
           [1, "Vous n'avez rien demandé. Un vrai remboursement d'impôt arrive tout seul sur votre compte bancaire, sans rien saisir."],
           [1, "« Sous 48 heures », « définitivement annulé » : on vous presse pour vous empêcher de réfléchir."],
           [1, "On vous demande vos coordonnées bancaires : les impôts ne le demandent jamais par e-mail."],
-          [1, "En survolant le bouton, on lit impots-gouv-fr.info : ce n'est pas impots.gouv.fr."]] },
+          [1, "En posant la souris sur le bouton, on lit impots-gouv-fr.info : ce n'est pas impots.gouv.fr."]] },
       { id: "r_impots", from: { name: "Impôts", email: "ne-pas-repondre@impots.gouv.fr" }, subject: "Votre avis d'impôt est disponible", date: "Hier 10:02", unread: true, fraud: false,
         context: "Comme chaque année à cette période, vous attendez votre avis d'impôt.",
         body: `<p>Bonjour ${esc(ctx.name)},</p><p>Votre avis d'impôt sur le revenu est disponible dans votre espace particulier.</p><p>Pour le consulter, connectez-vous sur impots.gouv.fr, rubrique « Documents ».</p><p>Ceci est un message automatique, merci de ne pas y répondre.</p>`,
@@ -728,7 +728,7 @@
         body: "<p>Bonjour,</p><p>Votre commande est disponible. Vous pouvez venir la récupérer aux heures d'ouverture.</p><p>Pharmacie du Centre</p>",
         checks: [[0, "C'est l'adresse de votre pharmacie."], [0, "Vous avez passé commande : vous attendiez ce message."], [0, "Aucune pression."], [0, "On ne vous demande rien."], [0, "Aucun lien."]] },
       { id: "f_banque", from: { name: "Banque du Valbourg", email: "securite@banque-valbourg-alerte.com" }, subject: "⚠ Activité inhabituelle : votre compte sera suspendu", date: "Lun. 06:12", unread: true, fraud: true,
-        context: "Votre banque est la Banque du Valbourg. Ses messages viennent d'une adresse qui finit par @banque-valbourg.fr",
+        context: "Votre banque est la Banque du Valbourg. Ses messages viennent d'une adresse qui finit par @banque-valbourg.fr.",
         body: `<p>Cher(e) client(e),</p><p>Nous avons détecté une activité inhabituelle sur votre compte. Par sécurité, il sera <b>suspendu aujourd'hui</b>.</p><p>Pour l'éviter, confirmez votre identité : identifiant, mot de passe et <b>le code que vous allez recevoir par SMS</b>.</p>${link("http://banque-valbourg-alerte.com/verification", "Confirmer mon identité")}`,
         checks: [[1, "L'adresse habituelle de votre banque finit par banque-valbourg.fr. Ici : banque-valbourg-alerte.com."], [1, "Vous n'avez rien fait d'inhabituel."], [1, "« Suspendu aujourd'hui » : la peur et l'urgence."], [1, "On demande votre mot de passe ET le code SMS. C'est exactement ce qu'une banque ne demande JAMAIS : avec ce code, l'escroc valide un paiement à votre place."], [1, "Le lien mène vers banque-valbourg-alerte.com, pas vers votre banque."]] },
       { id: "r_media", from: P.media, subject: "Rappel : vos livres sont à rendre samedi", date: "Dim. 09:00", unread: true, fraud: false,
@@ -761,7 +761,7 @@
         const list = ctx.byLevel({ beginner: SENDERS.slice(0, 4), intermediate: SENDERS.slice(0, 5), expert: SENDERS });
         L.s ||= {};
         const f = frame(ctx, { level: 6, title: "Qui m'écrit vraiment ? 🔍", step: 0, noClient: true,
-          consigne: "Le nom affiché peut être un <b>costume</b>. Pour chaque expéditeur, cliquez sur « 👁 Voir l'adresse », puis dites si c'est <b>fiable</b> ou <b>suspect</b>.",
+          consigne: "Le nom affiché peut être un <b>costume</b>. Pour chaque expéditeur, cliquez sur « 👁 Voir l'adresse », puis choisissez <b>✅ Fiable</b> ou <b>🚩 Suspect</b>.",
           help: "Regardez ce qui est écrit APRÈS le @, et surtout la fin. « .gouv.fr » = l'État. Gmail, Hotmail… = jamais une administration." });
         const draw = () => {
           f.panel.innerHTML = reassure + `<div class="sender-grid">${list.map((x, i) => {
@@ -790,7 +790,7 @@
         const list = ctx.byLevel({ beginner: LINKS.slice(0, 5), intermediate: LINKS.slice(0, 6), expert: LINKS });
         L.l ||= {};
         const f = frame(ctx, { level: 6, title: "Où mène ce lien ? 🔗", step: 1, noClient: true,
-          consigne: "Le vrai nom d'un site se trouve <b>juste avant le premier « / »</b>. C'est la <b>fin</b> de ce nom qui compte : le début peut être un déguisement. Pour chaque lien : site officiel ou piège ?",
+          consigne: "Le vrai nom d'un site se trouve <b>juste avant le premier « / »</b>. C'est la <b>fin</b> de ce nom qui compte : le début peut être un déguisement. Pour chaque lien, choisissez <b>✅ Officiel</b> ou <b>🚩 Piège</b>.",
           help: "Exemple : dans https://www.impots.gouv.fr/accueil, le vrai nom est impots.gouv.fr." });
         const draw = () => {
           f.panel.innerHTML = `<div class="url-demo">Exemple : ${urlAnatomy("https://www.impots.gouv.fr/accueil")} <small>→ en vert : le vrai nom du site</small></div>
@@ -817,7 +817,7 @@
         L.mails ||= fraudMails(ctx);
         L.dec ||= {};
         const f = frame(ctx, { level: 6, title: "L'enquête dans la boîte mail 🕵️", step: 2,
-          consigne: "Ouvrez <b>chaque message</b>, posez-vous les 5 questions, puis décidez : <b>normal</b> ou <b>arnaque</b> ? Une fiche d'enquête vous expliquera tout.",
+          consigne: "Ouvrez <b>chaque message</b> et posez-vous les 5 questions. Choisissez <b>✅ Normal</b> ou <b>🚩 Une arnaque</b> : une fiche d'enquête vous explique la réponse. Rangez chaque arnaque avec <b>🚫 Indésirable</b>.",
           help: "Cliquez sur « ▾ voir l'adresse » à côté du nom. Posez la souris sur les boutons SANS cliquer pour voir où ils mènent (en bas de la boîte)." });
         const total = L.mails.length;
         const panelFor = m => {
@@ -854,7 +854,7 @@
             if (type === "open") panelFor(d.mail);
             if (type === "hover" && m) c.flash(`🔍 Ce lien mène vers <b>${esc(realDomain(hostOf(d.url)))}</b> (regardez en bas de la boîte).`, m.fraud ? "warn" : "info", 4000);
             if (type === "link") {
-              if (m.fraud) { G.ko("click_" + m.id, "Ne pas cliquer sur le lien d'un message suspect", "Dans la vraie vie, si cela arrive : fermez la page sans rien remplir. En général, il ne s'est rien passé."); c.flash("Oups, vous avez cliqué ! Pas de panique : ici rien ne s'est passé. Dans la vraie vie, on ferme simplement la page <b>sans rien remplir</b>. La prochaine fois : on survole sans cliquer.", "warn", 8000); }
+              if (m.fraud) { G.ko("click_" + m.id, "Ne pas cliquer sur le lien d'un message suspect", "Dans la vraie vie, si cela arrive : fermez la page sans rien remplir. En général, il ne s'est rien passé."); c.flash("Oups, vous avez cliqué ! Pas de panique : ici rien ne s'est passé. Dans la vraie vie, on ferme simplement la page <b>sans rien remplir</b>. La prochaine fois : on pose la souris sur le lien, sans cliquer.", "warn", 8000); }
               else c.flash("Ce lien était sûr. Mais le meilleur réflexe reste de taper soi-même l'adresse du site.", "info", 5000);
             }
             if (type === "spam") {
@@ -862,7 +862,7 @@
               else { G.ko("spam_" + m.id, "Ne pas ranger un vrai message en indésirable", `« ${m.subject} » était un vrai message. Dans le dossier Indésirables, ouvrez-le puis cliquez sur « ✅ Ce n'est pas un indésirable ».`); c.flash("Ce message était normal ! Allez le récupérer dans 🚫 Indésirables.", "warn", 5000); }
               panelFor(null);
             }
-            if (type === "delete" && m.fraud) c.flash("Supprimé, c'est bien. « 🚫 Indésirable » est encore mieux : il apprend à trier tout seul.", "info", 4500);
+            if (type === "delete" && m.fraud) c.flash("Le supprimer, c'est bien. Le ranger en « 🚫 Indésirable », c'est encore mieux : la messagerie apprend à trier toute seule.", "info", 4500);
           } });
         panelFor(null);
         return;
@@ -870,14 +870,14 @@
 
       if (step === 3) {
         const f = frame(ctx, { level: 6, title: "Et si… ? 🆘", step: 3, noClient: true,
-          consigne: "Les situations qui font peur, et quoi faire calmement. Se faire piéger n'est pas une honte : ces escrocs sont des professionnels." });
+          consigne: "Voici des situations qui font peur. Choisissez ce qu'il faut faire, calmement. Se faire piéger n'est pas une honte : ces escrocs sont des professionnels." });
         inlineQuiz(f.panel, { G, key: "etsi", questions: [
           { q: "Vous avez cliqué sur le lien d'un faux message, mais vous n'avez <b>rien rempli</b>. Que faites-vous ?", choices: ["Je ferme la page et je supprime le message", "J'éteins l'ordinateur et je ne m'en sers plus", "Je remplis quand même, pour voir"], ok: 0, why: "En général, il ne s'est rien passé : le danger, c'est de remplir. On ferme la page, on garde son ordinateur à jour, et on continue sa journée." },
-          { q: "Vous avez donné votre <b>numéro de carte bancaire</b> sur un faux site.", choices: ["J'attends de voir mon prochain relevé", "J'appelle ma banque tout de suite pour bloquer la carte", "Je réponds à l'e-mail pour annuler"], ok: 1, why: "Le numéro de la banque est au dos de la carte. Plus on bloque vite, moins l'escroc peut l'utiliser." },
-          { q: "Un message dit : « On vous a filmé avec votre webcam. Payez 500 €, sinon on publie la vidéo. »", choices: ["Je paie pour être tranquille", "C'est un mensonge envoyé à des milliers de personnes : je ne réponds pas, je supprime", "Je réponds pour négocier"], ok: 1, why: "Ce chantage est envoyé au hasard, en masse : il n'y a pas de vidéo. Ne payez jamais. Si vous êtes inquiet, parlez-en à une personne de confiance ou consultez cybermalveillance.gouv.fr." },
-          { q: "Vous n'êtes <b>pas sûr</b> qu'un message soit vrai. Que faites-vous ?", choices: ["Je clique pour vérifier", "Je vais moi-même sur le site officiel, ou j'appelle le numéro que je connais", "Je le transfère à tous mes contacts pour leur demander"], ok: 1, why: "Vérifier par soi-même, c'est la règle d'or. Et vous pouvez toujours demander au médiateur numérique de la médiathèque." },
+          { q: "Vous avez donné votre <b>numéro de carte bancaire</b> sur un faux site. Que faites-vous ?", choices: ["J'attends de voir mon prochain relevé", "J'appelle ma banque tout de suite pour bloquer la carte", "Je réponds à l'e-mail pour annuler"], ok: 1, why: "Le numéro de la banque est au dos de la carte. Plus on bloque vite, moins l'escroc peut l'utiliser." },
+          { q: "Un message dit : « On vous a filmé avec votre webcam. Payez 500 €, sinon on publie la vidéo. » Que faites-vous ?", choices: ["Je paie pour être tranquille", "C'est un mensonge envoyé à des milliers de personnes : je ne réponds pas, je supprime", "Je réponds pour négocier"], ok: 1, why: "Ce chantage est envoyé au hasard, en masse : il n'y a pas de vidéo. Ne payez jamais. Si vous êtes inquiet ou inquiète, parlez-en à une personne de confiance ou consultez cybermalveillance.gouv.fr." },
+          { q: "Vous n'êtes <b>pas sûr(e)</b> qu'un message soit vrai. Que faites-vous ?", choices: ["Je clique pour vérifier", "Je vais moi-même sur le site officiel, ou j'appelle le numéro que je connais", "Je le transfère à tous mes contacts pour leur demander"], ok: 1, why: "Vérifier par soi-même, c'est la règle d'or. Et vous pouvez toujours demander au médiateur numérique de la médiathèque." },
           ...ctx.byLevel({ beginner: [], intermediate: [], expert: [
-            { q: "Vous avez tapé votre <b>mot de passe</b> sur un faux site.", choices: ["Je le change tout de suite, sur le vrai site", "Ce n'est pas grave", "J'attends un e-mail de confirmation"], ok: 0, why: "Changez-le sur le vrai site, et partout où vous utilisiez le même mot de passe." }
+            { q: "Vous avez tapé votre <b>mot de passe</b> sur un faux site. Que faites-vous ?", choices: ["Je le change tout de suite, sur le vrai site", "Ce n'est pas grave", "J'attends un e-mail de confirmation"], ok: 0, why: "Changez-le sur le vrai site, et partout où vous utilisiez le même mot de passe." }
           ] })
         ], onDone: () => finish(ctx, G, { key: "mail_fraud", label: "Je sais repérer un e-mail frauduleux avec les 5 questions",
           intro: "Vous avez maintenant une méthode : les 5 questions. 🫶 Dans le doute, vous avez toujours le droit de ne rien faire et de vérifier par vous-même. Imprimez votre fiche-mémo et gardez-la près de l'ordinateur." }) });

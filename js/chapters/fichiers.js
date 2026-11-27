@@ -99,15 +99,15 @@
     { title: "Ranger : créer un dossier, déplacer 🗂️", html: `
       <div class="l-grid2">
         <div class="l-card big" data-reveal="1"><h3>📁 Créer un dossier</h3><p>Dans <b>Documents</b> : <b>＋ Nouveau</b> › <b>Dossier</b>.</p><p>Je tape tout de suite son nom (« Santé »), puis <kbd>Entrée</kbd>.</p></div>
-        <div class="l-card big" data-reveal="2"><h3>👉 Y ranger un fichier</h3><p><b>Je le glisse</b> sur le dossier, en gardant le clic appuyé.</p><p>Ou bien : <b>✂️ Couper</b>, j'ouvre le dossier, <b>📋 Coller</b>.</p></div>
+        <div class="l-card big" data-reveal="2"><h3>👉 Y ranger un fichier</h3><p><b>Je le glisse</b> sur le dossier, en gardant le clic appuyé.</p><p>Ou bien : <b>✂️ Couper</b>, j'ouvre le dossier, puis <b>📋 Coller</b>.</p></div>
       </div>
       <div class="l-callout" data-reveal="3">🗄️ Quelques dossiers simples suffisent : <b>Santé · Impôts · Maison · Banque · Papiers · Photos</b>. Trop de dossiers, et on ne sait plus où chercher !</div>` },
 
     { title: "La Corbeille, mon filet de sécurité 🗑️", html: `
       <div class="l-grid3">
-        <div class="l-card" data-reveal="1"><h3>🗑️ Supprimer</h3><p>Clic sur le fichier, puis <b>Supprimer</b> (ou la touche <kbd>Suppr</kbd>).</p><small>Il part dans la Corbeille.</small></div>
-        <div class="l-safe" data-reveal="2"><h3>↩️ Restaurer</h3><p>Une erreur ? J'ouvre la <b>Corbeille</b>, clic sur le fichier, <b>Restaurer</b>.</p><small>Il revient à sa place !</small></div>
-        <div class="l-risk" data-reveal="3"><h3>🧹 Vider</h3><p>« Vider la Corbeille » supprime <b>pour de bon</b>.</p><small>Je regarde avant de vider.</small></div>
+        <div class="l-card" data-reveal="1"><h3>🗑️ Supprimer</h3><p>Je clique sur le fichier, puis sur <b>Supprimer</b> (ou la touche <kbd>Suppr</kbd>).</p><small>Il part dans la Corbeille.</small></div>
+        <div class="l-safe" data-reveal="2"><h3>↩️ Restaurer</h3><p>Une erreur ? J'ouvre la <b>Corbeille</b>, je clique sur le fichier, puis sur <b>Restaurer</b>.</p><small>Il revient à sa place !</small></div>
+        <div class="l-risk" data-reveal="3"><h3>🧹 Vider</h3><p>« Vider la Corbeille » supprime <b>pour de bon</b>.</p><small>Je regarde ce qu'elle contient avant de la vider.</small></div>
       </div>
       <div class="l-callout" data-reveal="4">🔑 Sur une <b>clé USB</b>, attention : la suppression est souvent <b>définitive</b>. Windows demande « Voulez-vous vraiment… ? » : je lis avant de dire oui.</div>` }
   ];
@@ -135,7 +135,7 @@
           <li data-reveal="2"><span>🗄️</span><div><b>Je vais dans le bon dossier</b><small>Téléchargements, Documents › Maison…</small></div></li>
           <li data-reveal="3"><span>👆</span><div><b>Un clic sur le fichier, puis « Ouvrir »</b><small>Son nom apparaît sur le site.</small></div></li>
         </ol>
-        <div class="l-card big" data-reveal="4"><h3>✅ Avant d'envoyer, je vérifie</h3><p>📄 le <b>bon document</b> (et le recto !)</p><p>📅 la <b>date</b> : « moins de 3 mois » ?</p><p>🏷️ le <b>format</b> : PDF, JPG ?</p><p>⚖️ la <b>taille</b> : 5 Mo maximum ? (1 Mo = 1 000 Ko)</p></div>
+        <div class="l-card big" data-reveal="4"><h3>✅ Avant d'envoyer, je vérifie</h3><p>📄 le <b>bon document</b> (et le bon côté : recto ou verso !)</p><p>📅 la <b>date</b> : « moins de 3 mois » ?</p><p>🏷️ le <b>format</b> : PDF, JPG ?</p><p>⚖️ la <b>taille</b> : 5 Mo maximum ? (1 Mo = 1 000 Ko)</p></div>
       </div>` },
 
     { title: "Pas de panique 🫶", html: `

@@ -101,7 +101,7 @@
             if (!drag) return; drag.ph.remove(); drag = null; const over = z.classList.contains("over"); z.classList.remove("over");
             d.style.position = ""; d.style.left = d.style.top = ""; d.style.zIndex = ""; d.style.cursor = ""; d.style.width = "";
             if (over) { z.classList.add("ok"); z.innerHTML = "📁 Courrier ✉️"; d.remove(); if (T.done("drag")) (fails ? G.ko : G.ok)("drag", "Glisser-déposer", "On garde le bouton enfoncé pendant tout le trajet, et on ne lâche qu'au-dessus du dossier."); later(ctx, next, 1000); }
-            else { fails++; say("La lettre est revenue : il faut <b>garder le bouton enfoncé</b> jusqu'à être au-dessus du dossier Courrier, puis lâcher."); }
+            else { fails++; say("La lettre est revenue : il faut <b>garder le bouton enfoncé</b> jusqu'au dossier Courrier, puis le lâcher."); }
           });
         },
         wheel() {
@@ -139,8 +139,8 @@
         help: "Les touches clignotantes en bleu vous montrent par où commencer." });
       const euro = ctx.isBeginner() ? "Café à 3 euros" : "Café à 3 €";
       const ex = [
-        { k: "maj", t: "Marie Dupont", lab: "Votre nom, avec les majuscules : <code>Marie Dupont</code>", hint: ["ShiftLeft", "ShiftRight"], tip: "Pour UNE majuscule : on garde <b>⇧ Maj</b> enfoncée, et on appuie sur la lettre." },
-        { k: "num", t: "26000", lab: "Le code postal : <code>26000</code>", hint: ["ShiftLeft", "CapsLock"], tip: "Sur un clavier français, les chiffres du haut demandent <b>⇧ Maj</b> (ou <b>Verr. Maj</b> allumé). Sans, on obtient « é(ààà » ! Le pavé numérique, à droite, marche aussi." },
+        { k: "maj", t: "Marie Dupont", lab: "Un nom, avec les majuscules : <code>Marie Dupont</code>", hint: ["ShiftLeft", "ShiftRight"], tip: "Pour UNE majuscule : on garde <b>⇧ Maj</b> enfoncée, et on appuie sur la lettre." },
+        { k: "num", t: "26000", lab: "Le code postal : <code>26000</code>", hint: ["ShiftLeft", "CapsLock"], tip: "Sur un clavier français, les chiffres du haut demandent <b>⇧ Maj</b> (ou <b>Verr. Maj</b> allumé). Sans elle, on obtient « é-ààà » ! Le pavé numérique, à droite, marche aussi." },
         { k: "at", t: "marie.dupont@exemple.fr", lab: "L'adresse e-mail : <code>marie.dupont@exemple.fr</code>", hint: ["AltRight", "Digit0", "ShiftLeft", "Comma"], tip: "L'arobase <b>@</b> : on garde <b>Alt Gr</b> enfoncée, et on appuie sur la touche <b>à 0</b>. Le point : <b>⇧ Maj</b> + la touche <b>; .</b>" },
         { k: "bs", t: "Bonjour", start: "Bonjoru", lab: "Corrigez la faute : la case contient <code>Bonjoru</code>. Effacez les 2 dernières lettres avec <b>⌫ Effacer</b>, puis tapez <b>ur</b>.", hint: ["Backspace"], tip: "La touche <b>⌫ Effacer</b> (en haut à droite, la grande flèche) efface la lettre à gauche du trait qui clignote." },
         { k: "acc", t: euro, lab: `Avec les accents : <code>${euro}</code>`, hint: ["Digit2", "Digit0", ...(ctx.isBeginner() ? [] : ["AltRight", "KeyE"])], tip: `<b>é</b> et <b>à</b> ont leur propre touche (2 et 0, sans Maj).${ctx.isBeginner() ? "" : " Le <b>€</b> : Alt Gr + E."}` }
@@ -176,7 +176,7 @@
         if (L.ended) return; L.ended = true; kb.hint([]);
         quiz(T.slot(), { G, key: "q2", questions: [
           { q: "Tout ce que je tape s'écrit EN MAJUSCULES. Pourquoi ?", choices: ["Le clavier est cassé", "Le Verr. Maj est activé : j'appuie une fois dessus", "L'écran est trop grand"], ok: 1, why: "La touche Verr. Maj bloque les majuscules. Un voyant s'allume souvent sur le clavier." },
-          { q: "Pour taper l'arobase @ sur un clavier français :", choices: ["Alt Gr + à", "Maj + a", "Ctrl + @"], ok: 0, why: "On garde Alt Gr enfoncée (à droite de la barre d'espace) et on appuie sur la touche « à 0 »." },
+          { q: "Comment taper l'arobase @ sur un clavier français ?", choices: ["Alt Gr + à", "Maj + a", "Ctrl + @"], ok: 0, why: "On garde Alt Gr enfoncée (à droite de la barre d'espace) et on appuie sur la touche « à 0 »." },
           { q: "La touche Entrée sert à…", choices: ["Valider (ou aller à la ligne dans un texte)", "Effacer"], ok: 0, why: "Entrée valide une recherche, un formulaire, ou passe à la ligne dans un texte." }
         ], onDone: () => finish(ctx, G, { key: "per_clavier", label: "Je sais taper majuscules, chiffres, @ et accents", intro: "Majuscules, chiffres, arobase, correction et accents : les touches les plus utiles n'ont plus de secret." }) });
       }
@@ -194,7 +194,7 @@
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const NUM = "CAF-2026-048731", MAIL = "etat-civil@mairie-valbourg.fr";
       const f = frame(ctx, { level: 1, title: "Copier, coller… et annuler", step: 0, noClient: true,
-        consigne: "Recopier un long numéro à la main, c'est le risque d'une erreur. Le <b>copier-coller</b> le fait sans faute !",
+        consigne: "Recopier un long numéro à la main, c'est risquer une erreur. Le <b>copier-coller</b> le fait sans faute !",
         help: "<b>Ctrl + C</b> = copier · <b>Ctrl + V</b> = coller · <b>Ctrl + Z</b> = annuler. On garde Ctrl enfoncée, et on appuie sur la lettre. (Le clic droit propose aussi Copier et Coller.)" });
       f.panel.innerHTML = `<div class="wk-tasks"></div>
         <div class="fk-split" style="margin-top:10px;display:grid;gap:12px">
@@ -206,8 +206,8 @@
       const T = tasker(f.panel.querySelector(".wk-tasks"), [
         { k: "copy", label: "Cliquez <b>une fois</b> sur le numéro de dossier (il se surligne), puis copiez-le : <b>Ctrl + C</b>." },
         { k: "paste", label: "Cliquez dans la case <b>Numéro de dossier</b>, puis collez : <b>Ctrl + V</b>." },
-        { k: "mail", label: "Même chose avec l'adresse e-mail de la mairie, dans la case <b>Destinataire</b>." },
-        { k: "undo", label: "Oups ! Dans <b>Votre message</b>, sélectionnez tout (<b>Ctrl + A</b>) et appuyez sur <b>Suppr</b>… puis rattrapez l'erreur avec <b>Ctrl + Z</b>." }
+        { k: "mail", label: "Copiez l'adresse e-mail de la mairie (<b>Ctrl + C</b>), puis collez-la dans la case <b>Destinataire</b> (<b>Ctrl + V</b>)." },
+        { k: "undo", label: "Cliquez dans <b>Votre message</b>. Sélectionnez tout (<b>Ctrl + A</b>), puis appuyez sur <b>Suppr</b>. Oups ! Rattrapez l'erreur avec <b>Ctrl + Z</b>." }
       ]);
       const $ = s => f.panel.querySelector(s);
       let copied = "", pasted = { num: false, mail: false }, typed = { num: false, mail: false }, erased = false;
@@ -235,8 +235,8 @@
         if (L.ended) return; L.ended = true;
         quiz(T.slot(), { G, key: "q3", questions: [
           { q: "Après « Copier », le texte est…", choices: ["Gardé en mémoire, prêt à être collé (il reste aussi à sa place)", "Effacé de là où il était"], ok: 0, why: "Copier ne change rien au texte d'origine : il est simplement gardé dans une mémoire invisible, le « presse-papiers »." },
-          { q: "Je n'arrive pas avec Ctrl : quelle autre solution ?", choices: ["Le clic droit › Copier, puis clic droit › Coller", "Il n'y en a pas"], ok: 0, why: "Le clic droit propose les mêmes actions : Copier, Coller." },
-          { q: "J'ai supprimé un paragraphe par erreur. Le réflexe ?", choices: ["Ctrl + Z", "Fermer la fenêtre"], ok: 0, why: "Ctrl + Z (annuler) marche dans presque tous les logiciels, et même dans l'Explorateur." }
+          { q: "Je n'arrive pas à utiliser la touche Ctrl. Quelle autre solution ?", choices: ["Le clic droit › Copier, puis clic droit › Coller", "Il n'y en a pas"], ok: 0, why: "Le clic droit propose les mêmes actions : Copier, Coller." },
+          { q: "J'ai supprimé un paragraphe par erreur. Quel est le bon réflexe ?", choices: ["Ctrl + Z", "Fermer la fenêtre"], ok: 0, why: "Ctrl + Z (annuler) marche dans presque tous les logiciels, et même dans l'Explorateur." }
         ], onDone: () => finish(ctx, G, { key: "per_copier", label: "Je sais copier, coller et annuler", intro: "Vous savez copier un numéro ou une adresse sans faute, et rattraper une erreur avec Ctrl + Z." }) });
       }
     }
@@ -308,8 +308,8 @@
               if (T.done("pdf")) { if (!G.has("pdf")) G.ok("pdf", "Enregistrer en PDF au lieu d'imprimer"); }
               T.note(`<div class="alert good">💾 Fichier <b>rdv_dr_martin.pdf</b> enregistré dans <b>Téléchargements</b>.</div>`);
               quiz(T.slot(), { G, key: "q4", questions: [
-                { q: "Le raccourci pour imprimer, presque partout :", choices: ["Ctrl + P", "Ctrl + I", "Alt + F4"], ok: 0, why: "P comme « print » (imprimer en anglais)." },
-                { q: "Pour une attestation de 3 pages dont seule la 1re compte :", choices: ["J'imprime tout", "Pages › Personnalisées › 1"], ok: 1, why: "On choisit les pages : moins de papier, moins d'encre." },
+                { q: "Quel raccourci permet d'imprimer, presque partout ?", choices: ["Ctrl + P", "Ctrl + I", "Alt + F4"], ok: 0, why: "P comme « print » (imprimer en anglais)." },
+                { q: "Une attestation fait 3 pages, mais seule la 1re est utile. Que faire ?", choices: ["J'imprime tout", "Pages › Personnalisées › 1"], ok: 1, why: "On choisit les pages : moins de papier, moins d'encre." },
                 { q: "« Enregistrer au format PDF », ça fait quoi ?", choices: ["Ça imprime sur papier", "Ça crée un fichier PDF, sans papier"], ok: 1, why: "Pratique pour garder une confirmation, un billet, un reçu… et l'envoyer par e-mail." }
               ], onDone: () => finish(ctx, G, { key: "per_imprimer", label: "Je sais imprimer juste ce qu'il faut", intro: "Vous savez choisir l'imprimante, les pages, la couleur, et créer un PDF au lieu d'imprimer." }) });
             }
@@ -340,10 +340,10 @@
       const step = ctx.m.step || 0, Pn = list[step];
       if (!Pn) return ctx.finalScreen({ theme: null });
       const f = frame(ctx, { level: 3, title: `L'imprimante n'imprime pas : ${Pn.title} (${step + 1} / ${list.length})`, step: Math.min(step, 3), noClient: true,
-        consigne: "Marie a cliqué sur « Imprimer »… et rien ne sort. Regardez l'<b>écran de l'imprimante</b> et la <b>file d'attente</b> de Windows, puis réparez.",
+        consigne: "Marie a cliqué sur « Imprimer »… et rien ne sort. Regardez l'<b>écran de l'imprimante</b> et la <b>file d'attente</b> de Windows, puis réparez la panne.",
         help: "Ne cliquez pas dix fois sur « Imprimer » ! Chaque clic ajoute un document dans la file d'attente." });
       f.panel.innerHTML = `<div class="wk-tasks"></div><div style="display:flex;gap:10px;align-items:center;margin:10px 0"><span>📕 attestation.pdf</span><button type="button" class="secondary" data-again>🖨️ Imprimer à nouveau</button></div><div class="pq-slot"></div>`;
-      const T = tasker(f.panel.querySelector(".wk-tasks"), [{ k: "fix", label: "Trouvez la panne et réparez." }, { k: "out", label: "Vérifiez que la feuille sort (une seule !)." }]);
+      const T = tasker(f.panel.querySelector(".wk-tasks"), [{ k: "fix", label: "Trouvez la panne et réparez-la." }, { k: "out", label: "Vérifiez que la feuille sort (une seule !)." }]);
       let extra = 0, printedN = 0;
       const pr = keep(ctx, P().printer(f.panel.querySelector(".pq-slot"), { state: Pn.state, big: ctx.demo, hint: ctx.isBeginner() ? null : null, onEvent: (t, d, x) => {
         if (t === "hint") T.note(`<div class="alert">${d.msg}</div>`);
@@ -355,14 +355,14 @@
           printedN++;
           if (T.is("fix") && !T.is("out")) {
             T.done("out");
-            (extra > 0 ? G.ko : G.ok)("once_" + Pn.id, `Panne ${step + 1} : une seule feuille imprimée`, "Chaque clic sur « Imprimer » ajoute un document : réparé, l'imprimante sort tout… en plusieurs exemplaires !");
+            (extra > 0 ? G.ko : G.ok)("once_" + Pn.id, `Panne ${step + 1} : une seule feuille imprimée`, "Chaque clic sur « Imprimer » ajoute un document : une fois réparée, l'imprimante sort tout… en plusieurs exemplaires !");
             T.note(`<div class="alert good">✅ ${Pn.cause}${extra > 0 ? ` <br>⚠️ Mais vous aviez relancé ${extra} fois : ${extra + 1} feuilles sortent !` : ""}</div>`);
             if (step < list.length - 1) { T.slot().innerHTML = `<button type="button" class="primary" data-n>Panne suivante →</button>`; T.slot().querySelector("[data-n]").addEventListener("click", () => ctx.go(step + 1)); }
             else quiz(T.slot(), { G, key: "q5", questions: [
               { q: "Rien ne sort de l'imprimante. Le premier réflexe ?", choices: ["Recliquer sur Imprimer plusieurs fois", "Regarder l'écran de l'imprimante et la file d'attente"], ok: 1, why: "Les messages disent presque toujours la panne : papier, éteinte, bourrage, document bloqué." },
               { q: "Windows indique « Hors connexion ». Je vérifie…", choices: ["Que l'imprimante est allumée et branchée (ou sur le même Wi-Fi)", "La Corbeille"], ok: 0, why: "« Hors connexion » : l'ordinateur ne voit plus l'imprimante." },
-              { q: "Une feuille est coincée :", choices: ["Je tire très fort", "J'ouvre le capot et je la retire doucement, imprimante éteinte si possible"], ok: 1, why: "Doucement, dans le sens de la sortie du papier, pour ne pas laisser de morceaux." }
-            ], onDone: () => finish(ctx, G, { key: "per_panne", label: "Je sais dépanner une imprimante", intro: "Papier, imprimante éteinte, document bloqué : vous savez lire les messages et réparer, sans imprimer dix fois." }) });
+              { q: "Une feuille est coincée. Que faire ?", choices: ["Je tire très fort", "J'ouvre le capot et je la retire doucement, imprimante éteinte si possible"], ok: 1, why: "Doucement, dans le sens de la sortie du papier, pour ne pas laisser de morceaux." }
+            ], onDone: () => finish(ctx, G, { key: "per_panne", label: "Je sais dépanner une imprimante", intro: "Papier, imprimante éteinte, document bloqué, feuille coincée : vous savez lire les messages et réparer, sans imprimer dix fois." }) });
           }
         }
       } }));
@@ -383,8 +383,8 @@
       const L = ctx.local, G = grader(L);
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const f = frame(ctx, { level: 4, title: "La clé USB : brancher, copier, éjecter", step: 0,
-        consigne: "Marie veut emporter son CV à la médiathèque pour l'imprimer. Elle le <b>copie</b> sur une clé USB… sans oublier de l'<b>éjecter</b> avant de la retirer.",
-        help: "Pour copier : clic sur le fichier, <b>📄 Copier</b>, ouvrez la clé USB, <b>📋 Coller</b>. (Ou glissez le fichier sur la clé, dans la colonne de gauche.)" });
+        consigne: "Marie veut emporter son CV à la médiathèque pour l'imprimer. Aidez-la : <b>copiez</b> le CV sur la clé USB. Puis <b>éjectez</b> la clé avant de la retirer.",
+        help: "Pour copier : cliquez sur le fichier, puis <b>📄 Copier</b>. Ouvrez la clé USB, puis <b>📋 Coller</b>. (Ou glissez le fichier sur la clé, dans la colonne de gauche.)" });
       const { pc, file, folder } = AN.files;
       const fs = pc({ documents: [file("CV_Marie_Dupont.pdf", { tag: "cv", ago: 4, content: "<h3>Marie Dupont</h3><p>Curriculum vitae (fictif)</p>" }), file("lettre_motivation.docx", { ago: 4 }), folder("Santé", [])] });
       f.host.insertAdjacentHTML("beforebegin", `<div class="wk-usb" style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0"><button type="button" class="secondary" data-plug>🔌 Brancher la clé USB</button><button type="button" class="secondary" data-unplug disabled>✋ Retirer la clé USB</button></div>`);
@@ -431,9 +431,9 @@
       function end() {
         if (L.ended) return; L.ended = true; x.hint(null);
         quiz(T.slot(), { G, key: "q6", questions: [
-          { q: "Je trouve une clé USB par terre, sur le parking. Je…", choices: ["La branche pour voir à qui elle est", "Ne la branche pas : je la rapporte à l'accueil"], ok: 1, why: "Une clé inconnue peut contenir un virus qui s'installe tout seul. On ne la branche jamais." },
-          { q: "« Copier » vers la clé, ou « couper » ?", choices: ["Copier : le fichier reste aussi sur l'ordinateur", "Couper : c'est pareil"], ok: 0, why: "Couper déplace : le fichier quitte l'ordinateur. Pour emporter une copie, on copie." },
-          { q: "Je supprime un fichier sur la clé USB. Il va dans la Corbeille ?", choices: ["Oui", "Non : souvent, il est supprimé pour de bon"], ok: 1, why: "Sur une clé, la suppression est souvent définitive. Windows demande « Voulez-vous vraiment… ? »." }
+          { q: "Je trouve une clé USB par terre, sur le parking. Que faire ?", choices: ["Je la branche pour voir à qui elle est", "Je ne la branche pas : je la rapporte à l'accueil"], ok: 1, why: "Une clé inconnue peut contenir un virus qui s'installe tout seul. On ne la branche jamais." },
+          { q: "Pour emporter un fichier sur la clé, je fais « Copier » ou « Couper » ?", choices: ["Copier : le fichier reste aussi sur l'ordinateur", "Couper : c'est pareil"], ok: 0, why: "Couper déplace : le fichier quitte l'ordinateur. Pour emporter une copie, on copie." },
+          { q: "Je supprime un fichier sur la clé USB. Va-t-il dans la Corbeille ?", choices: ["Oui", "Non : souvent, il est supprimé pour de bon"], ok: 1, why: "Sur une clé, la suppression est souvent définitive. Windows demande « Voulez-vous vraiment… ? »." }
         ], onDone: () => finish(ctx, G, { key: "per_usb", label: "Je sais utiliser une clé USB", intro: "Vous savez brancher une clé, y copier un fichier, l'éjecter… et vous méfier des clés inconnues." }) });
       }
     }
@@ -478,7 +478,7 @@
         listen(ctx, pg, "wheel", e => { if (!(e.ctrlKey || e.metaKey)) return; e.preventDefault(); step1(e.deltaY < 0 ? 1 : -1); }, { passive: false });
         f.panel.querySelectorAll("[data-z]").forEach(b => b.addEventListener("click", () => { const i = Z.indexOf(z); set(Z[Math.max(0, Math.min(Z.length - 1, i + Number(b.dataset.z)))], "btn"); }));
         pg.addEventListener("click", () => pg.focus());
-        T.note(`<div class="alert">👆 Cliquez d'abord <b>dans la page</b> (elle s'entoure de bleu), puis Ctrl + +.</div>`);
+        T.note(`<div class="alert">👆 Cliquez d'abord <b>dans la page</b> (elle s'entoure de bleu), puis appuyez sur Ctrl + +.</div>`);
         function end() { T.note(`<div class="alert good">✅ Vous savez zoomer ! Ça marche sur tous les sites, et même dans l'Explorateur.</div>`); later(ctx, () => ctx.go(1), 2000); }
         return;
       }
@@ -499,9 +499,9 @@
           if (T.all && !L.ended) {
             L.ended = true;
             quiz(T.slot(), { G, key: "q7", questions: [
-              { q: "Le texte d'UN site est trop petit. Le plus simple :", choices: ["Ctrl + + dans le navigateur", "Acheter un plus grand écran"], ok: 0, why: "Le zoom du navigateur agrandit la page, sans rien changer au reste." },
-              { q: "Tout est trop petit sur l'ordinateur, partout :", choices: ["Paramètres › Affichage › Taille du texte (ou Mise à l'échelle)", "Ctrl + 0"], ok: 0, why: "Les Paramètres agrandissent tout, pour de bon." },
-              { q: "Il existe aussi une loupe, pour agrandir une partie de l'écran :", choices: ["⊞ Windows + « + »", "Ctrl + Z"], ok: 0, why: "La Loupe de Windows suit la souris. Pour la fermer : ⊞ Windows + Échap." }
+              { q: "Le texte d'UN site est trop petit. Quelle est la solution la plus simple ?", choices: ["Ctrl + + dans le navigateur", "Acheter un plus grand écran"], ok: 0, why: "Le zoom du navigateur agrandit la page, sans rien changer au reste." },
+              { q: "Tout est trop petit, partout sur l'ordinateur. Que faire ?", choices: ["Paramètres › Affichage › Taille du texte (ou Mise à l'échelle)", "Ctrl + 0"], ok: 0, why: "Les Paramètres agrandissent tout, pour de bon." },
+              { q: "Quel raccourci ouvre la Loupe, qui agrandit une partie de l'écran ?", choices: ["⊞ Windows + « + »", "Ctrl + Z"], ok: 0, why: "La Loupe de Windows suit la souris. Pour la fermer : ⊞ Windows + Échap." }
             ], onDone: () => finish(ctx, G, { key: "per_ecran", label: "Je sais régler l'écran pour mon confort", intro: "Zoom, taille du texte, luminosité, éclairage nocturne : l'ordinateur s'adapte à vos yeux." }) });
           }
         } }));
@@ -520,12 +520,12 @@
       const step = ctx.m.step || 0, L = ctx.local, G = grader(L);
       if (step === 0) {
         const f = frame(ctx, { level: 6, title: "Mission réelle : l'ordinateur de la médiathèque", step: 0, noClient: true,
-          consigne: "Sur le <b>vrai</b> ordinateur, en vrai : on observe et on essaie… <b>sans rien imprimer</b> et sans rien supprimer." });
+          consigne: "Cette fois, sur le <b>vrai</b> ordinateur : on observe et on essaie… <b>sans rien imprimer</b> et sans rien supprimer." });
         f.panel.innerHTML = `<ol class="nv-steps">
             <li>Regardez l'ordinateur : combien de <b>prises USB</b> voyez-vous (devant, sur le côté, derrière l'écran) ?</li>
             <li>Sur une page Internet (cet onglet, par exemple), appuyez sur <b>Ctrl + P</b>. Regardez la liste <b>Destination</b> : quel est le nom de l'imprimante ? Puis cliquez sur <b>Annuler</b>.</li>
             <li>Sur une page Internet, essayez <b>Ctrl + +</b>, puis <b>Ctrl + 0</b>.</li>
-            <li>Sélectionnez un mot de cette page (cliquez-glissez dessus), copiez-le avec <b>Ctrl + C</b>, puis collez-le dans la barre de recherche avec <b>Ctrl + V</b>.</li></ol>
+            <li>Sélectionnez un mot de cette page (gardez le clic appuyé et glissez sur le mot), copiez-le avec <b>Ctrl + C</b>, puis collez-le dans la barre de recherche avec <b>Ctrl + V</b>.</li></ol>
           <div class="alert">🖨️ On clique sur <b>Annuler</b> dans la fenêtre d'impression : on n'imprime rien. Une question ? On lève la main ✋.</div>
           <div class="final-actions"><button type="button" class="primary" data-go>J'ai fait la mission : je réponds →</button></div>`;
         f.panel.querySelector("[data-go]").addEventListener("click", () => ctx.go(1));
@@ -556,7 +556,7 @@
           (printer ? G.ok : G.ko)("printer", "Trouver le nom de l'imprimante", "Ctrl + P, puis la liste « Destination » (ou « Imprimante »).");
           (c("ctrlp") ? G.ok : G.ko)("ctrlp", "Ouvrir l'impression avec Ctrl + P", "Ctrl + P marche dans le navigateur, dans un PDF, dans Word…");
           (c("zoom") ? G.ok : G.ko)("zoom", "Zoomer et revenir à 100 %", "Ctrl + + pour agrandir, Ctrl + 0 pour revenir.");
-          (c("at") ? G.ok : G.ko)("at", "Copier-coller avec Ctrl + C / Ctrl + V", "On sélectionne, Ctrl + C, on clique où coller, Ctrl + V.");
+          (c("at") ? G.ok : G.ko)("at", "Copier-coller avec Ctrl + C / Ctrl + V", "On sélectionne le texte, puis Ctrl + C. On clique là où on veut coller, puis Ctrl + V.");
           (c("noprint") ? G.ok : G.ko)("noprint", "Ne rien imprimer pendant l'observation", "Pour cette mission, on clique sur Annuler.");
           const text = `🖨️ Mission réelle Périphériques\n🔌 Prises USB : ${usb}\n🖨️ Imprimante : ${printer || "(non trouvée)"}\n${c("ctrlp") ? "✅" : "⬜"} Ctrl + P · ${c("zoom") ? "✅" : "⬜"} zoom · ${c("at") ? "✅" : "⬜"} copier-coller · ${c("noprint") ? "✅" : "⬜"} rien imprimé${note ? `\n💬 ${note}` : ""}`;
           try { await ctx.api.sendToTeacher?.("🖨️ Mission réelle : périphériques", text.slice(0, 1900)); }

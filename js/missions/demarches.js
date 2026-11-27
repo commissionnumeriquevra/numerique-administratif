@@ -36,14 +36,14 @@
       const firstFree = L.cal[0].find(d => d.slots.length);
       const rule = ctx.byLevel({
         beginner: { motif: motifs[0], text: `Prenez rendez-vous pour « ${motifs[0]} », le <b>premier jour disponible</b>, à l'heure de votre choix.`, check: (d, s) => d.date === firstFree.date || `Ce n'est pas le premier jour disponible. Le premier jour où des horaires sont proposés est le ${fmtDay(firstFree.date)}.` },
-        intermediate: { motif: motifs[1], text: `Prenez rendez-vous pour « ${motifs[1]} », un <b>mardi ou un jeudi</b>, <b>l'après-midi</b> (à partir de 14 h).`, check: (d, s) => { const wd = new Date(d.date).getDay(); if (wd !== 2 && wd !== 4) return "Le jour choisi n'est ni un mardi ni un jeudi."; if (s < "14:00") return "Ce créneau est le matin. Il faut l'après-midi (à partir de 14 h)."; return true; } },
+        intermediate: { motif: motifs[1], text: `Prenez rendez-vous pour « ${motifs[1]} », un <b>mardi ou un jeudi</b>, <b>l'après-midi</b> (à partir de 14 h).`, check: (d, s) => { const wd = new Date(d.date).getDay(); if (wd !== 2 && wd !== 4) return "Le jour choisi n'est ni un mardi ni un jeudi."; if (s < "14:00") return "Ce créneau est le matin. Choisissez une heure de l'après-midi (à partir de 14 h)."; return true; } },
         expert: { motif: motifs[2], text: `Prenez rendez-vous pour « ${motifs[2]} » <b>la semaine suivante</b> (pas la première semaine affichée), <b>après 15 h</b>. Notez la référence : on vous la demandera.`, check: (d, s) => { if (!L.cal[1].some(x => x.date === d.date)) return "Ce jour est dans la première semaine. Utilisez la flèche « Semaine suivante → »."; if (s <= "15:00") return "Le créneau doit être après 15 h."; return true; } }
       });
 
       if (step === 0) {
         ctx.html(`${ctx.header("Mission démarche", "Prendre un rendez-vous en ligne", 0)}
           <div class="mission-step"><h2>Votre consigne</h2><p class="consigne" data-speak>${rule.text}</p>
-          ${ctx.help("Les jours grisés n'ont plus de place. Cliquez sur un jour, puis sur une heure.")}
+          ${ctx.help("Choisissez d'abord le motif. Ensuite, cliquez sur un jour, puis sur une heure. Les jours grisés sont complets.")}
           <button class="primary" type="button" data-act="start">Ouvrir le site de rendez-vous</button></div>`);
         ctx.act("start", () => ctx.go(1));
         return;
@@ -105,7 +105,7 @@
           const v = ctx.box.querySelector("#refCheck").value.trim().toUpperCase();
           const ok = L.ref ? v === L.ref : /^RDV-[A-Z0-9]{4}-\d{2}$/.test(v);
           if (!ok) { ctx.box.querySelector("#refFb").innerHTML = `<div class="alert bad">Ce n'est pas la bonne référence. Relisez le message « Confirmation de rendez-vous ».</div>`; return; }
-          ctx.complete({ key: "appointment", label: "J'ai pris un rendez-vous en ligne", text: "Rendez-vous pris et référence retrouvée : vous êtes prêt pour le guichet !" });
+          ctx.complete({ key: "appointment", label: "J'ai pris un rendez-vous en ligne", text: "Rendez-vous pris et référence retrouvée : vous êtes prêt(e) pour le guichet !" });
         });
         return;
       }
@@ -139,7 +139,7 @@
       const site = (inner) => `<div class="fake-site login-site"><div class="training-watermark">⚠ SITE FICTIF — n'utilisez aucun vrai mot de passe</div><div class="fake-site-top"><div class="fake-site-brand">🔐 Mon Compte Exemple</div><div class="fake-site-url">https://compte.service-exemple.fr</div></div><div class="fake-site-body">${inner}</div></div>`;
       if (step === 0) {
         ctx.html(`${ctx.header("Mission démarche", "J'ai oublié mon mot de passe", 0)}
-          <p class="consigne" data-speak>Vous voulez vous connecter à votre compte, mais vous avez oublié votre mot de passe. Trouvez comment en créer un nouveau.</p>
+          <p class="consigne" data-speak>Vous voulez vous connecter à votre compte, mais vous avez oublié votre mot de passe. Cherchez sur la page le lien pour en créer un nouveau, puis cliquez dessus.</p>
           ${site(L.forgot ? `
             <h3>Mot de passe oublié</h3><p>Saisissez l'adresse e-mail de votre compte. Nous vous enverrons un lien.</p>
             <label for="fpMail">Adresse e-mail</label><input id="fpMail" placeholder="exercice@exemple.fr" autocomplete="off">
@@ -173,7 +173,7 @@
           phish: `<p><b>De :</b> securite.compte@verif-mdp-alert.com</p><p>Cher utilisateur, votre mot de passe expire dans 1 heure. Saisissez votre mot de passe actuel pour le conserver.</p><p><button type="button" class="secondary" data-act="phish">Conserver mon mot de passe</button></p>`
         };
         ctx.html(`${ctx.header("Mission démarche", "Ma boîte e-mail", 1)}
-          <p class="consigne" data-speak>Le site vous a envoyé un e-mail. Ouvrez-le et suivez le lien.</p>
+          <p class="consigne" data-speak>Le site vous a envoyé un e-mail. Trouvez-le dans la liste et cliquez dessus pour l'ouvrir. Ensuite, cliquez sur le bouton du message.</p>
           <div class="webmail"><div class="training-watermark">⚠ MESSAGERIE FICTIVE — EXERCICE</div>
             <div class="webmail-body"><div class="webmail-list">${mails.map(([id, from, subj, when]) => `<button type="button" class="webmail-item ${L.openMail === id ? "on" : ""} ${ctx.isBeginner() && id === "reset" ? "pulse-hint" : ""}" data-act="mail" data-id="${id}"><b>${esc(from)}</b><span>${esc(subj)}</span><small>${esc(when)}</small></button>`).join("")}</div>
             <div class="webmail-read">${L.openMail ? body[L.openMail] : `<p class="muted">Sélectionnez un message.</p>`}<div id="pwFb" aria-live="polite"></div></div></div></div>`);
@@ -218,7 +218,7 @@
       if (step === 3) {
         if (!L.pw) return ctx.go(2);
         ctx.html(`${ctx.header("Mission démarche", "Se reconnecter", 3)}
-          <p class="consigne" data-speak>Votre mot de passe est changé. Connectez-vous avec votre <b>nouveau</b> mot de passe pour vérifier que vous le connaissez.</p>
+          <p class="consigne" data-speak>Votre mot de passe a été changé. Connectez-vous avec votre <b>nouveau</b> mot de passe pour vérifier que vous le connaissez.</p>
           ${site(`<div class="alert good">Mot de passe modifié avec succès.</div><h3>Connexion</h3>
             <label for="lgId2">Identifiant</label><input id="lgId2" value="exercice@exemple.fr" autocomplete="off">
             <label for="lgPw2">Mot de passe</label><input id="lgPw2" type="password" autocomplete="off">

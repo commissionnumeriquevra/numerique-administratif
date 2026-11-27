@@ -42,7 +42,7 @@
         ctx.html(`<div class="mouse-mission">${ctx.header("Mission souris", "Explorer des sites administratifs fictifs", 0)}
           <div class="mission-step">
             <h2>Objectif</h2>
-            <p data-speak>Entraînez-vous à pointer, cliquer et changer de rubrique. Choisissez un site.</p>
+            <p data-speak>Entraînez-vous à cliquer sur les rubriques d'un site. Pour commencer, cliquez sur un des trois sites ci-dessous.</p>
             <div class="mouse-hint">${ctx.byLevel({ beginner: "Vous aurez des indications précises sur les onglets à ouvrir.", intermediate: "Vous devrez retrouver plusieurs rubriques avec moins d'aide.", expert: "Vous devrez explorer librement toutes les rubriques." })}</div>
             <div class="mouse-site-picker">
               ${Object.entries(fakeSites).map(([id, s]) => `<button type="button" class="mouse-site-card" data-act="site" data-site="${id}"><div>${s.icon}</div><strong>${esc(s.name.split(" —")[0])}</strong><span>${esc(s.hint)}</span></button>`).join("")}
@@ -63,9 +63,9 @@
       const page = site.tabs.find(t => t.id === L.active) || site.tabs[0];
       const labelOf = id => site.tabs.find(t => t.id === id)?.label || id;
       const hint = ctx.byLevel({
-        beginner: `Cliquez sur : ${L.targets.map(labelOf).join(" puis ")}.`,
-        intermediate: `Retrouvez et ouvrez ${L.targets.length} rubriques différentes.`,
-        expert: "Explorez toutes les grandes rubriques du site fictif."
+        beginner: `Cliquez en haut sur « ${L.targets.map(labelOf).join(" », puis sur « ")} ». Une coche ✓ s'affiche pour chaque rubrique ouverte.`,
+        intermediate: `Trouvez les ${L.targets.length} rubriques cachées en cliquant sur les onglets en haut du site. Une coche ✓ s'affiche pour chaque rubrique trouvée.`,
+        expert: "Cliquez sur tous les onglets du site, l'un après l'autre. Une coche ✓ s'affiche pour chaque rubrique trouvée."
       });
       const complete = L.targets.every(id => L.visited.includes(id));
       ctx.html(`<div class="mouse-mission">${ctx.header("Navigation souris", site.name, 1)}
@@ -135,14 +135,14 @@
         <span class="key-state" id="st_arrow">Flèches</span><span class="key-state" id="st_space">Espace</span><span class="key-state" id="st_enter">Entrée ↵</span>
       </div>
       <div class="keyboard-step-list">
-        ${stepBox(1, "Corriger avec Retour arrière", `Tapez <b>Bonjouur</b> (avec une faute), puis corrigez avec <span class="keycap">⌫</span> pour obtenir <b>Bonjour</b>.<div class="keyboard-practice-box"><label class="sr-only" for="kbCorrection">Zone de saisie</label><input id="kbCorrection" class="keyboard-big-input" type="text" autocomplete="off" placeholder="Tapez ici"></div>`)}
-        ${stepBox(2, "Écrire une majuscule", `Tapez <b>Paris</b>, avec un P majuscule (Maj ⇧ + p).<div class="keyboard-practice-box"><label class="sr-only" for="kbUppercase">Ville</label><input id="kbUppercase" class="keyboard-big-input" type="text" autocomplete="off" placeholder="Paris"></div>`)}
+        ${stepBox(1, "Corriger avec Retour arrière", `Tapez <b>Bonjouur</b> (avec un u en trop). Appuyez 2 fois sur <span class="keycap">⌫</span>, puis tapez <b>r</b>. Vous devez lire <b>Bonjour</b>.<div class="keyboard-practice-box"><label class="sr-only" for="kbCorrection">Zone de saisie</label><input id="kbCorrection" class="keyboard-big-input" type="text" autocomplete="off" placeholder="Tapez ici"></div>`)}
+        ${stepBox(2, "Écrire une majuscule", `Gardez <span class="keycap">Maj ⇧</span> enfoncée et tapez <b>p</b>. Lâchez, puis tapez <b>aris</b>. Vous devez lire <b>Paris</b>.<div class="keyboard-practice-box"><label class="sr-only" for="kbUppercase">Ville</label><input id="kbUppercase" class="keyboard-big-input" type="text" autocomplete="off" placeholder="Paris"></div>`)}
         ${stepBox(3, "Écrire une adresse e-mail", `Tapez <b>exercice@exemple.fr</b>. ${ctx.isBeginner() ? "Sur un clavier français : <span class='keycap'>Alt Gr</span> + <span class='keycap'>à 0</span> donne @." : ""}<div class="keyboard-practice-box"><label class="sr-only" for="kbEmail">E-mail</label><input id="kbEmail" class="keyboard-big-input" type="text" autocomplete="off" spellcheck="false" placeholder="exercice@exemple.fr"></div>`)}
-        ${stepBox(4, "Naviguer avec Tab", `Passez au champ suivant avec <span class="keycap">Tab ↹</span>.<div class="keyboard-practice-box"><input aria-label="Champ 1" class="keyboard-big-input" type="text" value="Champ 1"><input aria-label="Champ 2" class="keyboard-big-input" type="text" value="Champ 2" style="margin-top:10px"></div>`)}
-        ${stepBox(5, "Revenir avec Maj + Tab", `Depuis le second champ, revenez au premier avec <span class="keycap">Maj ⇧</span> + <span class="keycap">Tab ↹</span>.<div class="keyboard-practice-box"><input aria-label="Premier" class="keyboard-big-input" type="text" value="Premier"><input aria-label="Second" class="keyboard-big-input" type="text" value="Second" style="margin-top:10px"></div>`)}
-        ${stepBox(6, "Utiliser les flèches", `Placez-vous sur la liste et changez de choix avec les flèches.<div class="keyboard-practice-box"><select id="kbSelect" class="keyboard-select" aria-label="Organisme"><option value="">— Choisir —</option><option value="ameli">Ameli</option><option value="impots">Impôts</option><option value="msa">MSA</option></select></div>`)}
-        ${stepBox(7, "Cocher avec Espace", `Placez-vous sur la case avec Tab puis appuyez sur <span class="keycap">Espace</span>.<div class="keyboard-practice-box"><label class="keyboard-checkbox"><input id="kbCheckbox" type="checkbox"><span>Je confirme avoir fait l'exercice.</span></label></div>`)}
-        ${stepBox(8, "Valider avec Entrée", `Atteignez le bouton avec Tab et activez-le avec <span class="keycap">Entrée ↵</span>.<div class="keyboard-practice-box"><button id="kbEnterButton" class="primary" type="button">Valider au clavier</button></div>`)}
+        ${stepBox(4, "Naviguer avec Tab", `Cliquez dans « Champ 1 ». Appuyez sur <span class="keycap">Tab ↹</span> : le curseur passe dans « Champ 2 ».<div class="keyboard-practice-box"><input aria-label="Champ 1" class="keyboard-big-input" type="text" value="Champ 1"><input aria-label="Champ 2" class="keyboard-big-input" type="text" value="Champ 2" style="margin-top:10px"></div>`)}
+        ${stepBox(5, "Revenir avec Maj + Tab", `Cliquez dans « Second ». Gardez <span class="keycap">Maj ⇧</span> enfoncée et appuyez sur <span class="keycap">Tab ↹</span> : le curseur revient dans « Premier ».<div class="keyboard-practice-box"><input aria-label="Premier" class="keyboard-big-input" type="text" value="Premier"><input aria-label="Second" class="keyboard-big-input" type="text" value="Second" style="margin-top:10px"></div>`)}
+        ${stepBox(6, "Utiliser les flèches", `Allez sur la liste avec Tab. Appuyez sur la flèche <span class="keycap">↓</span> pour choisir un organisme.<div class="keyboard-practice-box"><select id="kbSelect" class="keyboard-select" aria-label="Organisme"><option value="">— Choisir —</option><option value="ameli">Ameli</option><option value="impots">Impôts</option><option value="msa">MSA</option></select></div>`)}
+        ${stepBox(7, "Cocher avec Espace", `Allez sur la case avec Tab. Appuyez sur <span class="keycap">Espace</span> : la case se coche.<div class="keyboard-practice-box"><label class="keyboard-checkbox"><input id="kbCheckbox" type="checkbox"><span>Je confirme avoir fait l'exercice.</span></label></div>`)}
+        ${stepBox(8, "Valider avec Entrée", `Allez sur le bouton avec Tab. Appuyez sur <span class="keycap">Entrée ↵</span>.<div class="keyboard-practice-box"><button id="kbEnterButton" class="primary" type="button">Valider au clavier</button></div>`)}
       </div>
       <div id="keyboardPracticeFeedback" aria-live="polite"></div></div>`;
   }
@@ -272,7 +272,7 @@
         if (!/^\d{5}$/.test(v("tabPostal").value.trim())) { fb.innerHTML = `<div class="alert warn">Le code postal doit contenir 5 chiffres.</div>`; return; }
         const required = ctx.byLevel({ beginner: 5, intermediate: 7, expert: 9 });
         if (count < required) { fb.innerHTML = `<div class="alert warn"><strong>Le formulaire est rempli, mais vous avez peu utilisé la touche Tab.</strong><br>Tabulations détectées : ${count}. Pour ce niveau, essayez d'en faire au moins ${required}.<br>Revenez au premier champ et avancez avec Tab.</div>`; return; }
-        fb.innerHTML = `<div class="tab-success"><strong>Bravo !</strong><br>Formulaire rempli et ${count} déplacements avec Tab détectés.</div><button class="primary" type="button" data-act="finish">Terminer l'exercice →</button>`;
+        fb.innerHTML = `<div class="tab-success"><strong>Bravo !</strong><br>Le formulaire est rempli. Déplacements avec Tab : ${count}.</div><button class="primary" type="button" data-act="finish">Terminer l'exercice →</button>`;
         fb.querySelector("button").focus();
       });
       ctx.act("finish", () => ctx.complete({ key: "tab_form", label: "J'ai rempli un formulaire avec la touche Tab", text: "Vous avez rempli un formulaire en vous déplaçant au clavier." }));

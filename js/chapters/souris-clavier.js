@@ -34,7 +34,7 @@
     const down = e => { e.stopPropagation(); if (e.button === 0) light("left", "👆 Clic <b>gauche</b> : j'agis !"); else if (e.button === 2) light("right", "👉 Clic <b>droit</b> : j'explore les options !"); };
     const ctx = e => e.preventDefault();
     const dbl = () => light("left", "✌️ Un <b>double-clic</b> : toc-toc !");
-    const wh = e => { e.preventDefault(); light("wheel", `🛞 La <b>molette</b> ${e.deltaY > 0 ? "descend ⬇️" : "monte ⬆️"}`); };
+    const wh = e => { e.preventDefault(); light("wheel", `🛞 La <b>molette</b> : la page ${e.deltaY > 0 ? "descend ⬇️" : "remonte ⬆️"}`); };
     zone.addEventListener("mousedown", down); zone.addEventListener("contextmenu", ctx); zone.addEventListener("dblclick", dbl); zone.addEventListener("wheel", wh, { passive: false });
     return () => { clearTimeout(tm); zone.removeEventListener("mousedown", down); zone.removeEventListener("contextmenu", ctx); zone.removeEventListener("dblclick", dbl); zone.removeEventListener("wheel", wh); };
   };
@@ -111,7 +111,7 @@
     { title: "Glisser-déposer ✊", theme: "dense", mount: mountDrag, html: `
       <div class="sc-steps3">
         <div data-reveal="1"><i>👇</i>J'appuie sur le bouton gauche…</div>
-        <div data-reveal="2"><i>✊➡️</i>…je le <b>garde enfoncé</b> et je déplace…</div>
+        <div data-reveal="2"><i>✊➡️</i>…je le <b>garde enfoncé</b> et je déplace la souris…</div>
         <div data-reveal="3"><i>🫳</i>…je lâche au-dessus de l'arrivée.</div>
       </div>
       <div class="sc-live fx" style="margin-top:14px"><div class="sc-dragdemo"><div class="sc-file" data-drag><span>✉️</span>lettre.pdf</div><span style="font-size:2em">➡️</span><div class="sc-zone" data-drop style="min-height:90px;max-width:200px"><b>📁 Courrier</b><div class="sc-zin"></div></div></div><div class="sc-live-out">👉 Essayez : rangez la lettre dans le dossier.</div></div>
@@ -132,7 +132,7 @@
       <div class="pk-live"></div>
       <div class="sc-keys6">
         <div class="l-card" data-reveal="1"><h3>${kbd("⇧ Maj")} + lettre</h3><small>UNE majuscule (et les chiffres du haut)</small></div>
-        <div class="l-card" data-reveal="2"><h3>${kbd("⇩ Verr. Maj")}</h3><small>TOUT en majuscules : une fois pour allumer, une fois pour éteindre</small></div>
+        <div class="l-card" data-reveal="2"><h3>${kbd("⇩ Verr. Maj")}</h3><small>TOUT en majuscules : j’appuie une fois pour allumer, une fois pour éteindre</small></div>
         <div class="l-card" data-reveal="3"><h3>${kbd("Alt Gr")} + ${kbd("à 0")} = @</h3><small>l'arobase des adresses e-mail</small></div>
         <div class="l-card" data-reveal="4"><h3>${kbd("⌫ Effacer")}</h3><small>efface la lettre à gauche du curseur</small></div>
         <div class="l-card" data-reveal="5"><h3>${kbd("↵ Entrée")}</h3><small>valider, ou aller à la ligne</small></div>
@@ -163,7 +163,7 @@
         <div class="l-card big" data-reveal="2"><h3>${kbd("⌫ Effacer")}</h3><p>Efface la lettre <b>à gauche</b> du curseur. (${kbd("Suppr")}, elle, efface à droite.)</p></div>
       </div>
       <div class="l-flips" data-reveal="3">
-        ${flip("Bonjoru", "Je clique après « Bonjoru », ⌫ ⌫, puis « ur »", true)}${flip("Je suisà la gare", "Je clique avant « à », puis Espace", true)}${flip("J'ai tout effacé !", "🪄 Ctrl + Z : tout revient", true)}
+        ${flip("Bonjoru", "Je clique après « Bonjoru », ⌫ ⌫, puis je tape « ur »", true)}${flip("Je suisà la gare", "Je clique avant « à », puis j’appuie sur Espace", true)}${flip("J'ai tout effacé !", "🪄 Ctrl + Z : tout revient", true)}
       </div>
       <div class="l-callout" data-reveal="4">📝 Avant de valider, je <b>relis</b> : majuscule, accents, espaces, ponctuation.</div>` }
   ];

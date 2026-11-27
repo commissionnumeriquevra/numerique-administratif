@@ -126,7 +126,7 @@
     b.classList.toggle("hidden", !on);
     const req = !!state.seat?.help?.requested;
     b.classList.toggle("waiting", req);
-    b.innerHTML = req ? "⏳ Le formateur arrive…<small>Toucher pour annuler</small>" : "✋ J'ai besoin d'aide";
+    b.innerHTML = req ? "⏳ Le formateur arrive…<small>Cliquez pour annuler</small>" : "✋ J'ai besoin d'aide";
     b.setAttribute("aria-pressed", req ? "true" : "false");
   }
   async function toggleHelp() {
@@ -254,7 +254,7 @@
     const doJoin = async () => {
       const msg = $("#studentJoinMsg"); msg.className = "msg"; msg.textContent = "";
       const wc = $("#joinWorkshopCode").value.replace(/\D/g, ""), sc = $("#joinSeatCode").value.replace(/\D/g, "");
-      if (wc.length !== 6 || sc.length !== 4) { msg.className = "msg bad"; msg.textContent = "Le code de l'atelier a 6 chiffres et votre code participant en a 4."; return; }
+      if (wc.length !== 6 || sc.length !== 4) { msg.className = "msg bad"; msg.textContent = "Vérifiez vos codes : le code de l'atelier a 6 chiffres, votre code participant en a 4."; return; }
       const btn = $("#joinStudentBtn"); btn.disabled = true; btn.textContent = "Connexion…";
       try { await join(wc, sc); } catch (e) { msg.className = "msg bad"; msg.textContent = e.message; }
       finally { btn.disabled = false; btn.textContent = "Continuer"; }

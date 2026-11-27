@@ -142,9 +142,9 @@
       const step = ctx.m.step || 0, L = ctx.local, G = grader(L);
       if (step === 0) {
         const f = frame(ctx, { level: 1, title: "Se connecter à son compte", step: 0,
-          consigne: "Un compte, c'est comme une maison : l'<b>identifiant</b> dit quelle porte, le <b>mot de passe</b> est la clé. Connectez-vous au compte lecteur de Marie.",
+          consigne: "Un compte, c'est comme une maison : l'<b>identifiant</b> dit quelle maison, le <b>mot de passe</b> est la clé. Connectez-vous au compte lecteur de Marie avec les informations de son carnet d'exercice.",
           help: "Cliquez sur « Se connecter » en haut du site. Le bouton 👁 permet de vérifier ce que vous avez tapé dans le mot de passe." });
-        const tasks = [{ label: "Ouvrez la page de connexion (« 👤 Se connecter »)." }, { label: "Tapez l'identifiant et le mot de passe, puis cliquez sur « Se connecter »." }];
+        const tasks = [{ label: "Cliquez sur « 👤 Se connecter », en haut du site." }, { label: "Tapez l'identifiant et le mot de passe du carnet, puis cliquez sur « Se connecter »." }];
         const draw = (x = "") => { f.panel.innerHTML = `${SAFE}<div class="acc-card" style="margin:8px 0">🗂️ <b>Le carnet de Marie</b><span>Identifiant : <code>${ME.email}</code></span><span>Mot de passe : <code>${ME.pw}</code></span></div>${tasksHTML(tasks)}${x}`; };
         draw();
         let tries = 0, eye = false;
@@ -190,17 +190,17 @@
       }
       if (step === 2) {
         const f = frame(ctx, { level: 1, title: "L'ordinateur partagé", step: 2,
-          consigne: "Vous vous installez à un ordinateur de la médiathèque. Surprise : <b>la personne d'avant ne s'est pas déconnectée</b> ! Que faites-vous ?",
-          help: "Ses informations sont privées. Le bon geste rend service à la personne." });
+          consigne: "Vous vous installez devant un ordinateur de la médiathèque. Surprise : <b>Gérard, l'usager d'avant, ne s'est pas déconnecté</b> ! Que faites-vous ?",
+          help: "Les informations de Gérard sont privées. Le bon geste le protège." });
         let done = false;
-        f.panel.innerHTML = tasksHTML([{ label: "Faites ce qu'il faut pour protéger le compte de Gérard." }]);
+        f.panel.innerHTML = tasksHTML([{ label: "Protégez le compte de Gérard : trouvez le bon bouton sur le site." }]);
         mountB(ctx, f.host, { start: ACC, onEvent: (type, d, c) => {
           if (type === "action" && d.name === "logout" && !done) {
             done = true; G.ok("gerard", "Déconnecter un compte oublié sur un ordinateur partagé"); goPage(c, ACC + "/deconnecte");
             f.panel.innerHTML = `<div class="alert good">✅ Bravo : en le déconnectant, vous protégez Gérard. Sinon, la personne suivante pourrait voir son adresse, ou réserver à sa place.</div><div class="mk-q-slot"></div>`;
             quiz(f.panel.querySelector(".mk-q-slot"), { G, key: "pub", questions: [
-              { q: "Sur l'ordinateur de la médiathèque, je coche « Se souvenir de moi » ?", choices: ["Oui, c'est plus pratique", "Non, jamais sur un ordinateur partagé"], ok: 1, why: "« Se souvenir de moi » garde le compte ouvert pour la personne suivante. Seulement sur <b>son</b> ordinateur ou <b>son</b> téléphone." },
-              { q: "J'ai fini. Fermer la fenêtre suffit ?", choices: ["Oui, tout s'efface", "Non : je clique d'abord sur « Se déconnecter »"], ok: 1, why: "Fermer la fenêtre ne déconnecte pas toujours. Le bon réflexe : <b>Se déconnecter</b>, puis fermer." }
+              { q: "Sur un ordinateur de la médiathèque, est-ce que je coche « Se souvenir de moi » ?", choices: ["Oui, c'est plus pratique", "Non, jamais sur un ordinateur partagé"], ok: 1, why: "« Se souvenir de moi » garde le compte ouvert pour la personne suivante. On ne le coche que sur <b>son</b> ordinateur ou <b>son</b> téléphone." },
+              { q: "J'ai fini. Est-ce que fermer la fenêtre suffit ?", choices: ["Oui, tout s'efface", "Non : je clique d'abord sur « Se déconnecter »"], ok: 1, why: "Fermer la fenêtre ne déconnecte pas toujours. Le bon réflexe : <b>Se déconnecter</b>, puis fermer." }
             ], onDone: () => finish(ctx, G, { key: "acc_login", label: "Je sais me connecter et me déconnecter", intro: "Vous savez vous connecter à un compte, vérifier votre mot de passe avec 👁, et vous déconnecter, surtout sur un ordinateur partagé." }) });
           }
         } });
@@ -222,7 +222,7 @@
         const f = frame(ctx, { level: 2, title: "Créer un compte", step: 0,
           consigne: "Créez le compte lecteur de Marie sur le site de la médiathèque.",
           help: "Prenez votre temps : chaque case a son rôle. Les champs avec * sont obligatoires." });
-        const tasks = [{ label: "Trouvez la page « Créer un compte »." }, { label: `Remplissez le formulaire : <b>Marie</b> · <b>Dupont</b> · <code>${ME.email}</code>` }, { label: "Inventez un <b>mot de passe d'exercice</b> solide, et confirmez-le." }, { label: "Acceptez les conditions, puis cliquez sur « Créer mon compte »." }];
+        const tasks = [{ label: "Trouvez la page « Créer un compte »." }, { label: `Remplissez le formulaire : <b>Marie</b> · <b>Dupont</b> · <code>${ME.email}</code>` }, { label: "Inventez un <b>mot de passe d'exercice</b> solide (pas un vrai !), puis retapez-le dans la case « Confirmez »." }, { label: "Acceptez les conditions, puis cliquez sur « Créer mon compte »." }];
         f.panel.innerHTML = SAFE + tasksHTML(tasks);
         let first = true;
         mountB(ctx, f.host, { start: MED, onEvent: (type, d, c) => {
@@ -276,7 +276,7 @@
             f.panel.innerHTML = tasksHTML(tasks) + `<div class="mk-q-slot"></div>`;
             quiz(f.panel.querySelector(".mk-q-slot"), { G, key: "why", questions: [
               { q: "À quoi sert cet e-mail de confirmation ?", choices: ["À vérifier que l'adresse e-mail est bien la vôtre", "À vous vendre quelque chose", "À rien, on peut l'ignorer"], ok: 0, why: "Le site vérifie que l'adresse existe et vous appartient. Sans clic sur le lien, le compte reste souvent inactif." },
-              { q: "Vous recevez un e-mail de confirmation pour un site où vous ne vous êtes <b>jamais</b> inscrit(e)…", choices: ["Je clique pour voir", "Je ne clique pas, je l'ignore ou je le supprime"], ok: 1, why: "Quelqu'un s'est peut-être trompé d'adresse, ou c'est un piège. On ne clique pas." }
+              { q: "Vous recevez un e-mail de confirmation pour un site où vous ne vous êtes <b>jamais</b> inscrit(e). Que faites-vous ?", choices: ["Je clique pour voir", "Je ne clique pas, je l'ignore ou je le supprime"], ok: 1, why: "Quelqu'un s'est peut-être trompé d'adresse, ou c'est un piège. On ne clique pas." }
             ], onDone: () => finish(ctx, G, { key: "acc_signup", label: "Je sais créer un compte", intro: "Vous savez remplir un formulaire d'inscription, choisir un mot de passe solide et activer votre compte grâce à l'e-mail de confirmation." }) });
           }
         } });
@@ -295,9 +295,9 @@
   };
   const TRY = [
     { pw: "soleil", kind: "courant", why: "C'est l'un des mots de passe les plus utilisés en France : il est dans la liste que les logiciels essaient en premier." },
-    { pw: "Rex1952", kind: "perso", why: "Le nom de son chien + son année de naissance. Deux informations qu'elle publie sur les réseaux : un logiciel les combine en premier." },
-    { pw: "Lucas2015!", kind: "perso", why: "Le prénom de son petit-fils + l'année de sa naissance + un « ! ». Le point d'exclamation ne change presque rien : les logiciels essaient ces variantes automatiquement." },
-    { pw: "Valbourg26", kind: "perso", why: "Sa ville + son département. Des mots qu'on devine en regardant son profil." }
+    { pw: "Rex1952", kind: "perso", why: "Le nom du chien de Josiane + son année de naissance. Deux informations qu'elle publie sur les réseaux sociaux : un logiciel les combine en premier." },
+    { pw: "Lucas2015!", kind: "perso", why: "Le prénom du petit-fils de Josiane + l'année où il est né + un « ! ». Le point d'exclamation ne change presque rien : les logiciels essaient ces variantes automatiquement." },
+    { pw: "Valbourg26", kind: "perso", why: "La ville de Josiane + son numéro de département. Des mots qu'on devine en regardant son profil." }
   ];
   R("acc_pirate", {
     steps: 3,
@@ -305,14 +305,14 @@
       const step = ctx.m.step || 0, L = ctx.local, G = grader(L);
       if (step === 0) {
         const f = frame(ctx, { level: 3, title: "Le simulateur : pourquoi un mot de passe tient", step: 0, noClient: true,
-          consigne: "Un outil mesure la solidité d'un mot de passe : il affiche le <b>temps qu'un logiciel de pirate</b> mettrait à le trouver. Testons les mots de passe que les gens choisissent <u>le plus souvent</u>.",
+          consigne: "Un outil mesure la solidité d'un mot de passe : il affiche le <b>temps qu'un logiciel de pirate</b> mettrait à le trouver. Testons des mots de passe que les gens choisissent <u>très souvent</u>. Cliquez sur « Exemple suivant » pour passer au suivant.",
           help: "On ne tape jamais de vrai mot de passe : ici, on observe des exemples." });
         L.i ||= 0;
         const draw = () => {
           const t = TRY[L.i];
           const sg = AN.pw.strength(t.pw, Object.values(SNOOP).map(x => x.split(" ")[0]));
           f.panel.innerHTML = `${SAFE}<div class="acc-card" style="display:block;margin:8px 0;width:100%;box-sizing:border-box">
-              <div>Exemple ${L.i + 1} / ${TRY.length} — un mot de passe « ${t.kind === "courant" ? "très courant" : "fait avec ses infos personnelles"} » :</div>
+              <div>Exemple ${L.i + 1} / ${TRY.length} — un mot de passe « ${t.kind === "courant" ? "très courant" : "fait avec les infos personnelles de Josiane"} » :</div>
               <code style="font-size:1.4em;display:inline-block;margin:6px 0">${esc(t.pw)}</code>${AN.pw.gauge(t.pw, Object.values(SNOOP).map(x => x.split(" ")[0]))}</div>
             <div class="alert ${sg.score >= 3 ? "good" : "bad"}">${sg.score >= 3 ? "🛡️ " : "🔓 "}Trouvé <b>${sg.time === "instantanément" ? "instantanément" : "en " + sg.time}</b>. ${t.why}</div>
             <button type="button" class="primary" data-next>${L.i + 1 < TRY.length ? "Exemple suivant →" : "Comment font-ils ? →"}</button>`;
@@ -323,7 +323,7 @@
       }
       if (step === 1) {
         const f = frame(ctx, { level: 3, title: "Les 3 méthodes des pirates", step: 1, noClient: true,
-          consigne: "Les pirates ont trois grandes méthodes. Les connaître, c'est déjà se protéger." });
+          consigne: "Les pirates ont trois grandes méthodes. Les connaître, c'est déjà se protéger. Répondez aux questions." });
         quiz(f.panel, { G, key: "meth", title: `<div class="acc-split" style="margin-bottom:10px"><div>${AN.social.profile(AN.social.JOSIANE, { static: true })}</div><div class="alert">👆 Josiane publie son chien <b>Rex</b>, son année de naissance <b>1952</b>, son petit-fils <b>Lucas</b>… Tout ça peut servir à deviner son mot de passe.</div></div>`, questions: [
           { q: "Un site marchand se fait voler ses mots de passe. Pourquoi est-ce grave si j'utilise <b>le même mot de passe partout</b> ?", choices: ["Ce n'est pas grave", "Les pirates l'essaient automatiquement sur ma messagerie, ma banque…", "Le site me rembourse"], ok: 1, why: "C'est la méthode la plus fréquente : les mots de passe volés sont essayés sur des milliers d'autres sites. Un mot de passe <b>différent par site</b> limite les dégâts." },
           { q: "Quels mots de passe un logiciel essaie-t-il en tout premier ?", choices: ["Les plus courants : 123456, azerty, soleil…", "Les plus longs", "Ceux avec des accents"], ok: 0, why: "Des listes de millions de mots de passe courants circulent. Ils sont testés en quelques secondes." },
@@ -339,7 +339,7 @@
         f.panel.querySelector("[data-end]").addEventListener("click", () => {
           const n = f.panel.querySelectorAll("[data-k]:checked").length;
           G.ok("bilan", "Faire le point sur ses propres habitudes");
-          const fb = n ? `🛠️ <b>${n} point${n > 1 ? "s" : ""} à améliorer</b>, et c'est normal : presque tout le monde commence comme ça. Le niveau 4 apprend à fabriquer une phrase de passe, et le niveau 5 à ne plus rien retenir grâce au coffre-fort.` : "🛡️ Rien de coché : bravo ! Vérifiez quand même que vous n'avez pas le même mot de passe sur votre messagerie et ailleurs.";
+          const fb = n ? `🛠️ <b>${n} point${n > 1 ? "s" : ""} à améliorer</b>, et c'est normal : presque tout le monde commence comme ça. Le niveau 4 vous apprend à fabriquer une phrase de passe, et le niveau 5 à ne plus rien retenir grâce au coffre-fort.` : "🛡️ Rien de coché : bravo ! Vérifiez quand même que vous n'avez pas le même mot de passe sur votre messagerie et ailleurs.";
           finish(ctx, G, { key: "acc_pirate", label: "Je comprends ce qui rend un mot de passe fragile", intro: `${fb}<br>Vous avez vu les 3 méthodes des pirates : les fuites (le même mot de passe partout), les mots de passe courants, et les infos personnelles publiées.` });
         });
         return;
@@ -367,7 +367,7 @@
       if (step === 0) {
         const f = frame(ctx, { level: 4, title: "Fabriquer une phrase de passe", step: 0, noClient: true,
           consigne: "La recette : <b>4 mots ou plus, qui n'ont rien à voir avec votre vie</b>, pour faire une petite image farfelue. Exemple : « Trois tomates dansent sous la pluie ! »" });
-        f.panel.innerHTML = `${SAFE}<p>Cliquez sur des mots pour composer, ou écrivez votre propre phrase :</p>
+        f.panel.innerHTML = `${SAFE}<p>Cliquez sur des mots pour composer une phrase, ou écrivez la vôtre. Puis cliquez sur « Valider ma phrase ✔ ».</p>
           ${WORDS.map(([t, ws]) => `<div style="margin:6px 0"><small><b>${t}</b></small><div class="acc-words">${ws.map(w => `<button type="button" data-w="${esc(w)}">${esc(w)}</button>`).join("")}</div></div>`).join("")}
           <p><input class="acc-phrase" data-phrase placeholder="Votre phrase de passe d'exercice…" autocomplete="off" spellcheck="false"></p>
           <div class="gauge-slot">${AN.pw.gauge("")}</div>
@@ -386,22 +386,22 @@
             fb.innerHTML = `<div class="alert bad">${n < 4 ? `Votre phrase a <b>${n} mot${n > 1 ? "s" : ""}</b> : visez-en au moins 4.` : "Pas encore assez solide : regardez les conseils sous la jauge."}</div>`; return;
           }
           if (first) G.ok("phrase", "Fabriquer une phrase de passe solide");
-          fb.innerHTML = `<div class="alert good">🛡️ Bravo : « <b>${esc(p)}</b> » serait trouvé en <b>${s.time}</b>. Pour la retenir, <b>imaginez la scène</b> dans votre tête.<br>⚠️ C'était un entraînement : chez vous, inventez-en une <b>nouvelle</b> pour vos vrais comptes.</div><button type="button" class="primary" data-next>Continuer →</button>`;
+          fb.innerHTML = `<div class="alert good">🛡️ Bravo : « <b>${esc(p)}</b> » serait trouvée en <b>${s.time}</b>. Pour la retenir, <b>imaginez la scène</b> dans votre tête.<br>⚠️ C'était un entraînement : chez vous, inventez-en une <b>nouvelle</b> pour vos vrais comptes.</div><button type="button" class="primary" data-next>Continuer →</button>`;
           fb.querySelector("[data-next]").addEventListener("click", () => ctx.go(1));
         });
         return;
       }
       if (step === 1) {
-        const f = frame(ctx, { level: 4, title: "Solide ou fragile ?", step: 1, noClient: true, consigne: "Pour chaque mot de passe, votre avis : solide ou fragile ?" });
+        const f = frame(ctx, { level: 4, title: "Solide ou fragile ?", step: 1, noClient: true, consigne: "Pour chaque mot de passe, cliquez sur votre réponse : solide ou fragile ?" });
         quiz(f.panel, { G, key: "sf", questions: TESTS.map(([p, ok, why]) => ({ q: `<code class="mono" style="font-size:1.3em">${esc(p)}</code>`, choices: ["🔓 Fragile", "🔒 Solide"], ok: ok ? 1 : 0, why: `${why} Un logiciel de pirate le trouve <b>${AN.pw.strength(p).time === "instantanément" ? "instantanément" : "en " + AN.pw.strength(p).time}</b>.` })), onDone: () => ctx.go(2) });
         return;
       }
       if (step === 2) {
         const f = frame(ctx, { level: 4, title: "Les bonnes habitudes", step: 2, noClient: true, consigne: "Un bon mot de passe, c'est bien. Bien s'en servir, c'est mieux !" });
         quiz(f.panel, { G, key: "hab", questions: [
-          { q: "J'ai une super phrase de passe. Je l'utilise…", choices: ["Partout, comme ça je ne l'oublie pas", "Pour un seul compte : un mot de passe différent par site"], ok: 1, why: "Si un site se fait voler ses mots de passe, les pirates essaieront la même partout. Le niveau 5 montre comment tout retenir sans effort : le coffre-fort." },
+          { q: "J'ai une super phrase de passe. Je l'utilise…", choices: ["Partout, comme ça je ne l'oublie pas", "Pour un seul compte : un mot de passe différent par site"], ok: 1, why: "Si un site se fait voler ses mots de passe, les pirates essaieront cette phrase partout. Le niveau 5 montre comment tout retenir sans effort : le coffre-fort." },
           { q: "Où noter mes mots de passe ?", choices: ["Sur un post-it collé à l'écran", "Dans un carnet rangé chez moi, ou dans le coffre-fort du navigateur ou du téléphone", "Dans un e-mail envoyé à moi-même"], ok: 1, why: "Un carnet à la maison, c'est très bien (pas dans le sac avec le téléphone !). Le coffre-fort numérique, c'est encore plus pratique." },
-          { q: "Quel compte protéger avec le mot de passe le plus solide ?", choices: ["Ma messagerie", "Le site de recettes"], ok: 0, why: "Avec votre messagerie, un pirate peut cliquer sur « Mot de passe oublié » sur TOUS vos autres sites. C'est la clé de toutes les clés." }
+          { q: "Quel compte protéger avec le mot de passe le plus solide ?", choices: ["Ma messagerie", "Mon site de recettes"], ok: 0, why: "Avec votre messagerie, un pirate peut cliquer sur « Mot de passe oublié » sur TOUS vos autres sites. C'est la clé de toutes les clés." }
         ], onDone: () => finish(ctx, G, { key: "acc_phrase", label: "Je sais fabriquer une phrase de passe", intro: "Vous savez fabriquer une phrase de passe solide et facile à retenir, et vous connaissez les bonnes habitudes : un mot de passe par site, et la messagerie bien protégée." }) });
         return;
       }
@@ -470,7 +470,7 @@
         const f = frame(ctx, { level: 5, title: "💻 Reconnexion et coffre-fort", step: 2,
           consigne: "Une semaine plus tard, Marie revient sur le site de la piscine. Elle ne se souvient pas du mot de passe… mais le coffre-fort, si !",
           help: "Cliquez dans la case « Adresse e-mail » : le navigateur propose le compte enregistré. Pour voir un mot de passe enregistré : la clé 🔑 en haut à droite." });
-        const tasks = [{ label: "Cliquez dans la case <b>Adresse e-mail</b> et choisissez le compte proposé." }, { label: "Cliquez sur <b>« Se connecter »</b>." }, { label: "Ouvrez le coffre-fort (la clé <b>🔑</b> en haut) et affichez le mot de passe de la piscine." }];
+        const tasks = [{ label: "Cliquez dans la case <b>Adresse e-mail</b> et choisissez le compte proposé." }, { label: "Cliquez sur <b>« Se connecter »</b>." }, { label: "Ouvrez le coffre-fort (la clé <b>🔑</b> en haut) et affichez le mot de passe de la piscine avec le code <code>2580</code>." }];
         const draw = (x = "") => { f.panel.innerHTML = `<div class="acc-card">💻 Code de l'ordinateur d'exercice : <code>2580</code></div>${tasksHTML(tasks)}${x}`; };
         draw();
         let filled = false;
@@ -539,7 +539,7 @@
             }
           }
           if (step === 2) {
-            if (type === "open" && d.app === "passwords") { tasks[0].done = true; draw(); ph.setAppHTML(`<div class="pv-face"><span>🔒</span><b>Mots de passe est verrouillé</b><small>Vos mots de passe sont protégés par votre visage ou le code du téléphone.</small><button type="button" class="pv-btn" data-ph-act="faceid">🙂 Utiliser Face ID</button></div>`); }
+            if (type === "open" && d.app === "passwords") { tasks[0].done = true; draw(); ph.setAppHTML(`<div class="pv-face"><span>🔒</span><b>L'app Mots de passe est verrouillée</b><small>Vos mots de passe sont protégés par votre visage ou le code du téléphone.</small><button type="button" class="pv-btn" data-ph-act="faceid">🙂 Utiliser Face ID</button></div>`); }
             if (type === "act" && d.name === "faceid") {
               ph.setAppHTML(`<div class="pv-face"><span>🙂</span><b>Face ID…</b></div>`);
               setTimeout(() => { if (!alive(ctx)) return; tasks[1].done = true; draw(); G.ok("face", "Déverrouiller le coffre-fort"); ph.setAppHTML(`<p><b>Tous les mots de passe</b></p>${[["🏊", "piscine-valbourg.fr", "entry"], ["📚", "mediatheque-valbourg.fr", ""], ["🛒", "marche-valbourg.fr", ""]].map(([i, s, a]) => `<button type="button" class="pv-item" ${a ? `data-ph-act="${a}"` : "disabled"}>${i} <span><b>${s}</b><small>${ME.email}</small></span></button>`).join("")}`); }, 1200);
@@ -557,11 +557,11 @@
         return;
       }
       if (step === 3) {
-        const f = frame(ctx, { level: 5, title: "Le coffre-fort : les questions qu'on se pose", step: 3, noClient: true, consigne: "Les questions que tout le monde se pose sur le coffre-fort." });
+        const f = frame(ctx, { level: 5, title: "Le coffre-fort : les questions qu'on se pose", step: 3, noClient: true, consigne: "Répondez aux questions que tout le monde se pose sur le coffre-fort." });
         quiz(f.panel, { G, key: "vq", questions: [
           { q: "Avec un coffre-fort, combien de mots de passe dois-je retenir ?", choices: ["Tous", "Un seul : celui du compte Google ou Apple (et le code du téléphone ou de l'ordinateur)", "Aucun"], ok: 1, why: "Le coffre-fort retient tout le reste. Ce seul mot de passe doit donc être <b>très solide</b> : une phrase de passe !" },
-          { q: "Je perds mon téléphone. Mes mots de passe sont perdus ?", choices: ["Oui, tout est perdu", "Non : ils sont sauvegardés dans mon compte Google ou Apple, et je les retrouve sur un nouvel appareil"], ok: 1, why: "Ils sont synchronisés avec votre compte. Sur un nouveau téléphone, on se connecte à son compte et tout revient." },
-          { q: "Le coffre-fort remplit le mot de passe tout seul… sur un <b>faux site</b> ?", choices: ["Oui, il le remplit partout", "Non : il ne propose le mot de passe que sur le vrai site enregistré"], ok: 1, why: "Un bonus de sécurité : sur un faux site (ameli-remboursement.info), le coffre-fort ne propose rien. Si rien ne s'affiche… méfiance !" }
+          { q: "Je perds mon téléphone. Est-ce que mes mots de passe sont perdus ?", choices: ["Oui, tout est perdu", "Non : ils sont sauvegardés dans mon compte Google ou Apple, et je les retrouve sur un nouvel appareil"], ok: 1, why: "Ils sont synchronisés avec votre compte. Sur un nouveau téléphone, on se connecte à son compte et tout revient." },
+          { q: "Sur un <b>faux site</b>, le coffre-fort remplit-il le mot de passe tout seul ?", choices: ["Oui, il le remplit partout", "Non : il ne propose le mot de passe que sur le vrai site enregistré"], ok: 1, why: "Un bonus de sécurité : sur un faux site (ameli-remboursement.info), le coffre-fort ne propose rien. Si rien ne s'affiche… méfiance !" }
         ], onDone: () => finish(ctx, G, { key: "acc_vault", label: "Je sais utiliser un coffre-fort à mots de passe", intro: "Vous savez laisser le coffre-fort inventer, enregistrer et remplir vos mots de passe, et retrouver un mot de passe enregistré." }) });
         return;
       }
@@ -609,7 +609,7 @@
         const f = frame(ctx, { level: 6, title: "Le faux conseiller", step: 1,
           consigne: "Le lendemain, le téléphone de Marie sonne. Le numéro affiché ressemble à celui de sa banque… Décrochez et écoutez bien.",
           help: "Lisez bien les SMS qui arrivent pendant l'appel : ils disent à quoi sert le code." });
-        f.panel.innerHTML = tasksHTML([{ label: "Décrochez, écoutez… et décidez." }]);
+        f.panel.innerHTML = tasksHTML([{ label: "Touchez « Répondre », écoutez, puis choisissez votre réponse." }]);
         const [, pEl] = split(f);
         f.host.querySelector(".acc-split").style.gridTemplateColumns = "1fr";
         let decided = false;
@@ -634,10 +634,10 @@
         return;
       }
       if (step === 2) {
-        const f = frame(ctx, { level: 6, title: "Ce SMS, j'en fais quoi ?", step: 2, noClient: true, consigne: "Un code arrive par SMS. Selon la situation, le bon geste change." });
+        const f = frame(ctx, { level: 6, title: "Ce SMS, j'en fais quoi ?", step: 2, noClient: true, consigne: "Un code arrive par SMS. Selon la situation, le bon geste change. Choisissez le bon geste." });
         quiz(f.panel, { G, key: "smsq", questions: [
-          { q: "« Votre code de connexion : 482913 ». Vous êtes en train de vous connecter à votre banque.", choices: ["Je le tape sur le site de la banque", "Je le transfère à ma fille", "Je l'ignore"], ok: 0, why: "C'est vous qui vous connectez : le code se tape sur le site, et nulle part ailleurs." },
-          { q: "Le même SMS arrive… alors que vous ne faites <b>rien</b>.", choices: ["Je le tape quelque part pour voir", "Quelqu'un essaie d'entrer dans mon compte : je change mon mot de passe", "Je réponds au SMS"], ok: 1, why: "Le pirate a sans doute votre mot de passe, mais pas votre téléphone : le code l'a bloqué. Changez vite ce mot de passe." },
+          { q: "« Votre code de connexion : 482913 ». Vous êtes en train de vous connecter à votre banque. Que faites-vous ?", choices: ["Je le tape sur le site de la banque", "Je le transfère à ma fille", "Je l'ignore"], ok: 0, why: "C'est vous qui vous connectez : le code se tape sur le site, et nulle part ailleurs." },
+          { q: "Le même SMS arrive… alors que vous ne faites <b>rien</b>. Que faites-vous ?", choices: ["Je le tape quelque part pour voir", "Quelqu'un essaie d'entrer dans mon compte : je change mon mot de passe", "Je réponds au SMS"], ok: 1, why: "Le pirate a sans doute votre mot de passe, mais pas votre téléphone : le code l'a bloqué. Changez vite ce mot de passe." },
           { q: "Qui peut vous demander le code reçu par SMS ?", choices: ["Le conseiller de la banque, au téléphone", "Un technicien Microsoft", "Personne, jamais"], ok: 2, why: "Le code se tape <b>vous-même</b>, sur le site. Toute personne qui le demande est un escroc." }
         ], onDone: () => finish(ctx, G, { key: "acc_sms", label: "Je protège le code reçu par SMS", intro: "Vous savez utiliser la double sécurité (le code reçu par SMS) et vous ne donnerez jamais ce code, même à un « conseiller » pressant." }) });
         return;
@@ -711,9 +711,9 @@
         const f = frame(ctx, { level: 7, title: "Mon compte est-il piraté ?", step: 3, noClient: true, consigne: "Les signes qui doivent alerter… et les bons gestes, calmement." });
         quiz(f.panel, { G, key: "hack", questions: [
           { q: "Vous recevez « Nouvelle connexion depuis un appareil inconnu » alors que ce n'est pas vous. Que faire ?", choices: ["Rien, c'est sûrement une erreur", "Je change tout de suite mon mot de passe, en allant moi-même sur le site", "Je clique sur le lien de l'e-mail"], ok: 1, why: "On va soi-même sur le site (pas par le lien de l'e-mail, qui pourrait être un piège) et on change le mot de passe." },
-          { q: "Vos amis reçoivent de votre part des messages bizarres que vous n'avez pas écrits.", choices: ["Mon compte est sans doute piraté : je change le mot de passe et je préviens mes contacts", "Ce n'est pas grave"], ok: 0, why: "C'est un signe classique. Changez le mot de passe, activez le code par SMS, et prévenez vos contacts de ne pas cliquer." },
-          { q: "Votre mot de passe ne marche plus, alors que vous ne l'avez pas changé.", choices: ["J'utilise « Mot de passe oublié ? » ; si ça ne marche pas, je contacte le service", "J'abandonne ce compte"], ok: 0, why: "Le pirate a peut-être changé le mot de passe. « Mot de passe oublié » permet souvent de reprendre la main. Sinon, on contacte le service (et cybermalveillance.gouv.fr)." },
-          { q: "Pour éviter tout ça, le meilleur bouclier ?", choices: ["Une phrase de passe différente par site + le code par SMS activé", "Ne plus utiliser Internet"], ok: 0, why: "Un mot de passe solide et unique, plus la double sécurité : le pirate passe son chemin." }
+          { q: "Vos amis reçoivent de votre part des messages bizarres que vous n'avez pas écrits. Que faites-vous ?", choices: ["Mon compte est sans doute piraté : je change le mot de passe et je préviens mes contacts", "Ce n'est pas grave"], ok: 0, why: "C'est un signe classique. Changez le mot de passe, activez le code par SMS, et prévenez vos contacts de ne pas cliquer." },
+          { q: "Votre mot de passe ne marche plus, alors que vous ne l'avez pas changé. Que faites-vous ?", choices: ["J'utilise « Mot de passe oublié ? » ; si ça ne marche pas, je contacte le service", "J'abandonne ce compte"], ok: 0, why: "Le pirate a peut-être changé le mot de passe. « Mot de passe oublié » permet souvent de reprendre la main. Sinon, on contacte le service (et cybermalveillance.gouv.fr)." },
+          { q: "Quel est le meilleur bouclier pour éviter tout ça ?", choices: ["Une phrase de passe différente par site + le code par SMS activé", "Ne plus utiliser Internet"], ok: 0, why: "Un mot de passe solide et unique, plus la double sécurité : le pirate passe son chemin." }
         ], onDone: () => finish(ctx, G, { key: "acc_reset", label: "Je sais récupérer un compte", intro: "Vous savez utiliser « Mot de passe oublié ? », choisir un nouveau mot de passe, et reconnaître les signes d'un compte piraté." }) });
         return;
       }
@@ -725,10 +725,10 @@
      NIVEAU 8 — Mission réelle (sans jamais se connecter)
      ========================================================= */
   const REAL = [
-    { id: "ameli", icon: "💙", title: "Le compte ameli", site: "ameli.fr", task: "Sur <b>ameli.fr</b>, trouvez le bouton pour accéder à son compte." },
-    { id: "impots", icon: "🇫🇷", title: "L'espace des impôts", site: "impots.gouv.fr", task: "Sur <b>impots.gouv.fr</b>, trouvez le bouton pour accéder à son espace particulier." },
-    { id: "caf", icon: "👪", title: "Le compte CAF", site: "caf.fr", task: "Sur <b>caf.fr</b>, trouvez le bouton pour accéder à son compte." },
-    { id: "media", icon: "📚", title: "Le compte lecteur de votre médiathèque", site: "", task: "Sur le site des <b>médiathèques de votre ville</b>, trouvez où se connecter à son compte lecteur." }
+    { id: "ameli", icon: "💙", title: "Le compte ameli", site: "ameli.fr", task: "Sur <b>ameli.fr</b>, trouvez le bouton pour accéder à votre compte." },
+    { id: "impots", icon: "🇫🇷", title: "L'espace des impôts", site: "impots.gouv.fr", task: "Sur <b>impots.gouv.fr</b>, trouvez le bouton pour accéder à votre espace particulier." },
+    { id: "caf", icon: "👪", title: "Le compte CAF", site: "caf.fr", task: "Sur <b>caf.fr</b>, trouvez le bouton pour accéder à votre compte." },
+    { id: "media", icon: "📚", title: "Le compte lecteur de votre médiathèque", site: "", task: "Sur le site des <b>médiathèques de votre ville</b>, trouvez où se connecter à votre compte lecteur." }
   ];
   R("acc_real", {
     steps: 3,
@@ -747,7 +747,7 @@
       if (step === 1) {
         const f = frame(ctx, { level: 8, title: `${r.icon} ${r.title}`, step: 1, noClient: true, consigne: "Lisez la mission en entier, puis suivez les étapes." });
         f.panel.innerHTML = `<div class="nv-mission"><h3>🎯 ${r.task}</h3><p>Puis, <b>sans vous connecter</b>, observez la page de connexion :</p>
-            <ol><li>Peut-on se connecter avec <b>FranceConnect</b> ? (un bouton bleu « S'identifier avec FranceConnect »)</li><li>Quel est le <b>texte exact</b> du lien quand on a oublié son mot de passe ?</li><li>Quelle est l'<b>adresse</b> de la page (dans la barre d'adresse) ?</li></ol></div>
+            <ol><li>Peut-on se connecter avec <b>FranceConnect</b> ? (un bouton « S'identifier avec FranceConnect »)</li><li>Quel est le <b>texte exact</b> du lien quand on a oublié son mot de passe ?</li><li>Quelle est l'<b>adresse</b> de la page (dans la barre d'adresse) ?</li></ol></div>
           <ol class="nv-steps"><li>Ouvrez un <b>nouvel onglet</b> : <kbd>Ctrl</kbd> + <kbd>T</kbd>. Ne fermez pas l'atelier !</li><li>Tapez l'adresse${r.site ? ` <b>${r.site}</b>` : ""}, ou cherchez-la. Vérifiez le <b>vrai nom</b> du site.</li><li>Cliquez sur le bouton de connexion, et <b>observez seulement</b>.</li><li>Revenez ici par l'onglet <b>« Atelier numérique »</b>.</li></ol>
           <div class="alert bad">🛑 On ne tape <b>aucun</b> identifiant, <b>aucun</b> mot de passe, on ne crée pas de compte. Si le navigateur propose d'enregistrer quelque chose : « Jamais ». Un doute ? On lève la main ✋.</div>
           <div class="final-actions"><button type="button" class="secondary" data-change>← Choisir une autre mission</button><button type="button" class="primary" data-found>J'ai trouvé : je réponds →</button></div>`;

@@ -42,7 +42,7 @@
     { title: "Lire les icônes 👀", theme: "dense", html: `
       <div class="l-grid3">
         ${ico(S()(4), "Wi-Fi : tout va bien", "Plus il y a de traits, meilleur est le signal.", 1)}
-        ${ico(S()(4, { warn: true }), "Wi-Fi sans Internet", "Relié à la box… mais la box ne marche pas.", 2)}
+        ${ico(S()(4, { warn: true }), "Wi-Fi sans Internet", "Relié à la box… mais la box n'a pas Internet.", 2)}
         ${ico(G()(true), "Pas connecté", "Relié à rien : on ouvre le menu Wi-Fi.", 2)}
         ${ico("✈", "Mode avion", "Tout est coupé : Wi-Fi, 4G, appels.", 3)}
         ${ico(`${AN.net.cellBars(3)} <b style="font-size:.6em">4G</b>`, "Données mobiles", "Le téléphone utilise le forfait.", 3)}
@@ -54,8 +54,8 @@
       <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);gap:16px;align-items:start">
         <div><div class="wi-box"></div>
           <ol class="mm-notes" style="margin-top:10px"><li><i class="pin">1</i><div><b>Je lis l'étiquette de la box</b><small>Le nom du réseau et la clé (le mot de passe du Wi-Fi).</small></div></li>
-          <li><i class="pin">2</i><div><b>Menu Wi-Fi › le nom EXACT de la box</b><small>Les autres sont ceux des voisins.</small></div></li>
-          <li class="ok"><i class="pin ok">3</i><div><b>Je tape la clé, majuscules comprises</b><small>L'œil 👁 montre ce que je tape. Chez moi : « Se connecter automatiquement ».</small></div></li></ol></div>
+          <li><i class="pin">2</i><div><b>Menu Wi-Fi › le nom EXACT de la box</b><small>Les autres réseaux sont ceux des voisins.</small></div></li>
+          <li class="ok"><i class="pin ok">3</i><div><b>Je tape la clé, majuscules comprises</b><small>L'œil 👁 montre ce que je tape. Chez moi, je coche « Se connecter automatiquement ».</small></div></li></ol></div>
         <div class="wi-pc"></div></div>` },
 
     { title: "Wi-Fi ou 4G ? Mon forfait 📱", html: `
@@ -75,7 +75,7 @@
         <div class="l-safe" data-reveal="1"><h3>✅ Pratique</h3><p>Médiathèque, gare, hôpital, café… Gratuit, et ça économise le forfait.</p><p>On choisit le nom indiqué sur l'<b>affiche</b>, puis on <b>accepte les conditions</b>.</p></div>
         <div class="l-risk" data-reveal="2"><h3>⚠️ Prudence</h3><p>N'importe qui peut créer un Wi-Fi au nom attirant :</p><p><code>Mediatheque-Valbourg</code> ✅<br><code>Mediatheque-Valbourg-Gratuit-HD</code> 🚩</p></div>
       </div>
-      <div class="l-never" data-reveal="3"><h3>🚫 Un Wi-Fi ne demande jamais…</h3><p>…de mot de passe de messagerie, ni de carte bancaire. Et pour la banque, je préfère la <b>4G</b> ou la maison.</p></div>` },
+      <div class="l-never" data-reveal="3"><h3>🚫 Un Wi-Fi public ne demande jamais…</h3><p>…de mot de passe de messagerie, ni de carte bancaire. Et pour la banque, je préfère la <b>4G</b> ou la maison.</p></div>` },
 
     { title: "« Pas d'Internet » : la méthode en 3 étapes 🛠️", theme: "dense", html: `
       <ol class="l-gestures">
@@ -83,7 +83,7 @@
         <li data-reveal="2"><span>📶</span><div><b>2. Je vérifie le menu Wi-Fi</b><small>Le Wi-Fi est-il activé ? Suis-je connecté(e) au bon réseau (celui de MA box) ?</small></div></li>
         <li data-reveal="3"><span>📦</span><div><b>3. Je regarde les voyants de la box</b><small>Rouge ou clignotant : je la débranche, j'attends 10 secondes, je la rebranche… et j'attends 2 à 5 minutes.</small></div></li>
       </ol>
-      <div class="l-callout" data-reveal="4">📞 Toujours rouge ? J'appelle le numéro de mon <b>opérateur</b> (sur la facture). Jamais un numéro affiché dans une fenêtre surprise !</div>` }
+      <div class="l-callout" data-reveal="4">📞 Les voyants restent rouges ? J'appelle le numéro de mon <b>opérateur</b> (sur la facture). Jamais un numéro affiché dans une fenêtre surprise !</div>` }
   ];
 
   /* =================== SÉANCE 3 =================== */
@@ -93,7 +93,7 @@
         <div class="l-alert-mini" data-reveal="1"><b>💬 SERVICE-BOX</b><p>« Votre box sera suspendue sous 24 h suite à un impayé. Régularisez : box-regularisation.com »</p></div>
         <div class="l-alert-mini" data-reveal="2"><b>📞 « Technicien de votre opérateur »</b><p>« Votre box est piratée ! Installez l'application que je vous dicte, je prends la main. »</p></div>
       </div>
-      <ul class="l-list" data-reveal="3"><li>⏰ L'<b>urgence</b> (« sous 24 h ») et un <b>lien</b> à cliquer : arnaque.</li><li>🖥️ Personne ne prend la main sur votre ordinateur après un appel imprévu : je <b>raccroche</b>.</li></ul>
+      <ul class="l-list" data-reveal="3"><li>⏰ L'<b>urgence</b> (« sous 24 h ») et un <b>lien</b> à cliquer : arnaque.</li><li>🖥️ Un appel imprévu pour prendre la main sur mon ordinateur : je <b>raccroche</b>.</li></ul>
       <div class="l-callout" data-reveal="4">📲 Je signale le SMS en le transférant au <b>33700</b> (gratuit), puis je le supprime. Un doute ? J'appelle le numéro de ma facture.</div>` },
 
     { title: "Le partage de connexion 🔗", html: `
@@ -106,8 +106,8 @@
     { title: "Les bons réflexes 🫶", html: `
       <div class="l-grid3">
         <div class="l-safe" data-reveal="1"><h3>🔑 La clé Wi-Fi</h3><p>Je peux la donner à mes proches, chez moi. Elle est sur l'étiquette.</p></div>
-        <div class="l-safe" data-reveal="2"><h3>📊 Mon forfait</h3><p>Je regarde ma consommation dans les Réglages. Les vidéos, en Wi-Fi !</p></div>
-        <div class="l-safe" data-reveal="3"><h3>✈ Le mode avion</h3><p>Internet ne marche plus ? Je vérifie d'abord qu'il n'est pas activé.</p></div>
+        <div class="l-safe" data-reveal="2"><h3>📊 Mon forfait</h3><p>Je regarde ma consommation dans les Réglages. Je regarde les vidéos en Wi-Fi !</p></div>
+        <div class="l-safe" data-reveal="3"><h3>✈ Le mode avion</h3><p>Internet ne marche plus ? Je vérifie d'abord que le mode avion n'est pas activé.</p></div>
       </div>` }
   ];
 
@@ -129,7 +129,7 @@
         cover(1, "Internet arrive chez moi", ["📦 La box, le Wi-Fi, la 4G", "👀 Lire les icônes", "📡 Se connecter à la box", "📱 Wi-Fi ou forfait ?"]),
         pick(A, "Comment Internet"), game("wifi_ou4g", "Wi-Fi ou 4G ?"),
         pick(A, "Lire les icônes"), game("wifi_icones", "Que veut dire cette icône ?"),
-        pick(A, "Connecter un appareil"), game("wifi_cle", "Tape la clé du Wi-Fi"),
+        pick(A, "Connecter un appareil"), game("wifi_cle", "Tapez la clé du Wi-Fi"),
         pick(A, "Wi-Fi ou 4G ? Mon"),
         end("les <b>niveaux 1, 2 et 3</b> : les icônes, l'ordinateur et la box, le téléphone", "wifi_box")] },
       { id: "s2", title: "Séance 2 : dehors… et en panne", icon: "🛠️", badge: "Séance 2 · Dehors et en panne", slides: () => [

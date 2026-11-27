@@ -51,20 +51,20 @@
       which("Toute la famille est en copie du repas de dimanche. Vous dites à <b>tout le monde</b> que vous apportez le dessert.", 1, "Tout le monde doit lire la réponse : <b>Répondre à tous</b>.", "Le dessert pour toute la famille"),
       which("Un message envoyé à <b>30 parents</b> annonce la fête de l'école. Vous voulez juste demander à l'organisatrice si vous pouvez aider.", 0, "Inutile d'écrire aux 30 personnes : <b>Répondre</b> à l'organisatrice suffit.", "Aider à la fête de l'école"),
       which("Votre voisin vous demande les horaires du club de marche : vous les avez reçus par e-mail.", 2, "On <b>transfère</b> le message du club à votre voisin.", "Les horaires du club pour le voisin"),
-      which("Le médecin écrit à vous <b>et</b> à votre conjoint (en copie) pour changer l'heure. Vous confirmez pour les deux.", 1, "Le médecin et votre conjoint doivent lire la réponse : <b>Répondre à tous</b>.", "Confirmer au médecin et au conjoint")
+      which("Le médecin vous écrit pour changer l'heure du rendez-vous. Votre conjoint est <b>en copie</b>. Vous confirmez pour vous deux.", 1, "Le médecin et votre conjoint doivent lire la réponse : <b>Répondre à tous</b>.", "Confirmer au médecin et au conjoint")
     ] });
 
   G({ id: "ordre_mail", title: "Remets le mail dans l'ordre", icon: "🧩",
     intro: "Les morceaux d'un e-mail sont mélangés : remettez-les dans le bon ordre, du <b>haut</b> vers le <b>bas</b>.",
     rounds: [
-      { kind: "order", limit: 75, prompt: "Un e-mail pour s'inscrire à l'atelier :", answer: ["Objet : Inscription atelier jeudi", "Bonjour,", "Je souhaite m'inscrire à l'atelier de jeudi à 14 h.", "Cordialement,", "Marie Dupont"], why: "Objet → formule de politesse → le message → formule de fin → signature." },
+      { kind: "order", limit: 75, prompt: "Un e-mail pour s'inscrire à l'atelier :", answer: ["Objet : Inscription atelier jeudi", "Bonjour,", "Je souhaite m'inscrire à l'atelier de jeudi à 14 h.", "Cordialement,", "Marie Dupont"], why: "Objet → salutation (Bonjour) → le message → formule de politesse (Cordialement) → signature." },
       { kind: "order", limit: 75, prompt: "Un e-mail à la mairie :", answer: ["Objet : Demande de rendez-vous", "Madame, Monsieur,", "Je souhaiterais prendre rendez-vous pour renouveler ma carte d'identité.", "Je vous remercie par avance.", "Bien cordialement,", "Paul Roux"], why: "Pour une administration : « Madame, Monsieur » au début, « Bien cordialement » à la fin." }
     ] });
 
   G({ id: "corrige_mail", title: "Corrige le mail", icon: "🖍️",
-    intro: "Ce message pour la médiathèque contient <b>7 erreurs</b>. Cliquez dessus pour les trouver !",
+    intro: "Ce message pour la médiathèque contient <b>7 erreurs</b>. Cliquez sur chaque erreur que vous trouvez !",
     rounds: [{ kind: "spot", limit: 150, prompt: "Trouvez les <b>7 erreurs</b> de ce message envoyé à la médiathèque.", why: "Avant d'envoyer, on relit : destinataires, objet, politesse, pièces jointes.",
-      zones: { dest: "Claire est dans « À » : elle devait être en copie (Cc)", objet: "L'objet est vide", salut: "« Salut » : trop familier pour la médiathèque", caps: "Tout en MAJUSCULES : cela donne l'impression de crier", faute: "« ateleir » : une faute de frappe, il faut relire", fin: "Pas de formule de politesse avant la signature", pj: "Une pièce jointe sans rapport avec la demande" },
+      zones: { dest: "Claire est dans « À » : elle devrait être en copie (Cc)", objet: "L'objet est vide", salut: "« Salut » : trop familier pour la médiathèque", caps: "Tout en MAJUSCULES : cela donne l'impression de crier", faute: "« ateleir » : une faute de frappe, il faut relire", fin: "Pas de formule de politesse avant la signature", pj: "Une pièce jointe sans rapport avec la demande" },
       content: `<div class="mm"><div class="mm-bar"><span>✏️ Nouveau message</span><i></i><i></i><i></i></div>
         <div class="lp-field"><b>À</b> mediatheque@valbourg.fr ; <span class="z" data-z="dest">claire.dupont@gmail.com</span></div>
         <div class="lp-field"><b>Cc</b> <span class="lp-empty">(vide)</span></div>
@@ -101,7 +101,7 @@
       doc(file("🖼️", "photo_mariage.jpg"), "de votre cousine, qui vous l'avait promise", 0, "Une photo (.jpg) attendue, d'une personne connue : pas de souci.", "photo_mariage.jpg"),
       doc(file("🗜️", "suivi_colis.zip"), "d'un « service de livraison » inconnu", 1, "Un <b>.zip</b> d'un inconnu, pour un colis que vous n'attendez pas : on n'ouvre pas.", "suivi_colis.zip"),
       doc(file("📘", "recette_gateau.docx"), "de votre amie Josiane, qui vous l'avait proposée", 0, "Un texte (.docx) attendu, d'une amie : on peut l'ouvrir.", "recette_gateau.docx"),
-      doc(file("⚙️", "mise_a_jour_securite.exe"), "« de votre banque », sans que vous l'ayez demandé", 1, "Une banque n'envoie jamais de programme (.exe) à installer par e-mail.", "mise_a_jour_securite.exe")
+      doc(file("⚙️", "mise_a_jour_securite.exe"), "« de votre banque », sans aucune demande de votre part", 1, "Une banque n'envoie jamais de programme (.exe) à installer par e-mail.", "mise_a_jour_securite.exe")
     ] });
 
   /* =================== SÉANCE 4 =================== */
@@ -120,7 +120,7 @@
 
   const lines = (...l) => l;
   G({ id: "detecteur", title: "Le détecteur", icon: "🚨",
-    intro: "Un message apparaît <b>ligne par ligne</b>. Dès que vous êtes sûr que c'est une arnaque, appuyez sur 🚩. Plus vous êtes rapide, plus vous gagnez ! Si tout est normal, attendez la fin.",
+    intro: "Un message s'affiche <b>ligne par ligne</b>. Dès que vous êtes sûr(e) que c'est une arnaque, appuyez sur 🚩. Plus vous êtes rapide, plus vous gagnez ! Si tout est normal, attendez la fin.",
     rounds: [
       { kind: "buzz", fake: true, interval: 3, lines: lines("<b>De :</b> Suivi Colis &lt;notification@suivi-colis-express.top&gt;", "<b>Objet :</b> Votre colis est en attente", "Bonjour,", "Votre colis n'a pas pu être livré.", "Des frais de <b>1,99 €</b> sont à régler sous 24 h.", "Cliquez ici pour payer : suivi-colis-express.top/paiement"),
         why: "Dès la 1re ligne, l'adresse <b>suivi-colis-express.top</b> n'est celle d'aucun transporteur. Puis l'urgence et le paiement." },
@@ -165,6 +165,6 @@
       QF("Vous avez donné votre <b>numéro de carte bancaire</b> sur un faux site.", ["J'attends de voir mon relevé", "J'appelle ma banque tout de suite pour bloquer la carte", "Je réponds à l'e-mail pour annuler"], 1, "Le numéro de la banque est au dos de la carte. Plus on bloque vite, moins l'escroc peut s'en servir.", "J'ai donné ma carte"),
       QF("Vous avez tapé votre <b>mot de passe</b> sur un faux site.", ["Je le change tout de suite, sur le vrai site", "Ce n'est pas grave", "J'attends un e-mail de confirmation"], 0, "On le change sur le vrai site, et partout où on utilisait le même.", "J'ai donné mon mot de passe"),
       QF("« On vous a filmé avec votre webcam. Payez 500 €, sinon on publie la vidéo. »", ["Je paie pour être tranquille", "C'est un mensonge envoyé en masse : je supprime", "Je réponds pour négocier"], 1, "Ce chantage est envoyé au hasard à des milliers de personnes : il n'y a pas de vidéo. On ne paie jamais.", "Le chantage à la webcam"),
-      QF("Vous n'êtes <b>pas sûr</b> qu'un message soit vrai.", ["Je clique pour vérifier", "Je vais moi-même sur le site, ou j'appelle le numéro que je connais", "Je le transfère à tous mes contacts"], 1, "Vérifier par soi-même : la règle d'or. Et on peut toujours demander au médiateur numérique !", "Dans le doute")
+      QF("Vous n'êtes <b>pas sûr(e)</b> qu'un message soit vrai.", ["Je clique pour vérifier", "Je vais moi-même sur le site, ou j'appelle le numéro que je connais", "Je le transfère à tous mes contacts"], 1, "Vérifier par soi-même : la règle d'or. Et on peut toujours demander au médiateur numérique !", "Dans le doute")
     ] });
 })(window.AN);

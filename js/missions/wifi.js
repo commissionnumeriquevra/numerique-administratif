@@ -64,21 +64,21 @@
       const step = ctx.m.step || 0, L = ctx.local, G = grader(L);
       if (step === 0) {
         const f = frame(ctx, { level: 1, title: "Lire les icônes du réseau", step: 0, noClient: true,
-          consigne: "En bas à droite de l'ordinateur, en haut du téléphone : de petites icônes disent <b>comment</b> l'appareil est relié à Internet. Apprenons à les lire !" });
+          consigne: "En bas à droite de l'écran de l'ordinateur, et tout en haut du téléphone, de petites icônes disent <b>comment</b> l'appareil est relié à Internet. Apprenons à les lire !" });
         const S = N().signal;
         quiz(f.panel, { G, key: "ico", questions: [
           { label: "Reconnaître l'icône du Wi-Fi qui marche", q: `Sur l'ordinateur, je vois cette icône. Cela veut dire…${tray(S(4, { color: "#fff" }), "Wi-Fi")}`, choices: ["Je suis connecté(e) au Wi-Fi, Internet marche", "Il n'y a pas de Wi-Fi", "Le son est coupé"], ok: 0, why: "L'éventail plein : connecté au Wi-Fi, avec un bon signal." },
           { label: "Reconnaître le globe barré (pas connecté)", q: `Et celle-ci ?${tray(`<span style="color:#fff">${N().globe(true)}</span>`, "globe barré")}`, choices: ["Je suis connecté(e)", "Je ne suis connecté(e) à aucun réseau : pas d'Internet", "Il y a une mise à jour"], ok: 1, why: "Le petit globe barré : l'ordinateur n'est relié à <b>rien</b>. On ouvre le menu Wi-Fi pour se connecter." },
-          { label: "Reconnaître le Wi-Fi sans Internet (point d'exclamation)", q: `Le Wi-Fi avec un petit point d'exclamation :${tray(S(4, { color: "#fff", warn: true }), "Wi-Fi avec point d'exclamation")}`, choices: ["Tout va bien", "Je suis relié(e) à la box… mais la box n'a pas Internet", "Le Wi-Fi est trop fort"], ok: 1, why: "Le Wi-Fi marche entre l'ordinateur et la box, mais la box elle-même n'arrive pas à joindre Internet. Souvent : on redémarre la box." },
-          { label: "Reconnaître le mode avion", q: `Un petit avion ✈ :${tray(`<span style="color:#fff;font-size:1.3em">✈</span>`, "avion")}`, choices: ["Le mode avion est activé : tout est coupé", "Un voyage est prévu"], ok: 0, why: "Le mode avion coupe le Wi-Fi, la 4G et les appels. Pratique en avion… et piège classique quand il est activé par erreur !" },
+          { label: "Reconnaître le Wi-Fi sans Internet (point d'exclamation)", q: `Le Wi-Fi avec un petit point d'exclamation. Cela veut dire…${tray(S(4, { color: "#fff", warn: true }), "Wi-Fi avec point d'exclamation")}`, choices: ["Tout va bien", "Je suis relié(e) à la box… mais la box n'a pas Internet", "Le Wi-Fi est trop fort"], ok: 1, why: "Le Wi-Fi marche entre l'ordinateur et la box, mais la box elle-même n'arrive pas à joindre Internet. Souvent : on redémarre la box." },
+          { label: "Reconnaître le mode avion", q: `Un petit avion ✈. Cela veut dire…${tray(`<span style="color:#fff;font-size:1.3em">✈</span>`, "avion")}`, choices: ["Le mode avion est activé : tout est coupé", "Un voyage est prévu"], ok: 0, why: "Le mode avion coupe le Wi-Fi, la 4G et les appels. Pratique en avion… et piège classique quand il est activé par erreur !" },
           { label: "Reconnaître la 4G (le forfait)", q: `Sur le téléphone : ${tray(`<span style="color:#fff">${N().cellBars(4)} <b>4G</b></span>`, "4G")} Internet passe par…`, choices: ["Le Wi-Fi de la maison", "Les données mobiles (le forfait du téléphone)"], ok: 1, why: "« 4G » ou « 5G » : le téléphone utilise votre <b>forfait</b>. Les barres montrent la force du signal de l'antenne." },
-          { label: "Comprendre un signal faible", q: `Le Wi-Fi avec une seule barre : ${tray(S(1, { color: "#fff" }), "une barre")}`, choices: ["Le signal est faible : je me rapproche de la box", "Le Wi-Fi est en panne"], ok: 0, why: "Une seule barre : le Wi-Fi est loin ou gêné par des murs. Internet risque d'être lent." }
+          { label: "Comprendre un signal faible", q: `Le Wi-Fi n'a qu'une seule barre. Cela veut dire…${tray(S(1, { color: "#fff" }), "une barre")}`, choices: ["Le signal est faible : je me rapproche de la box", "Le Wi-Fi est en panne"], ok: 0, why: "Une seule barre : la box est loin, ou le signal est gêné par des murs. Internet risque d'être lent." }
         ], onDone: () => ctx.go(1) });
         return;
       }
       if (step === 1) {
         const f = frame(ctx, { level: 1, title: "À vous de jouer, sur le téléphone", step: 1,
-          consigne: "Regardez bien la <b>barre d'état</b> du téléphone (tout en haut) à chaque action.",
+          consigne: "Suivez les étapes sur le téléphone. Après chaque action, regardez la <b>barre d'état</b> (tout en haut de l'écran).",
           help: "Tout se règle dans l'application <b>⚙️ Réglages</b>." });
         const st = stage(ctx, f.host, "wk-tel");
         const T = tasker(st.a, [
@@ -100,7 +100,7 @@
             T.note(`<div class="alert good">✅ Vous savez lire la barre d'état et utiliser les réglages essentiels.</div>`);
             quiz(T.slot(), { G, key: "q1b", questions: [
               { q: "Internet ne marche plus sur le téléphone, et je vois ✈ en haut. Que faire ?", choices: ["Redémarrer la box", "Désactiver le mode avion", "Acheter un nouveau téléphone"], ok: 1, why: "Le mode avion coupe tout. Le désactiver suffit." },
-              { q: "Chez moi, le téléphone affiche le Wi-Fi. Il utilise mon forfait ?", choices: ["Oui", "Non : il passe par la box"], ok: 1, why: "En Wi-Fi, c'est la box qui fournit Internet : le forfait du téléphone n'est pas utilisé." }
+              { q: "Chez moi, le téléphone est connecté au Wi-Fi. Utilise-t-il mon forfait ?", choices: ["Oui", "Non : il passe par la box"], ok: 1, why: "En Wi-Fi, c'est la box qui fournit Internet : le forfait du téléphone n'est pas utilisé." }
             ], onDone: () => finish(ctx, G, { key: "wifi_icons", label: "Je sais lire les icônes du réseau", intro: "Vous reconnaissez le Wi-Fi, la 4G, le mode avion, le signal faible et le « pas d'Internet »." }) });
           }
         } }));
@@ -120,12 +120,12 @@
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const key = ctx.byLevel(KEY);
       const f = frame(ctx, { level: 2, title: "Connecter l'ordinateur à la box", step: 0,
-        consigne: `Marie a une nouvelle box. Son ordinateur n'est pas encore connecté. Les informations sont sur l'<b>étiquette</b>, sous la box.`,
+        consigne: `Marie a une nouvelle box. Son ordinateur n'est pas encore connecté. Les informations sont sur l'<b>étiquette</b>, sous la box. C'est réussi quand la page s'affiche dans le navigateur.`,
         help: "Le menu Wi-Fi s'ouvre en cliquant sur les icônes en bas à droite (🌐 🔊 🔋), puis sur la petite flèche <b>›</b> à côté du Wi-Fi." });
       const st = stage(ctx, f.host);
       st.a.innerHTML = `<div class="wk-tasks"></div><div class="wk-boxslot" style="margin-top:12px"></div>`;
       const T = tasker(st.a.querySelector(".wk-tasks"), [
-        { k: "label", label: "Retournez la box pour lire son <b>étiquette</b> : le nom du réseau et la clé." },
+        { k: "label", label: "Cliquez sur « Retourner la box » pour lire son <b>étiquette</b> : le nom du réseau et la clé." },
         { k: "menu", label: "Sur l'ordinateur, ouvrez le <b>menu Wi-Fi</b> (en bas à droite), puis la liste des réseaux (<b>›</b>)." },
         { k: "net", label: `Choisissez <b>le réseau de la box</b> (le nom de l'étiquette).` },
         { k: "key", label: "Tapez la <b>clé de sécurité</b>, exactement comme sur l'étiquette." },
@@ -159,7 +159,7 @@
             L.ended = true;
             T.note(`<div class="alert good">✅ L'ordinateur de Marie est connecté à sa box !</div>`);
             quiz(T.slot(), { G, key: "q2", questions: [
-              { q: "Où trouve-t-on le nom du Wi-Fi et sa clé ?", choices: ["Sur l'étiquette de la box (dessous ou derrière)", "Sur la facture d'électricité", "On l'invente"], ok: 0, why: "L'étiquette donne le nom du réseau (SSID) et la clé de sécurité. On peut aussi les trouver dans l'espace client de l'opérateur." },
+              { q: "Où trouve-t-on le nom du Wi-Fi et sa clé ?", choices: ["Sur l'étiquette de la box (dessous ou derrière)", "Sur la facture d'électricité", "On les invente"], ok: 0, why: "L'étiquette donne le nom du réseau (SSID) et la clé de sécurité. On peut aussi les trouver dans l'espace client de l'opérateur." },
               { q: "La clé « Kp7mVx2e » : je peux taper « kp7mvx2e » ?", choices: ["Oui, c'est pareil", "Non : les majuscules comptent"], ok: 1, why: "Une clé Wi-Fi est un mot de passe : chaque majuscule compte." },
               { q: "Plusieurs réseaux s'affichent : « Livebox-7A3E », « SFR_9C21 »… Ce sont…", choices: ["Les réseaux des voisins", "Des virus", "Des réseaux à moi"], ok: 0, why: "On voit les box des voisins : c'est normal. On choisit seulement le <b>nom exact</b> de sa box." }
             ], onDone: () => finish(ctx, G, { key: "wifi_box", label: "Je sais connecter un ordinateur à ma box", intro: "Vous savez lire l'étiquette de la box, choisir le bon réseau et taper la clé de sécurité." }) });
@@ -182,7 +182,7 @@
       const key = ctx.byLevel(KEY);
       const f = frame(ctx, { level: 3, title: "Le téléphone : Wi-Fi ou 4G ?", step: 0,
         consigne: "Connectez le téléphone de Marie au Wi-Fi de sa box, puis découvrez quand il utilise son <b>forfait</b>.",
-        help: "⚙️ Réglages › Wi-Fi › le nom de la box › mot de passe. Le mot de passe est sur l'étiquette, ci-dessous." });
+        help: "⚙️ Réglages › Wi-Fi › le nom de la box › mot de passe. Le mot de passe est sur l'étiquette, au-dessus de la liste des étapes." });
       const st = stage(ctx, f.host, "wk-tel");
       const T = tasker(st.a, [
         { k: "join", label: `Connectez le téléphone au Wi-Fi <b>${HOME}</b> (clé : <code>${key}</code>).` },
@@ -197,7 +197,7 @@
           if (t === "connect" && d.net.id !== HOME) ph.msg("Ce n'est pas la box de Marie… Choisissez « " + HOME + " ».", "warn");
           if (t === "screen" && d.screen === "usage" && T.is("join") && T.done("usage")) {
             quiz(T.slot(), { G, key: "q3u", questions: [
-              { q: "D'après l'écran, combien Marie a-t-elle utilisé de son forfait ce mois-ci ?", choices: ["3,2 Go sur 5 Go", "5 Go sur 3,2 Go", "Rien du tout"], ok: 0, why: "3,2 Go utilisés sur les 5 Go du forfait. Il reste 1,8 Go jusqu'au 1er du mois." },
+              { q: "D'après l'écran, combien de Go Marie a-t-elle utilisés ce mois-ci ?", choices: ["3,2 Go sur 5 Go", "5 Go sur 3,2 Go", "Rien du tout"], ok: 0, why: "3,2 Go utilisés sur les 5 Go du forfait. Il reste 1,8 Go jusqu'au 1er du mois." },
               { q: "Quelle application a le plus consommé ?", choices: ["Les messages", "Les vidéos", "Les plans"], ok: 1, why: "Les vidéos consomment énormément. Mieux vaut les regarder en Wi-Fi !" }
             ], onDone: () => { T.slot().innerHTML = `<button type="button" class="primary" data-out>🚶 Marie sort de chez elle</button>`; T.slot().querySelector("[data-out]").addEventListener("click", goOut); } });
           }
@@ -208,8 +208,8 @@
           T.done("out"); G.ok("out", "Voir le téléphone passer tout seul en 4G");
           T.note(`<div class="alert">📶 Loin de la box, le téléphone a perdu le Wi-Fi : il est passé <b>tout seul</b> en <b>4G</b> (regardez en haut). Internet marche toujours… avec le forfait.</div>`);
           quiz(T.slot(), { G, key: "q3", questions: [
-            { q: "Dehors, Marie veut regarder une vidéo d'une heure. Que se passe-t-il ?", choices: ["Rien de spécial", "Elle consomme beaucoup de son forfait (1 à 3 Go)", "C'est impossible"], ok: 1, why: "Une heure de vidéo peut consommer plus d'1 Go. Avec 1,8 Go restant, elle risque d'épuiser son forfait." },
-            { q: "Forfait épuisé : que se passe-t-il le plus souvent ?", choices: ["Internet devient très lent jusqu'au mois suivant", "Le téléphone s'éteint", "On est forcément facturé 100 €"], ok: 0, why: "La plupart des forfaits ralentissent fortement (ou proposent une recharge). Le compteur repart à zéro au début du mois." },
+            { q: "Dehors, Marie veut regarder une vidéo d'une heure. Que se passe-t-il ?", choices: ["Rien de spécial", "Elle consomme beaucoup de son forfait (1 à 3 Go)", "C'est impossible"], ok: 1, why: "Une heure de vidéo peut consommer de 1 à 3 Go. Avec 1,8 Go restants, elle risque d'épuiser son forfait." },
+            { q: "Quand le forfait est épuisé, que se passe-t-il le plus souvent ?", choices: ["Internet devient très lent jusqu'au mois suivant", "Le téléphone s'éteint", "On est forcément facturé 100 €"], ok: 0, why: "La plupart des forfaits ralentissent fortement (ou proposent une recharge). Le compteur repart à zéro au début du mois." },
             { q: "Faut-il couper le Wi-Fi en sortant de chez soi ?", choices: ["Oui, sinon ça coûte cher", "Non : le téléphone passe tout seul de l'un à l'autre"], ok: 1, why: "Pas besoin : le téléphone choisit seul le Wi-Fi quand il est là, la 4G sinon." }
           ], onDone: () => finish(ctx, G, { key: "wifi_phone", label: "Je comprends Wi-Fi et données mobiles", intro: "Vous savez connecter le téléphone au Wi-Fi et vous comprenez quand il utilise le forfait (4G)." }) });
         }, 900);
@@ -267,7 +267,7 @@
             if (!L.ended) { L.ended = true; T.note(`<div class="alert good">✅ Connecté(e) au Wi-Fi de la médiathèque !</div>`);
               quiz(T.slot(), { G, key: "q4", questions: [
                 { q: "Sur un Wi-Fi public, je peux…", choices: ["Lire les actualités, chercher un horaire", "Faire mes virements bancaires sans réfléchir"], ok: 0, why: "Pour la banque ou les démarches sensibles, on préfère la <b>4G</b> ou le Wi-Fi de la maison." },
-                { q: "Un Wi-Fi public vous demande votre numéro de carte bancaire « pour vérifier votre âge ». ", choices: ["Je le donne", "C'est une arnaque : je me déconnecte"], ok: 1, why: "Un Wi-Fi gratuit ne demande jamais de carte bancaire ni de mot de passe." },
+                { q: "Un Wi-Fi public vous demande votre numéro de carte bancaire « pour vérifier votre âge ». Que faites-vous ?", choices: ["Je le donne", "C'est une arnaque : je me déconnecte"], ok: 1, why: "Un Wi-Fi gratuit ne demande jamais de carte bancaire ni de mot de passe." },
                 { q: "Comment savoir quel est le vrai Wi-Fi d'un lieu ?", choices: ["Je prends celui qui a le meilleur signal", "Je lis l'affiche ou je demande à l'accueil"], ok: 1, why: "Un faux réseau peut avoir un très bon signal. Le bon nom est affiché, ou donné à l'accueil." }
               ], onDone: () => finish(ctx, G, { key: "wifi_public", label: "Je sais utiliser un Wi-Fi public prudemment", intro: "Vous savez reconnaître le vrai Wi-Fi d'un lieu public, accepter ses conditions… et repérer un faux réseau." }) }); }
           }
@@ -291,15 +291,15 @@
       const P = PANNES[step]; if (!P) return ctx.finalScreen({ theme: null });
       const key = "Kp7mVx2eRt9q";
       const f = frame(ctx, { level: 5, title: `« Pas d'Internet » : ${P.title} / 4`, step,
-        consigne: "Le navigateur affiche « Aucune connexion Internet ». Menez l'enquête : regardez <b>l'icône en bas à droite</b>, et les <b>voyants de la box</b>. Réparez, puis vérifiez avec <b>⟳</b>.",
+        consigne: "Le navigateur affiche « Aucune connexion Internet ». Menez l'enquête : regardez <b>l'icône en bas à droite</b>, et les <b>voyants de la box</b>. Réparez, puis vérifiez avec <b>⟳</b> : c'est réussi quand la page s'affiche.",
         help: "Ordre conseillé : 1) l'icône en bas à droite (✈ ? globe barré ? point d'exclamation ?) 2) le menu Wi-Fi 3) les voyants de la box." });
       const st = stage(ctx, f.host);
       st.a.innerHTML = `<div class="wk-tasks"></div><div class="wk-boxslot" style="margin-top:12px"></div>`;
-      const T = tasker(st.a.querySelector(".wk-tasks"), [{ k: "fix", label: "Trouvez la cause et réparez." }, { k: "check", label: "Vérifiez avec <b>⟳</b> dans le navigateur." }]);
+      const T = tasker(st.a.querySelector(".wk-tasks"), [{ k: "fix", label: "Trouvez la cause de la panne et réparez-la." }, { k: "check", label: "Vérifiez avec <b>⟳</b> dans le navigateur." }]);
       let uselessRestart = false;
       const bx = st.keep(N().box(st.a.querySelector(".wk-boxslot"), { ssid: HOME, key, state: P.boxOk ? "ok" : "fail", canRestart: true, wait: ctx.demo ? 5 : 6, big: ctx.demo, onEvent: (t) => {
         if (t === "restart" && P.boxOk && !uselessRestart) { uselessRestart = true; G.ko("diag_" + P.id, "Regarder l'icône avant de redémarrer la box", "Les voyants étaient tous verts : la box allait bien. Le problème venait de l'ordinateur."); T.note(`<div class="alert">🤔 Les voyants de la box étaient <b>verts</b> : elle allait bien. Regardez plutôt l'icône en bas à droite de l'ordinateur.</div>`); }
-        if (t === "restart" && !P.boxOk) T.note(`<div class="alert">⏳ On attend que la box redémarre (les voyants clignotent)… puis ⟳ dans le navigateur.</div>`);
+        if (t === "restart" && !P.boxOk) T.note(`<div class="alert">⏳ Attendez que la box redémarre (les voyants clignotent)… puis cliquez sur ⟳ dans le navigateur.</div>`);
         if (t === "restarted") { pc.render(); if (P.fix(pc.status()) && T.done("fix") && !G.has("diag_" + P.id)) G.ok("diag_" + P.id, `Panne ${step + 1} : trouver la cause`); }
       } }));
       const nets = homeNets(key);
@@ -314,8 +314,8 @@
           T.note(`<div class="alert good">✅ Réparé ! ${P.cause}</div>`);
           if (step < PANNES.length - 1) { T.slot().innerHTML = `<button type="button" class="primary" data-n>Panne suivante →</button>`; T.slot().querySelector("[data-n]").addEventListener("click", () => ctx.go(step + 1)); }
           else quiz(T.slot(), { G, key: "q5", questions: [
-            { q: "Internet ne marche plus. Que regarde-t-on en premier ?", choices: ["On rappelle l'opérateur tout de suite", "L'icône réseau, en bas à droite (ou en haut du téléphone)", "On réinstalle l'ordinateur"], ok: 1, why: "L'icône dit presque tout : ✈ mode avion, globe barré (pas connecté), point d'exclamation (problème de box)." },
-            { q: "Pour redémarrer la box :", choices: ["Je la débranche, j'attends quelques secondes, je la rebranche, puis j'attends 2 à 5 minutes", "J'appuie sur tous les boutons", "Je la secoue"], ok: 0, why: "Débrancher, attendre, rebrancher… et patienter : la box met quelques minutes à redémarrer." },
+            { q: "Internet ne marche plus. Que faites-vous en premier ?", choices: ["J'appelle l'opérateur tout de suite", "Je regarde l'icône réseau, en bas à droite (ou en haut du téléphone)", "Je réinstalle l'ordinateur"], ok: 1, why: "L'icône dit presque tout : ✈ mode avion, globe barré (pas connecté), point d'exclamation (problème de box)." },
+            { q: "Comment redémarrer la box ?", choices: ["Je la débranche, j'attends quelques secondes, je la rebranche, puis j'attends 2 à 5 minutes", "J'appuie sur tous les boutons", "Je la secoue"], ok: 0, why: "Débrancher, attendre, rebrancher… et patienter : la box met quelques minutes à redémarrer." },
             { q: "Les voyants de la box restent rouges, même après un redémarrage. Que faire ?", choices: ["Appeler le service client de l'opérateur (numéro sur la facture ou le site officiel)", "Appeler le numéro qui s'affiche dans une fenêtre sur l'écran"], ok: 0, why: "On appelle le vrai numéro de l'opérateur (facture, contrat). Jamais un numéro affiché par une fenêtre surprise : c'est une arnaque." }
           ], onDone: () => finish(ctx, G, { key: "wifi_panne", label: "Je sais dépanner « pas d'Internet »", intro: "Vous savez lire l'icône réseau, désactiver le mode avion, rallumer le Wi-Fi, choisir le bon réseau et redémarrer la box." }) });
         }
@@ -335,7 +335,7 @@
       const L = ctx.local, G = grader(L);
       if ((ctx.m.step || 0) > 0) return ctx.finalScreen({ theme: null });
       const f = frame(ctx, { level: 6, title: "Les arnaques autour de la box et du forfait", step: 0, noClient: true,
-        consigne: "Messages, appels, Wi-Fi gratuits… Pour chaque situation : <b>arnaque</b> ou <b>normal</b> ? Les escrocs aiment parler de box et de forfait, parce que tout le monde en a un." });
+        consigne: "Messages, appels, Wi-Fi gratuits… Pour chaque situation, répondez : <b>arnaque</b> ou <b>normal</b> ? Les escrocs aiment parler de box et de forfait, parce que presque tout le monde en a." });
       const A = ["🚩 Arnaque", "✅ Normal"];
       quiz(f.panel, { G, key: "scam", questions: [
         { label: "SMS « forfait épuisé, rechargez 1,99 € » : arnaque", q: `${sms("+33 7 56 12 98 40", "<p>Votre forfait mobile est épuisé. Rechargez 1,99 € pour éviter la coupure : <u>recharge-forfait-fr.info</u></p>")}`, choices: A, ok: 0, why: "Numéro inconnu, petit montant, lien bizarre, urgence : arnaque. Votre opérateur ne vous envoie pas de lien de paiement comme ça." },
@@ -348,7 +348,7 @@
         f.panel.innerHTML = `<div class="alert good">Bravo ! Et si vous recevez un SMS d'arnaque ?</div><div class="mk-q-slot"></div>`;
         quiz(f.panel.querySelector(".mk-q-slot"), { G, key: "scam2", questions: [
           { q: "Je reçois un SMS d'arnaque. Je peux le signaler gratuitement en le transférant au…", choices: ["33700", "17", "3615"], ok: 0, why: "Le <b>33700</b> est le numéro officiel pour signaler les SMS et appels indésirables. Puis on supprime le message." },
-          { q: "J'ai cliqué sur un lien et payé 1,99 €. Que faire ?", choices: ["Rien, c'est peu", "J'appelle ma banque pour faire opposition, et je regarde cybermalveillance.gouv.fr"], ok: 1, why: "Les escrocs gardent votre numéro de carte : ils feront d'autres prélèvements. On fait opposition au plus vite." }
+          { q: "J'ai cliqué sur un lien et payé 1,99 €. Que faire ?", choices: ["Rien, c'est peu", "J'appelle ma banque pour faire opposition, et je regarde cybermalveillance.gouv.fr"], ok: 1, why: "Les escrocs gardent votre numéro de carte : ils peuvent faire d'autres prélèvements. On fait opposition au plus vite." }
         ], onDone: () => finish(ctx, G, { key: "wifi_scams", label: "Je repère les arnaques autour de la box et du forfait", intro: "Vous repérez les faux SMS de forfait, les faux techniciens et les faux Wi-Fi, et vous savez signaler au 33700." }) });
       } });
     }
@@ -383,11 +383,11 @@
           if (t === "wrongKey") { if (!G.has("pc")) G.ko("pc", "Taper le mot de passe du partage", "Il est affiché dans Réglages › Partage de connexion, sur le téléphone."); T.note(`<div class="alert">Le mot de passe est écrit sur le téléphone, dans <b>Partage de connexion</b>.</div>`); }
           if (t === "connect" && d.net.id === hsName && T.done("pc")) { if (!G.has("pc")) G.ok("pc", "Taper le mot de passe du partage"); if (ctx.isBeginner()) x.hint(null, "refresh"); }
           if (t === "refresh" && d.online && x.current?.id === hsName && T.done("check")) { G.ok("check", "Vérifier que ça marche"); x.hint(null); T.note(`<div class="alert good">✅ L'ordinateur passe par le téléphone ! Pensez à couper le partage une fois fini.</div>`); }
-          if (t === "refresh" && !d.online) x.msg(x.current?.id === HOME ? "Toujours connecté(e) à la box, qui est en panne. Choisissez le réseau du <b>téléphone</b> dans le menu Wi-Fi." : "Pas d'Internet. Le partage est-il bien activé sur le téléphone ?", "info", 6000);
+          if (t === "refresh" && !d.online) x.msg(x.current?.id === HOME ? "L'ordinateur est toujours connecté à la box, qui est en panne. Choisissez le réseau du <b>téléphone</b> dans le menu Wi-Fi." : "Pas d'Internet. Le partage est-il bien activé sur le téléphone ?", "info", 6000);
         } });
       ph = N().phone(f.host.querySelector(".wk-ph"), { big: false, nets: [N().net(HOME, { key: "Kp7mVx2eRt9q", bars: 4, internet: false })], connected: null, wifiOn: false, data: false, hsName, hsKey, onEvent: (t, d) => {
         if (t === "data" && d.on && T.done("data")) G.ok("data", "Activer les données mobiles");
-        if (t === "hotspotRefused") T.note(`<div class="alert">Il faut d'abord activer les <b>données mobiles</b> : c'est elles que le téléphone va partager.</div>`);
+        if (t === "hotspotRefused") T.note(`<div class="alert">Il faut d'abord activer les <b>données mobiles</b> : ce sont elles que le téléphone va partager.</div>`);
         if (t === "hotspot") {
           if (d.on && T.done("hs")) { G.ok("hs", "Activer le partage de connexion"); if (ctx.isBeginner()) pc.hint("tray"); }
           if (!d.on) { if (pc.current?.id === hsName) { pc.state.connected = null; } pc.render(); if (T.is("check") && T.done("off")) { G.ok("off", "Couper le partage à la fin"); end(); } }
@@ -401,7 +401,7 @@
         if (L.ended) return; L.ended = true;
         quiz(T.slot(), { G, key: "q7", questions: [
           { q: "Avec le partage de connexion, l'ordinateur utilise…", choices: ["Le forfait du téléphone", "La box du voisin", "Rien, c'est gratuit"], ok: 0, why: "L'ordinateur passe par les données mobiles du téléphone : il consomme le forfait. Pas de vidéos en partage !" },
-          { q: "Le partage de connexion, c'est utile quand…", choices: ["La box est en panne, ou en déplacement sans Wi-Fi", "Je veux aller plus vite chez moi"], ok: 0, why: "C'est une solution de secours : pour une démarche urgente, un mail, un formulaire." },
+          { q: "Le partage de connexion, c'est utile quand…", choices: ["La box est en panne, ou je suis en déplacement sans Wi-Fi", "Je veux aller plus vite chez moi"], ok: 0, why: "C'est une solution de secours : pour une démarche urgente, un e-mail, un formulaire." },
           { q: "Pourquoi le partage a-t-il un mot de passe ?", choices: ["Pour que les voisins ne profitent pas de mon forfait", "Ça ne sert à rien"], ok: 0, why: "Sans mot de passe, n'importe qui à côté pourrait utiliser votre forfait." }
         ], onDone: () => finish(ctx, G, { key: "wifi_share", label: "Je sais utiliser le partage de connexion", intro: "Vous savez transformer votre téléphone en « box de secours » pour l'ordinateur… et couper le partage ensuite." }) });
       }
@@ -417,7 +417,7 @@
       const step = ctx.m.step || 0, L = ctx.local, G = grader(L);
       if (step === 0) {
         const f = frame(ctx, { level: 8, title: "Mission réelle : mon téléphone et la médiathèque", step: 0, noClient: true,
-          consigne: "Cette fois, sur votre <b>vrai téléphone</b> (ou une tablette), et dans la médiathèque. On observe et on note, sans rien changer d'important." });
+          consigne: "Cette fois, vous utilisez votre <b>vrai téléphone</b> (ou une tablette), ici, à la médiathèque. Vous observez et vous notez, sans rien changer d'important." });
         f.panel.innerHTML = `<ol class="nv-steps">
             <li>Regardez la <b>barre d'état</b> de votre téléphone (tout en haut) : quelles icônes voyez-vous ?</li>
             <li>Ouvrez <b>Réglages</b> (ou Paramètres) et trouvez le <b>mode avion</b>. <b>Ne l'activez pas</b> : trouvez-le seulement.</li>
@@ -454,7 +454,7 @@
           $f("[data-send]").disabled = true;
           G.ok("icons", "Lire les icônes de son appareil");
           (use !== "Je n'ai pas trouvé" ? G.ok : G.ko)("use", "Trouver sa consommation de données", "Réglages › Données cellulaires (iPhone) ou Connexions › Utilisation des données (Android). On cherche ensemble !");
-          (ssid ? G.ok : G.ko)("ssid", "Trouver le nom du Wi-Fi de la médiathèque", "Il est affiché à l'accueil, ou on le demande.");
+          (ssid ? G.ok : G.ko)("ssid", "Trouver le nom du Wi-Fi de la médiathèque", "Le nom est affiché à l'accueil ; sinon, on le demande.");
           (c("air") ? G.ok : G.ko)("air", "Trouver le mode avion", "Réglages, tout en haut ; ou en glissant le doigt depuis le haut de l'écran.");
           (c("list") ? G.ok : G.ko)("list", "Afficher la liste des réseaux Wi-Fi", "Réglages › Wi-Fi.");
           (c("nothing") ? G.ok : G.ko)("nothing", "Ne donner aucun mot de passe ni code", "Pour cette mission, on n'avait rien à donner.");

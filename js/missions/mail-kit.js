@@ -185,10 +185,10 @@
         const d = { ...st.compose, attachments: [...st.compose.attachments] };
         const problems = [];
         if (!d.to.trim()) problems.push("Le champ « À » est vide : à qui envoyez-vous ce message ?");
-        else if (!d.to.split(/[,;]/).every(isEmail)) problems.push(`L'adresse « ${d.to} » n'est pas valide. Vérifiez l'arobase @ et le point.`);
+        else if (!d.to.split(/[,;]/).every(isEmail)) problems.push(`L'adresse « ${d.to} » n'est pas valide. Vérifiez qu'il y a une arobase @ et un point.`);
         if (d.cc.trim() && !d.cc.split(/[,;]/).every(isEmail)) problems.push(`L'adresse en copie « ${d.cc} » n'est pas valide.`);
         if (problems.length) { flash(problems.join("<br>"), "bad"); return; }
-        if (!d.subject.trim() && !st.confirmNoSubject) { st.confirmNoSubject = true; flash("Votre message n'a pas d'objet. Ajoutez-en un, ou cliquez à nouveau sur « Envoyer » pour l'envoyer quand même.", "warn"); return; }
+        if (!d.subject.trim() && !st.confirmNoSubject) { st.confirmNoSubject = true; flash("Votre message n'a pas d'objet. Écrivez-en un dans « Objet », ou cliquez à nouveau sur « Envoyer » pour l'envoyer quand même.", "warn"); return; }
         st.confirmNoSubject = false;
         const sent = { id: "sent_" + Date.now(), from: me, to: d.to, toName: d.to, cc: d.cc, subject: d.subject || "(sans objet)", body: esc(d.body).replace(/\n/g, "<br>"), attachments: d.attachments, folder: "sent", date: "À l'instant" };
         st.mails.push(sent);
@@ -215,7 +215,7 @@
       unattach: el => { readDraft(); const [f] = st.compose.attachments.splice(Number(el.dataset.i), 1); render(); emit("unattach", f); },
       att: el => { const m = byId(st.sel); const att = m.attachments[Number(el.dataset.i)]; st.preview = { mail: m, att }; render(); emit("attOpen", { mail: m, att }); },
       prevClose: () => { st.preview = null; render(); },
-      download: () => { const { mail, att } = st.preview; st.preview = null; render(); flash(`⬇️ « ${esc(att.name)} » a été téléchargé dans le dossier <b>Téléchargements</b>.`, "good", 4000); emit("download", { mail, att }); }
+      download: () => { const { mail, att } = st.preview; st.preview = null; render(); flash(`⬇️ Le fichier « ${esc(att.name)} » a été téléchargé dans le dossier <b>Téléchargements</b>.`, "good", 4000); emit("download", { mail, att }); }
     };
 
     function readDraft() {
