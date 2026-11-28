@@ -228,7 +228,7 @@
       shown: (r, ms) => Math.min(r.lines.length, 1 + Math.floor(ms / K.buzz.interval(r))),
       play(ctx) {
         const r = ctx.round;
-        ctx.el.innerHTML = `<div class="lp-prompt">${r.prompt || "Le message apparaît ligne par ligne. Dès que vous êtes sûr que c'est une arnaque : appuyez !"}</div>
+        ctx.el.innerHTML = `<div class="lp-prompt">${r.prompt || "Le message apparaît ligne par ligne. Dès que vous êtes sûr(e) que c'est une arnaque, appuyez sur 🚩 !"}</div>
           <div class="lp-buzz-mail">${r.head || ""}<div class="lp-buzz-lines"></div></div>
           <div class="lp-buzz-btns"><button type="button" class="lp-buzz">🚩 C'est une arnaque !</button><button type="button" class="lp-normal" disabled>✅ Ça me semble normal</button></div>`;
         const lines = ctx.el.querySelector(".lp-buzz-lines");

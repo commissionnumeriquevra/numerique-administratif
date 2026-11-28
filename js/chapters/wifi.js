@@ -135,7 +135,7 @@
       { id: "s2", title: "Séance 2 : dehors… et en panne", icon: "🛠️", badge: "Séance 2 · Dehors et en panne", slides: () => [
         cover(2, "Dehors… et en panne", ["☕ Le Wi-Fi public", "🎭 Les faux réseaux", "🛠️ « Pas d'Internet » : la méthode", "📦 Redémarrer la box"]),
         pick(B, "Le Wi-Fi public"), game("wifi_public_ok", "Sur un Wi-Fi public, je peux… ?"),
-        pick(B, "« Pas d'Internet »"), game("wifi_diag", "Quelle est la panne ?"), game("wifi_redemarrer", "Redémarrer la box, dans l'ordre"),
+        pick(B, "« Pas d'Internet »"), game("wifi_diag", "Internet ne marche pas : que faire ?"), game("wifi_redemarrer", "Redémarrer la box, dans l'ordre"),
         end("les <b>niveaux 4 et 5</b> : le Wi-Fi public, et le dépannage", "wifi_panne")] },
       { id: "s3", title: "Séance 3 : arnaques et solutions de secours", icon: "🔗", badge: "Séance 3 · Arnaques et secours", slides: () => [
         cover(3, "Arnaques et solutions de secours", ["🚩 Les arnaques box et forfait", "🔗 Le partage de connexion", "🫶 Les bons réflexes"]),
