@@ -32,14 +32,21 @@
   }
 
   /** Liste de tâches qui se cochent toutes seules. */
-  const tasksHTML = tasks => `<ol class="mk-tasks">${tasks.map(t => `<li class="${t.done ? "done" : ""}"><span aria-hidden="true">${t.done ? "✅" : "⬜"}</span> ${t.label}</li>`).join("")}</ol>`;
+  const tasksHTML = tasks => {
+    const cur = tasks.findIndex(t => !t.done);
+    return `<ol class="mk-tasks">${tasks.map((t, i) => {
+      const st = t.done ? "done" : i === cur ? "current" : "todo";
+      const label = String(t.label).replace(/^<b>👉<\/b>\s*/, "");
+      return `<li class="${st}"><span class="mk-n" aria-hidden="true">${t.done ? "✓" : i + 1}</span><span class="mk-l">${st === "current" ? `<span class="mk-now">👉 À vous</span>` : ""}${label}</span></li>`;
+    }).join("")}</ol>`;
+  };
 
   /** Questions posées dans le panneau, sans effacer la boîte mail. On continue toujours. */
   function inlineQuiz(el, { questions, G, key, onDone, title = "" }) {
     let i = 0, answered = null;
     const draw = () => {
       const q = questions[i];
-      el.innerHTML = `${title}<div class="mk-quiz inline"><div class="mk-quiz-count">Question ${i + 1} / ${questions.length}</div>
+      el.innerHTML = `${title}<div class="mk-quiz inline"><div class="mk-quiz-head"><span>❓ ${questions.length > 1 ? "Les questions" : "La question"}</span><b class="mk-quiz-count">Question ${i + 1} sur ${questions.length}</b></div>
         <h3 data-speak>${q.q}</h3>
         <div class="choice-stack">${q.choices.map((c, k) => `<button type="button" class="secondary ${answered != null ? (k === q.ok ? "right" : k === answered ? "wrong" : "") : ""}" data-k="${k}" ${answered != null ? "disabled" : ""}>${c}</button>`).join("")}</div>
         ${answered != null ? `<div class="alert ${answered === q.ok ? "good" : "bad"}">${answered === q.ok ? "✅ Bonne réponse ! " : "❌ Pas tout à fait. "}${q.why}</div>
@@ -53,6 +60,8 @@
       el.querySelector("[data-next]")?.addEventListener("click", () => { i++; answered = null; if (i < questions.length) draw(); else onDone(); });
     };
     draw();
+    // Les questions arrivent : on les amène sous les yeux du participant.
+    setTimeout(() => { try { el.querySelector(".mk-quiz")?.scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) {} }, 60);
   }
 
   /** Messages réels du formateur, ajoutés à la boîte (et ceux qui arrivent pendant l'exercice). */

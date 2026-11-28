@@ -1,0 +1,105 @@
+/* =========================================================
+   Exercices faits seul : un écran lisible d'un coup d'œil
+   1. un en-tête compact (titre + « Étape 1 sur 3 »)
+   2. UNE consigne bien visible : « Ce que vous devez faire »
+   3. une astuce discrète (pas en vert : le vert = réussite)
+   4. les étapes numérotées, l'étape en cours en évidence
+   5. sur grand écran : les étapes à gauche (toujours visibles), l'exercice à droite
+   ========================================================= */
+:root{--ex-blue:#1d4ed8;--ex-blue-soft:#eff6ff;--ex-blue-line:#bfdbfe;--ex-ink:#0f172a;--ex-muted:#64748b;--ex-tip:#fffbeb;--ex-tip-line:#f59e0b;--ex-tip-ink:#78350f}
+
+/* --- 1. cadre plus large, en-tête compact --- */
+#missionScreen .mission-shell{max-width:1240px;padding:18px 26px 26px}
+#missionScreen .mission-toolbar{margin-bottom:6px}
+#missionContent h1,.demo-stage .mx-head h1{font-size:clamp(1.45rem,2.3vw,1.95rem);line-height:1.15;margin:2px 0 0}
+#missionContent .eyebrow{margin:0;font-size:.72rem}
+.mx-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;padding:4px 0 12px;margin-bottom:12px;border-bottom:2px solid #eef0f4}
+.mx-title{min-width:0}
+.mp-wrap{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:170px}
+.mp-label{font-weight:800;font-size:.95rem;color:var(--ex-blue);background:var(--ex-blue-soft);border:1px solid var(--ex-blue-line);border-radius:999px;padding:3px 12px;white-space:nowrap}
+.mp-wrap .mission-progress{margin:0;width:170px}
+#missionContent > .mp-wrap{align-items:flex-start;margin:6px 0 14px}
+@media (max-width:760px){.mx-head{flex-direction:column;align-items:flex-start}.mp-wrap{align-items:flex-start}}
+
+/* --- 2. la consigne : le premier endroit où regarder --- */
+#missionContent .consigne,.demo-stage .consigne{position:relative;background:#fff;border:2px solid var(--ex-blue-line);border-left:8px solid var(--ex-blue);border-radius:14px;padding:30px 18px 14px;margin:0 0 10px;font-size:1.14rem;line-height:1.5;color:var(--ex-ink);box-shadow:0 4px 14px rgba(29,78,216,.07)}
+#missionContent .consigne::before,.demo-stage .consigne::before{content:"🎯 Ce que vous devez faire";position:absolute;top:8px;left:18px;font-size:.74rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--ex-blue)}
+
+/* --- 3. l'astuce : discrète, en ambre --- */
+#missionContent .help-tip,.demo-stage .help-tip{background:var(--ex-tip);color:var(--ex-tip-ink);border:1px solid #fde68a;border-left:5px solid var(--ex-tip-line);border-radius:12px;font-weight:500;font-size:1rem;padding:9px 14px;margin:0 0 12px}
+.help-tip .tip-label{display:inline-block;font-weight:900;margin-right:4px}
+#missionContent .help-tip.good{background:var(--ex-tip)}
+
+/* --- 4. les étapes numérotées --- */
+.mk-tasks{counter-reset:none;gap:8px}
+.mk-tasks li{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-radius:12px;background:#fff;border:1px solid #e5e7eb;line-height:1.4;transition:background .2s,border-color .2s}
+.mk-tasks .mk-n{flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:.95rem;background:#e5e7eb;color:#475569}
+.mk-tasks .mk-l{flex:1;min-width:0}
+.mk-tasks li.todo{opacity:.62}
+.mk-tasks li.current{background:var(--ex-blue-soft);border:2px solid var(--ex-blue);box-shadow:0 6px 16px rgba(29,78,216,.14);font-size:1.06rem;opacity:1}
+.mk-tasks li.current .mk-n{background:var(--ex-blue);color:#fff}
+.mk-tasks .mk-now{display:block;font-size:.72rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--ex-blue);margin-bottom:2px}
+.mk-tasks li.done{background:#f0fdf4;border-color:#bbf7d0;color:#166534}
+.mk-tasks li.done .mk-n{background:#16a34a;color:#fff}
+
+/* messages de l'exercice (bravo / petit rappel) : bien visibles, sous les étapes */
+.mk-fb .alert{font-size:1.02rem;box-shadow:0 4px 12px rgba(15,23,42,.06)}
+.mk-panel{background:#f8fafc;border-color:#e2e8f0}
+
+/* --- 5. grand écran : étapes à gauche (collées en haut), exercice à droite --- */
+@media (min-width:1100px){
+  #missionContent .mk-mission:has(> .mk-panel:not(:empty)):has(> .mk-host:not(:empty)){grid-template-columns:minmax(290px,350px) minmax(0,1fr);align-items:start}
+  #missionContent .mk-mission:has(> .mk-panel:not(:empty)):has(> .mk-host:not(:empty)) > .mk-panel{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;grid-column:1;grid-row:1 / span 6}
+  #missionContent .mk-mission:has(> .mk-panel:not(:empty)):has(> .mk-host:not(:empty)) > :not(.mk-panel){grid-column:2}
+}
+
+/* boutons de l'exercice : un peu plus grands et lisibles */
+#missionContent button.primary{font-size:1.05rem}
+
+/* contraste élevé */
+body.hc #missionContent .consigne{border:3px solid #000;border-left-width:10px}
+body.hc .mk-tasks li.current{border:3px solid #000;background:#fff}
+body.hc #missionContent .help-tip{border:2px solid #000;background:#fff;color:#000}
+
+/* Souris, Clic Master : la liste d'étapes et la zone de travail sont dans le même panneau */
+@media (min-width:1100px){
+  #missionContent .mk-panel:has(> .wk-tasks, > .cm-tasks){display:grid;grid-template-columns:minmax(270px,330px) minmax(0,1fr);gap:16px;align-items:start}
+  #missionContent .mk-panel:has(> .wk-tasks, > .cm-tasks) > :is(.wk-tasks,.cm-tasks){grid-column:1;grid-row:1 / span 6;position:sticky;top:12px}
+  #missionContent .mk-panel:has(> .wk-tasks, > .cm-tasks) > :not(.wk-tasks,.cm-tasks){grid-column:2;min-width:0}
+}
+
+/* Modèle à recopier (dictées) : police simple, sans empattements, bien lisible */
+.cm-model{font-family:inherit !important;font-weight:700;font-size:1.7rem;letter-spacing:.01em;border:2px dashed #c7d2fe}
+
+/* Noms de dossiers : jamais coupés au milieu d'un mot (« Téléchargements ») */
+.cm-item span,.cm-cap,.fx-tile-n{word-break:normal;overflow-wrap:normal;hyphens:none}
+.cm-item{min-width:118px}
+
+/* =========================================================
+   Trois zones, trois couleurs :
+   🎯 consigne (bleu) · 📋 étapes (gris, étape en cours en bleu) · ❓ questions (violet)
+   ========================================================= */
+.mk-tasks::before{content:"📋 Les étapes à faire, dans l'ordre";display:block;font-size:.74rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#475569;margin:0 0 2px 2px}
+
+/* la carte des questions */
+.mk-quiz.inline{background:#faf5ff;border:2px solid #a78bfa;border-left:8px solid #7c3aed;border-radius:14px;padding:12px 16px 14px;box-shadow:0 6px 18px rgba(124,58,237,.12);scroll-margin-top:96px}
+.mk-quiz-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.mk-quiz-head span{font-size:.78rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#6d28d9}
+.mk-quiz-head .mk-quiz-count{background:#7c3aed;color:#fff;border-radius:999px;padding:3px 12px;font-size:.9rem}
+.mk-quiz.inline h3{font-size:1.15rem;color:#1e1b4b}
+.mk-quiz.inline .choice-stack button.secondary{background:#fff;border:2px solid #c4b5fd;color:#3b0764;font-size:1.02rem}
+.mk-quiz.inline .choice-stack button.secondary:hover:not(:disabled){border-color:#7c3aed;background:#f5f3ff}
+
+/* quand les questions arrivent et que toutes les étapes sont faites :
+   les étapes se replient, les questions passent devant, en pleine largeur */
+#missionContent .mk-mission:has(.mk-q-slot:not(:empty)):not(:has(.mk-tasks li.current)){grid-template-columns:1fr !important}
+#missionContent .mk-mission:has(.mk-q-slot:not(:empty)):not(:has(.mk-tasks li.current)) > *{grid-column:1 !important;grid-row:auto !important}
+#missionContent .mk-mission:has(.mk-q-slot:not(:empty)):not(:has(.mk-tasks li.current)) > .mk-panel{position:static;max-height:none;overflow:visible}
+#missionContent .mk-panel:has(.mk-q-slot:not(:empty)):not(:has(.mk-tasks li.current)){display:block}
+#missionContent .mk-panel:has(.mk-q-slot:not(:empty)):not(:has(.mk-tasks li.current)) .mk-tasks li{display:none}
+#missionContent .mk-panel:has(.mk-q-slot:not(:empty)):not(:has(.mk-tasks li.current)) .mk-tasks::before{content:"✅ Toutes les étapes sont faites. Dernière partie : les questions ↓";font-size:.95rem;letter-spacing:0;text-transform:none;color:#166534;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:8px 12px}
+#missionContent .mk-panel:has(.mk-q-slot:not(:empty)):not(:has(.mk-tasks li.current)) :is(.cm-stage,.sc-stage){display:none}
+
+/* écran final : le quiz de fin dans la même carte violette */
+#missionQuiz:not(:empty){background:#faf5ff;border:2px solid #a78bfa;border-left:8px solid #7c3aed;border-radius:14px;padding:14px 18px;margin:14px 0}
+#missionQuiz h2::before{content:"❓ "}

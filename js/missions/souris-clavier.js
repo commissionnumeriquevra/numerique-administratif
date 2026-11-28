@@ -206,7 +206,7 @@
         if (o === "door" && what === "open") { st.door = true; O("door").querySelector(".sc-ico").textContent = "🚪✨"; say("🚪 La porte s'ouvre… il y a un joli jardin 🌷"); if (cur === "door") done("door", "Agir avec le clic gauche", "Le clic gauche agit : il ouvre, il valide."); return; }
         if (o === "box" && what === "shake") { O("box").classList.remove("shake"); void O("box").offsetWidth; O("box").classList.add("shake"); say("🫨 Gling-gling… On dirait quelque chose de fragile !"); if (cur === "shake") done("shake", "Trouver une action dans le menu du clic droit", "« Secouer » n'existe que dans le menu du clic droit : il montre toutes les options."); return; }
         if (o === "box" && what === "open") {
-          if (cur !== "open") { err(cur); say("📦 Pas encore ! Le colis s'ouvrira à la fin. Suivez la consigne marquée d'un 👉"); return; }
+          if (cur !== "open") { err(cur); say("📦 Pas encore ! Le colis s'ouvrira à la fin. Suivez l'étape marquée « 👉 À vous »"); return; }
           st.box = true; O("box").querySelector(".sc-ico").textContent = "🎁"; say("🎁 Surprise : un livre de la médiathèque, et un mot : « Bravo ! »"); done("open", "Agir avec le clic gauche", "Le clic gauche agit : il ouvre, il valide."); return;
         }
         if (o === "photo" && (what === "right" || what === "left")) {

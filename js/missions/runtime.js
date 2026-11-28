@@ -79,14 +79,16 @@
       isBeginner() { return ctx.level === "beginner"; },
 
       progress(step, total = def.steps || 3) {
-        return `<div class="mission-progress" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${step}" aria-label="Étape ${Math.min(step + 1, total)} sur ${total}">${Array.from({ length: total }, (_, i) => `<i class="${i < step ? "done" : i === step ? "current" : ""}"></i>`).join("")}</div>`;
+        const label = step >= total ? "Terminé ✅" : `Partie ${step + 1} sur ${total}`;
+        if (total <= 1 && step < total) return "";
+        return `<div class="mp-wrap"><span class="mp-label">${label}</span><div class="mission-progress" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${step}" aria-label="Étape ${Math.min(step + 1, total)} sur ${total}">${Array.from({ length: total }, (_, i) => `<i class="${i < step ? "done" : i === step ? "current" : ""}"></i>`).join("")}</div></div>`;
       },
       /** Aide affichée seulement au niveau Débutant (ou aux niveaux listés). */
       help(text, levels = ["beginner"]) {
-        return levels.includes(ctx.level) ? `<div class="alert good help-tip" data-speak>💡 ${text}</div>` : "";
+        return levels.includes(ctx.level) ? `<div class="alert help-tip" data-speak><span class="tip-label">💡 Astuce</span> ${text}</div>` : "";
       },
       header(eyebrow, title, step) {
-        return `<p class="eyebrow">${esc(eyebrow)}</p><h1>${esc(title)}</h1>${step != null ? ctx.progress(step) : ""}`;
+        return `<div class="mx-head"><div class="mx-title"><p class="eyebrow">${esc(eyebrow)}</p><h1>${esc(title)}</h1></div>${step != null ? ctx.progress(step) : ""}</div>`;
       },
 
       html(markup) {
